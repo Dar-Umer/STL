@@ -411,8 +411,8 @@
                                 <img src="{{ asset('storage/' . $logo) }}" alt="Logo" class="logo-img">
                             @endif
                             <div>
-                                <h1>{{ setting('app_name', 'Soil Lab') }}</h1>
-                                <div class="tagline">{{ setting('app_description', 'Soil Testing & Health Management System') }}</div>
+                                <h1>{{ setting('app_name') ?: 'Soil Lab' }}</h1>
+                                <div class="tagline">{{ setting('app_description') ?: 'Soil Testing & Health Management System' }}</div>
                             </div>
                         </div>
                     </div>
@@ -689,21 +689,35 @@
     </main>
 
     {{-- INFO RIBBON --}}
+    @php
+        $ribbons = [];
+        for ($ri = 1; $ri <= 4; $ri++) {
+            $rIcon = setting('front.ribbon'.$ri.'_icon', '');
+            $rLabel = setting('front.ribbon'.$ri.'_label', '');
+            if ($rLabel) {
+                $ribbons[] = ['icon' => $rIcon ?: 'fa-check-circle', 'label' => $rLabel];
+            }
+        }
+        if (empty($ribbons)) {
+            $ribbons = [
+                ['icon' => 'fa-award', 'label' => '100% Free Testing'],
+                ['icon' => 'fa-map-marked-alt', 'label' => 'GPS Geotagged Parcels'],
+                ['icon' => 'fa-flask', 'label' => '12 Parameter Analysis'],
+                ['icon' => 'fa-mobile-alt', 'label' => 'Digital Soil Health Card'],
+            ];
+        }
+    @endphp
+    @if(!empty($ribbons))
     <div class="info-ribbon">
         <div class="container">
             <div class="info-grid">
-                @for($ri = 1; $ri <= 4; $ri++)
-                @php
-                    $rIcon = setting('front.ribbon'.$ri.'_icon', '');
-                    $rLabel = setting('front.ribbon'.$ri.'_label', '');
-                @endphp
-                @if($rLabel)
-                <div class="ir-item"><i class="fas {{ $rIcon }}"></i><span class="ir-label">{{ $rLabel }}</span></div>
-                @endif
-                @endfor
+                @foreach($ribbons as $rb)
+                <div class="ir-item"><i class="fas {{ $rb['icon'] }}"></i><span class="ir-label">{{ $rb['label'] }}</span></div>
+                @endforeach
             </div>
         </div>
     </div>
+    @endif
 
     {{-- FOOTER --}}
     <footer class="site-footer">
