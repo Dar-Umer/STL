@@ -335,11 +335,6 @@
             </li>
         </ul>
         <ul class="navbar-nav ml-auto align-items-center">
-            <li class="nav-item mr-2">
-                <a href="{{ url('/') }}" target="_blank" class="btn btn-sm btn-outline-secondary rounded-pill px-3 shadow-none" style="font-size: 0.8rem;">
-                    <i class="fas fa-external-link-alt mr-1"></i> Public Portal
-                </a>
-            </li>
             <li class="nav-item dropdown">
                 <a class="nav-link p-0 dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="navbar-user-chip">
@@ -427,7 +422,7 @@
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('admin.farmers') }}" class="nav-link {{ request()->routeIs('admin.farmers') ? 'active' : '' }}">
-                                        <i class="nav-icon fas fa-tractor"></i><p>Farmers</p>
+                                        <i class="nav-icon fas fa-user"></i><p>Farmers</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
@@ -637,7 +632,7 @@
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('admin.farmers') }}" class="nav-link {{ request()->routeIs('admin.farmers') ? 'active' : '' }}">
-                                        <i class="nav-icon fas fa-tractor"></i><p>Farmers</p>
+                                        <i class="nav-icon fas fa-user"></i><p>Farmers</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">

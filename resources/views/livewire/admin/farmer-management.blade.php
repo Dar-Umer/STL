@@ -3,7 +3,7 @@
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
         <div>
             <h4 class="mb-1 font-weight-bold" style="color: #0f172a;">
-                <i class="fas fa-tractor text-warning mr-2"></i>Farmer Directory
+                <i class="fas fa-user text-warning mr-2"></i>Farmer Directory
             </h4>
             <p class="text-muted small mb-0">Registered agricultural beneficiaries, farm locations, and contact records.</p>
         </div>
@@ -180,7 +180,7 @@
                                 <div class="d-flex align-items-center">
                                     <div class="rounded-circle mr-3 d-flex align-items-center justify-content-center text-warning shadow-xs" 
                                          style="width: 38px; height: 38px; min-width: 38px; background: #fffbeb;">
-                                        <i class="fas fa-tractor"></i>
+                                        <i class="fas fa-user"></i>
                                     </div>
                                     <div>
                                         <span class="font-weight-bold text-dark d-block">{{ $farmer->name }}</span>
@@ -222,7 +222,7 @@
                     @empty
                         <tr>
                             <td colspan="5" class="text-center py-5 text-muted">
-                                <i class="fas fa-tractor fa-3x mb-3 text-muted opacity-50 d-block"></i>
+                                <i class="fas fa-user fa-3x mb-3 text-muted opacity-50 d-block"></i>
                                 <h6 class="font-weight-bold text-dark">No farmers found</h6>
                                 <p class="small text-muted mb-0">Try adjusting your search criteria or register a new farmer.</p>
                             </td>

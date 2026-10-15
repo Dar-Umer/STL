@@ -14,10 +14,6 @@
             </div>
         </div>
         <div class="d-flex align-items-center">
-            <span class="badge badge-light border mr-3 px-3 py-2 text-muted" style="font-size: 0.8rem;">
-                <span class="d-inline-block rounded-circle bg-success mr-1" style="width: 8px; height: 8px; animation: pulse 2s infinite;"></span>
-                Live &bull; Updated {{ now()->format('h:i A') }}
-            </span>
             <button wire:click="refresh" wire:loading.attr="disabled" class="btn btn-sm btn-white border rounded-pill px-3 shadow-sm font-weight-medium text-secondary">
                 <i class="fas fa-sync-alt mr-1" wire:loading.class="fa-spin" wire:target="refresh"></i> Refresh
             </button>
@@ -66,7 +62,7 @@
                 <div class="card-body p-3 d-flex align-items-center">
                     <div class="d-flex align-items-center justify-content-center rounded-lg mr-3 shadow-sm" 
                          style="width: 50px; height: 50px; min-width: 50px; border-radius: 12px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #fff;">
-                        <i class="fas fa-tractor fa-lg"></i>
+                        <i class="fas fa-user fa-lg"></i>
                     </div>
                     <div class="overflow-hidden">
                         <span class="d-block text-muted text-uppercase font-weight-bold" style="font-size: 0.7rem; letter-spacing: 0.06em;">Farmers</span>
