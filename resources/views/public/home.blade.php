@@ -22,7 +22,7 @@
     @if($ogUrl)<meta name="twitter:image" content="{{ $ogUrl }}">@endif
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css">
     <style>
@@ -566,7 +566,7 @@
                     <div class="leader-post">{{ setting('front.cho_title', 'Chief Horticulture Officer') }}, {{ setting('front.cho_post', 'Pulwama District') }}</div>
                     <p class="leader-desc">{{ setting('front.cho_description', 'The Horticulture Department, Pulwama is committed to promoting sustainable farming through scientific soil analysis, quality plant material, and modern horticultural practices. Farmers are encouraged to avail free soil testing services for better crop yield.') }}</p>
                     <div class="leader-contacts">
-                        <span><i class="fas fa-phone-alt"></i> {{ setting('front.cho_phone', '+91-XXXX-XXXXXX') }}</span>
+                        <span><i class="fas fa-phone-alt"></i> {{ setting('front.cho_phone', '+91-1933-241234') }}</span>
                         <span><i class="fas fa-envelope"></i> {{ setting('front.cho_email', 'cho.pulwama@jk.gov.in') }}</span>
                         <span><i class="fas fa-map-marker-alt"></i> {{ setting('front.cho_address', 'Mini Secretariat, Pulwama, J&K 192301') }}</span>
                     </div>
@@ -610,12 +610,12 @@
                         <span class="title-line"></span>
                     </h4>
                     <div class="service-grid">
-                        <a href="{{ route('public.track') }}" class="service-card">
+                        <a href="{{ route('public.sample-request') }}" class="service-card">
                             <div class="sc-icon" style="background:linear-gradient(135deg,var(--green-500),var(--green-400))"><i class="fas fa-hand-holding-heart"></i></div>
                             <h6>{{ setting('front.feature1_title', 'Sample Collection') }}</h6>
                             <p>{{ setting('front.feature1_text', 'Field officials collect soil samples with GPS-tagged locations.') }}</p>
                         </a>
-                        <a href="#" class="service-card">
+                        <a href="#services" class="service-card">
                             <div class="sc-icon" style="background:linear-gradient(135deg,var(--green-700),var(--green-500))"><i class="fas fa-flask"></i></div>
                             <h6>{{ setting('front.feature2_title', 'Lab Testing') }}</h6>
                             <p>{{ setting('front.feature2_text', '12-parameter analysis including NPK, pH, and micronutrients.') }}</p>
@@ -625,17 +625,17 @@
                             <h6>{{ setting('front.feature3_title', 'Soil Health Card') }}</h6>
                             <p>{{ setting('front.feature3_text', 'Detailed report with ratings and crop-specific recommendations.') }}</p>
                         </a>
-                        <a href="#" class="service-card">
+                        <a href="#services" class="service-card">
                             <div class="sc-icon" style="background:linear-gradient(135deg,var(--red),#e53935)"><i class="fas fa-seedling"></i></div>
                             <h6>{{ setting('front.feature4_title', 'Fertilizer Advice') }}</h6>
                             <p>{{ setting('front.feature4_text', 'Science-based fertilizer recommendations for your crops.') }}</p>
                         </a>
-                        <a href="{{ setting('front.feature5_url', '#') }}" class="service-card">
+                        <a href="{{ setting('front.feature5_url') && setting('front.feature5_url') !== '#' ? setting('front.feature5_url') : route('contact') }}" class="service-card">
                             <div class="sc-icon" style="background:linear-gradient(135deg,#1565c0,#1e88e5)"><i class="fas {{ setting('front.feature5_icon', 'fa-map-marked-alt') }}"></i></div>
                             <h6>{{ setting('front.feature5_title', 'Locate Lab') }}</h6>
                             <p>{{ setting('front.feature5_text', 'Find your nearest soil testing laboratory.') }}</p>
                         </a>
-                        <a href="{{ setting('front.feature6_url', '#') }}" class="service-card">
+                        <a href="{{ setting('front.feature6_url') && setting('front.feature6_url') !== '#' ? setting('front.feature6_url') : '#services' }}" class="service-card">
                             <div class="sc-icon" style="background:linear-gradient(135deg,#6a1b9a,#ab47bc)"><i class="fas {{ setting('front.feature6_icon', 'fa-chart-bar') }}"></i></div>
                             <h6>{{ setting('front.feature6_title', 'Nutrient Guide') }}</h6>
                             <p>{{ setting('front.feature6_text', 'Balanced nutrient management recommendations.') }}</p>
@@ -670,10 +670,10 @@
             <div class="facts-section fade-section">
                 <div class="facts-head"><i class="fas fa-info-circle"></i> Horticulture Facts — Pulwama District</div>
                 <div class="facts-grid">
-                    <div class="fact-item"><span class="fact-num" data-count="{{ setting('front.fact1_value', '14×') }}">0</span><div class="fact-lbl">{{ setting('front.fact1_label', 'Growth Since 1972') }}</div></div>
-                    <div class="fact-item"><span class="fact-num" data-count="{{ setting('front.fact2_value', '24.94 LMT') }}">0</span><div class="fact-lbl">{{ setting('front.fact2_label', 'Annual Fruit Production') }}</div></div>
-                    <div class="fact-item"><span class="fact-num" data-count="{{ setting('front.fact3_value', '23 Lakh+') }}">0</span><div class="fact-lbl">{{ setting('front.fact3_label', 'People Employed') }}</div></div>
-                    <div class="fact-item"><span class="fact-num" data-count="{{ setting('front.fact4_value', '₹6,300 Cr') }}">0</span><div class="fact-lbl">{{ setting('front.fact4_label', 'Annual Turnover') }}</div></div>
+                    <div class="fact-item"><span class="fact-num" data-count="{{ setting('front.fact1_value', '14×') }}">{{ setting('front.fact1_value', '14×') }}</span><div class="fact-lbl">{{ setting('front.fact1_label', 'Growth Since 1972') }}</div></div>
+                    <div class="fact-item"><span class="fact-num" data-count="{{ setting('front.fact2_value', '24.94 LMT') }}">{{ setting('front.fact2_value', '24.94 LMT') }}</span><div class="fact-lbl">{{ setting('front.fact2_label', 'Annual Fruit Production') }}</div></div>
+                    <div class="fact-item"><span class="fact-num" data-count="{{ setting('front.fact3_value', '23 Lakh+') }}">{{ setting('front.fact3_value', '23 Lakh+') }}</span><div class="fact-lbl">{{ setting('front.fact3_label', 'People Employed') }}</div></div>
+                    <div class="fact-item"><span class="fact-num" data-count="{{ setting('front.fact4_value', '₹6,300 Cr') }}">{{ setting('front.fact4_value', '₹6,300 Cr') }}</span><div class="fact-lbl">{{ setting('front.fact4_label', 'Annual Turnover') }}</div></div>
                 </div>
             </div>
 
@@ -716,7 +716,19 @@
                 <div>
                     <div class="fw-head">Important Links</div>
                     <div class="imp-links">
-                        @php $footerLinks = json_decode(setting('front.footer_links', '[]'), true) ?: []; @endphp
+                        @php
+                            $footerLinks = json_decode(setting('front.footer_links', '[]'), true) ?: [];
+                            if (empty($footerLinks)) {
+                                $footerLinks = [
+                                    ['label' => 'Soil Health Card Scheme', 'url' => 'https://soilhealth.dac.gov.in/'],
+                                    ['label' => 'Horticulture Department J&K', 'url' => 'http://horticulture.jk.gov.in/'],
+                                    ['label' => 'Request Soil Testing', 'url' => route('public.sample-request')],
+                                    ['label' => 'Track Soil Report', 'url' => route('public.track')],
+                                    ['label' => 'Accessibility Options', 'url' => route('accessibility')],
+                                    ['label' => 'Contact Us', 'url' => route('contact')],
+                                ];
+                            }
+                        @endphp
                         @foreach($footerLinks as $link)
                         @if(!empty($link['label']))
                         <a href="{{ $link['url'] ?? '#' }}">{{ $link['label'] }}</a>
@@ -729,7 +741,7 @@
                     <ul>
                         <li><i class="fas fa-map-marker-alt"></i> {{ setting('front.cho_address', 'Mini Secretariat, Pulwama, J&K 192301') }}</li>
                         <li><i class="fas fa-envelope"></i> {{ setting('front.cho_email', 'cho.pulwama@jk.gov.in') }}</li>
-                        <li><i class="fas fa-phone"></i> {{ setting('front.cho_phone', '+91-XXXX-XXXXXX') }}</li>
+                        <li><i class="fas fa-phone"></i> {{ setting('front.cho_phone', '+91-1933-241234') }}</li>
                         <li><i class="fas fa-clock"></i> {{ setting('front.working_hours', 'Mon–Fri: 9 AM – 5 PM') }}</li>
                     </ul>
                 </div>

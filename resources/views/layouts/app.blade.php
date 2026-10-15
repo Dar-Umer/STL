@@ -39,10 +39,12 @@
 
     <!-- Sidebar -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
-        <a href="/" class="brand-link text-center">
+        <a href="{{ route('admin.dashboard') }}" class="brand-link text-center">
             @php $brandLogo = setting('logo_path', ''); @endphp
             @if($brandLogo)
-            <img src="{{ asset('storage/' . $brandLogo) }}" alt="Logo" style="max-height:40px;width:auto;object-fit:contain;opacity:.9">
+                <img src="{{ asset('storage/' . $brandLogo) }}" alt="Logo" style="max-height:38px;width:auto;object-fit:contain;opacity:.9">
+            @else
+                <span class="brand-text font-weight-bold" style="font-size:1.1rem;letter-spacing:.5px;"><i class="fas fa-flask mr-2" style="color:#28a745;"></i>{{ setting('app_name', 'Soil Lab') }}</span>
             @endif
         </a>
         <div class="sidebar">
@@ -376,15 +378,19 @@
 
     <!-- Content Wrapper -->
     <div class="content-wrapper">
+        @hasSection('page_title')
         <section class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>@yield('page_title', 'Dashboard')</h1>
+                        <h1>@yield('page_title')</h1>
                     </div>
                 </div>
             </div>
         </section>
+        @else
+        <div class="pt-3"></div>
+        @endif
         <section class="content">
             <div class="container-fluid">
                 @if(session('success'))

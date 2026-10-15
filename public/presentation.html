@@ -1,0 +1,1986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soil Lab &mdash; Comprehensive 20-Slide Master Presentation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0a5a2a;
+            --primary-light: #018840;
+            --primary-dark: #073819;
+            --accent: #f59e0b;
+            --accent-light: #fde68a;
+            --dark: #0f172a;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --border: rgba(226, 232, 240, 0.8);
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background: #0b1320;
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Bar Controls */
+        header.deck-header {
+            height: 54px;
+            background: rgba(11, 19, 32, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 100;
+            color: #fff;
+        }
+
+        .deck-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .deck-brand .badge {
+            background: rgba(1, 136, 64, 0.25);
+            color: #4ade80;
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            font-size: 0.7rem;
+            padding: 2px 10px;
+            border-radius: 999px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .deck-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-ctrl {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #e2e8f0;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .btn-ctrl:hover {
+            background: rgba(255, 255, 255, 0.16);
+            color: #fff;
+        }
+
+        /* Audio Voiceover Controls */
+        .audio-panel {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 3px 6px;
+            border-radius: 10px;
+        }
+
+        .btn-audio {
+            background: rgba(16, 185, 129, 0.18) !important;
+            border-color: rgba(74, 222, 128, 0.35) !important;
+            color: #4ade80 !important;
+            font-weight: 600;
+        }
+
+        .btn-audio.playing {
+            background: #059669 !important;
+            color: #fff !important;
+            border-color: #34d399 !important;
+        }
+
+        .btn-auto.active {
+            background: #d97706 !important;
+            color: #fff !important;
+            border-color: #fbbf24 !important;
+        }
+
+        .voice-select {
+            background: rgba(15, 23, 42, 0.9);
+            color: #cbd5e1;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 6px;
+            font-size: 0.72rem;
+            padding: 4px 6px;
+            max-width: 140px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .voice-select option {
+            background: #0f172a;
+            color: #fff;
+        }
+
+        .sound-wave {
+            display: inline-flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 12px;
+            margin-left: 4px;
+        }
+
+        .sound-wave span {
+            width: 2.5px;
+            height: 100%;
+            background: #4ade80;
+            border-radius: 2px;
+            animation: wave 1s ease-in-out infinite alternate;
+        }
+
+        .sound-wave span:nth-child(1) { animation-duration: 0.5s; }
+        .sound-wave span:nth-child(2) { animation-duration: 0.8s; }
+        .sound-wave span:nth-child(3) { animation-duration: 0.6s; }
+        .sound-wave span:nth-child(4) { animation-duration: 0.7s; }
+
+        @keyframes wave {
+            0% { height: 2px; }
+            100% { height: 12px; }
+        }
+
+        .btn-ctrl.active {
+            background: var(--primary-light);
+            border-color: #4ade80;
+            color: #fff;
+        }
+
+        /* Presentation Canvas */
+        main.deck-canvas {
+            flex: 1;
+            position: relative;
+            background: radial-gradient(circle at 50% 15%, #183d25 0%, #0c2114 40%, #07120b 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 28px 75px;
+        }
+
+        /* Slide Frame */
+        .slide {
+            position: absolute;
+            width: calc(100% - 56px);
+            max-width: 1260px;
+            height: calc(100% - 95px);
+            max-height: 740px;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 25px 65px -15px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.1);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px) scale(0.985);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Slide Structure */
+        .slide-header {
+            padding: 20px 36px 14px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #fff;
+        }
+
+        .slide-header .tag {
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--primary-light);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .slide-header h2 {
+            font-size: 1.55rem;
+            font-weight: 800;
+            color: var(--dark);
+            margin-top: 2px;
+            letter-spacing: -0.4px;
+        }
+
+        .slide-header .subtext {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .slide-body {
+            flex: 1;
+            padding: 22px 36px;
+            overflow-y: auto;
+            background: #fafaf9;
+        }
+
+        .slide-footer {
+            height: 44px;
+            border-top: 1px solid #f1f5f9;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 36px;
+            font-size: 0.74rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Speaker Notes Drawer */
+        .speaker-notes {
+            display: none;
+            position: absolute;
+            bottom: 66px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 56px);
+            max-width: 1260px;
+            background: rgba(15, 23, 42, 0.96);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 16px 24px;
+            color: #cbd5e1;
+            font-size: 0.84rem;
+            line-height: 1.6;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
+            z-index: 50;
+        }
+
+        .speaker-notes.visible {
+            display: block;
+        }
+
+        .speaker-notes strong {
+            color: var(--accent);
+            display: block;
+            margin-bottom: 4px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Bottom Deck Navigation */
+        footer.deck-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background: rgba(11, 19, 32, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+            z-index: 90;
+        }
+
+        .progress-bar-container {
+            flex: 1;
+            max-width: 420px;
+            margin: 0 24px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #f59e0b);
+            width: 5%;
+            transition: width 0.3s ease;
+        }
+
+        .slide-counter {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+        }
+
+        .nav-btn-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-nav {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-nav:hover:not(:disabled) {
+            background: var(--primary-light);
+            transform: translateY(-1px);
+        }
+
+        .btn-nav:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* Grids & Cards */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; height: 100%; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+        .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+
+        .feature-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 18px 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+            transition: all 0.2s;
+        }
+
+        .feature-card:hover {
+            border-color: #cbd5e1;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 22px -5px rgba(0, 0, 0, 0.06);
+        }
+
+        .feature-card .icon-box {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            color: #fff;
+            margin-bottom: 12px;
+            flex-shrink: 0;
+        }
+
+        .feature-card h4 {
+            font-size: 0.98rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 6px;
+        }
+
+        .feature-card p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.55;
+        }
+
+        .badge-pill {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-top: 10px;
+            width: fit-content;
+        }
+
+        /* Cover Slide */
+        .slide-cover {
+            background: linear-gradient(135deg, #073819 0%, #0a5a2a 50%, #041f0d 100%);
+            color: #fff;
+            position: relative;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .slide-cover::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .cover-content {
+            position: relative;
+            z-index: 2;
+            max-width: 920px;
+        }
+
+        .cover-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 6px 18px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            color: #fde68a;
+            font-weight: 700;
+            margin-bottom: 24px;
+            letter-spacing: 0.5px;
+        }
+
+        .slide-cover h1 {
+            font-size: 2.7rem;
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: -0.8px;
+            margin-bottom: 16px;
+        }
+
+        .slide-cover p.desc {
+            font-size: 1.05rem;
+            opacity: 0.88;
+            line-height: 1.6;
+            margin-bottom: 32px;
+            max-width: 780px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cover-meta {
+            display: flex;
+            justify-content: center;
+            gap: 36px;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            padding-top: 24px;
+        }
+
+        .cover-meta-item {
+            text-align: left;
+        }
+
+        .cover-meta-item .lbl {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            opacity: 0.65;
+        }
+
+        .cover-meta-item .val {
+            font-size: 0.92rem;
+            font-weight: 700;
+            margin-top: 2px;
+            color: #fff;
+        }
+
+        /* Flow Diagram */
+        .workflow-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            height: 100%;
+        }
+
+        .workflow-step {
+            flex: 1;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px 12px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            height: 100%;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+        }
+
+        .workflow-step .step-no {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .workflow-step .step-icon {
+            font-size: 1.6rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .workflow-step h5 {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 4px;
+        }
+
+        .workflow-step p {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            line-height: 1.45;
+        }
+
+        .workflow-arrow {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* Metric Box */
+        .metric-box {
+            background: #ffffff;
+            border-left: 4px solid var(--primary-light);
+            padding: 12px 16px;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 10px;
+            border-top: 1px solid #e2e8f0;
+            border-right: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .metric-box .metric-num {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .metric-box .metric-lbl {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* Tables */
+        .deck-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.78rem;
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
+        .deck-table th {
+            background: #f1f5f9;
+            color: var(--dark);
+            font-weight: 700;
+            padding: 10px 14px;
+            text-align: left;
+            border-bottom: 1px solid #cbd5e1;
+        }
+
+        .deck-table td {
+            padding: 9px 14px;
+            border-bottom: 1px solid #f1f5f9;
+            color: var(--text-main);
+        }
+
+        .deck-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Code snippets */
+        pre.code-snip {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            line-height: 1.5;
+            overflow-x: auto;
+        }
+
+        /* Slide Overview Modal */
+        .modal-overview {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(11, 19, 32, 0.96);
+            backdrop-filter: blur(16px);
+            z-index: 200;
+            padding: 36px 40px;
+            overflow-y: auto;
+        }
+
+        .modal-overview.active {
+            display: block;
+        }
+
+        .modal-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1240px;
+            margin: 0 auto 20px;
+            color: #fff;
+        }
+
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+            max-width: 1240px;
+            margin: 0 auto;
+        }
+
+        .overview-thumb {
+            background: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #cbd5e1;
+        }
+
+        .overview-thumb:hover {
+            border-color: #4ade80;
+            transform: translateY(-2px);
+            background: #24354a;
+        }
+
+        .overview-thumb.current {
+            border: 2px solid #4ade80;
+            background: #193826;
+        }
+
+        .overview-thumb .thumb-idx {
+            font-size: 0.68rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: #4ade80;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .overview-thumb .thumb-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.35;
+        }
+
+        /* Print Styles */
+        @media print {
+            header.deck-header, footer.deck-nav, .speaker-notes, .modal-overview {
+                display: none !important;
+            }
+            body {
+                background: #fff;
+                color: #000;
+                overflow: visible;
+                height: auto;
+            }
+            main.deck-canvas {
+                padding: 0;
+                background: transparent;
+                display: block;
+            }
+            .slide {
+                position: relative !important;
+                display: flex !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                height: 100vh !important;
+                page-break-after: always;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                border: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation & Controls -->
+    <header class="deck-header">
+        <div class="deck-brand">
+            <i class="fas fa-seedling text-emerald-400" style="color:#4ade80;"></i>
+            <span>Soil Lab</span>
+            <span class="badge">Master 20-Slide Deck</span>
+        </div>
+        <div class="deck-actions">
+            <!-- Audio Voiceover Controls -->
+            <div class="audio-panel">
+                <button class="btn-ctrl btn-audio" id="playAudioBtn" onclick="toggleAudio()" title="Play / Pause Voice Narration (A)">
+                    <i class="fas fa-volume-high" id="audioIcon"></i>
+                    <span id="audioBtnText">Play Voice (A)</span>
+                    <span class="sound-wave" id="soundWave" style="display:none;">
+                        <span></span><span></span><span></span><span></span>
+                    </span>
+                </button>
+                <button class="btn-ctrl btn-auto" id="autoPlayBtn" onclick="toggleAutoPlay()" title="Auto-advance slides as voice narration finishes (P)">
+                    <i class="fas fa-forward-step"></i> <span id="autoPlayText">Auto-Play (P)</span>
+                </button>
+                <select class="voice-select" id="voiceSelect" onchange="changeVoice()" title="Select Voiceover Accent"></select>
+                <button class="btn-ctrl" id="speedBtn" onclick="cycleSpeed()" title="Playback Speed" style="padding:6px 10px;font-size:0.75rem;">1.0x</button>
+            </div>
+            <button class="btn-ctrl" onclick="toggleOverview()"><i class="fas fa-th"></i> Slides (O)</button>
+            <button class="btn-ctrl" id="notesBtn" onclick="toggleNotes()"><i class="fas fa-sticky-note"></i> Script (N)</button>
+            <button class="btn-ctrl" onclick="window.print()"><i class="fas fa-file-pdf"></i> PDF</button>
+            <button class="btn-ctrl" onclick="toggleFullscreen()"><i class="fas fa-expand"></i> Fullscreen (F)</button>
+        </div>
+    </header>
+
+    <!-- Main Slide Canvas -->
+    <main class="deck-canvas">
+
+        <!-- SLIDE 1: Title Cover -->
+        <section class="slide slide-cover active" data-notes="Welcome everyone. Today I am presenting the Soil Lab platform — an enterprise digital transformation system engineered specifically for the Department of Horticulture, Government of Jammu & Kashmir. It unifies farmers, field officials, chemists, and directors into a single scientific ecosystem for the National Soil Health Card scheme.">
+            <div class="cover-content">
+                <div class="cover-badge"><i class="fas fa-shield-alt"></i> Government of Jammu &amp; Kashmir &bull; Horticulture Department</div>
+                <h1>Soil Testing Management &amp; Health Card Platform</h1>
+                <p class="desc">A full-lifecycle digital ecosystem automating online citizen requests, GPS-tagged field collection, 12-parameter chemical laboratory analysis, reagent inventory, and instant tamper-proof Soil Health Card issuance.</p>
+                <div class="cover-meta">
+                    <div class="cover-meta-item">
+                        <div class="lbl">Platform Architecture</div>
+                        <div class="val">Web + REST API + Flutter Mobile App</div>
+                    </div>
+                    <div class="cover-meta-item">
+                        <div class="lbl">Backend Stack</div>
+                        <div class="val">Laravel 12 &bull; Livewire 4 &bull; MySQL 8</div>
+                    </div>
+                    <div class="cover-meta-item">
+                        <div class="lbl">Deployment Target</div>
+                        <div class="val">District Soil Testing Lab, Pulwama</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 2: Background & Agricultural Context -->
+        <section class="slide" data-notes="Set the scene: Pulwama is the horticultural heartland of Kashmir — producing 24.94 lakh metric tonnes of high-value crops with an annual turnover exceeding 6,300 Crore rupees. However, unchecked chemical fertilizer application was degrading soil pH and organic carbon, while paper-based lab tests took a month to reach farmers.">
+            <div class="slide-header">
+                <div>
+                    <span class="tag"><i class="fas fa-chart-line"></i> Context &amp; Geography</span>
+                    <h2>Agricultural Context: Pulwama Horticultural Heartland</h2>
+                </div>
+                <div class="subtext">The economic importance and soil degradation challenges in Jammu &amp; Kashmir</div>
+            </div>
+            <div class="slide-body">
+                <div class="grid-2">
+                    <div>
+                        <div class="feature-card" style="margin-bottom:14px;">
+                            <h4><i class="fas fa-apple-whole text-success mr-2"></i> The Economic Engine</h4>
+                            <p>Horticulture contributes over 8% to the Gross State Domestic Product of Jammu &amp; Kashmir. In Pulwama district alone:</p>
+                            <div class="grid-2" style="margin-top:10px;">
+                                <div class="metric-box"><div class="metric-num">24.94 LMT</div><div class="metric-lbl">Annual Fruit Production</div></div>
+                                <div class="metric-box"><div class="metric-num">₹6,300 Cr</div><div class="metric-lbl">District Annual Turnover</div></div>
+                            </div>
+                            <div class="grid-2" style="margin-top:6px;">
+                                <div class="metric-box"><div class="metric-num">23 Lakh+</div><div class="metric-lbl">People Gainfully Employed</div></div>
+                                <div class="metric-box"><div class="metric-num">14× Growth</div><div class="metric-lbl">Output Expansion Since 1972</div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="feature-card" style="background:#fff1f2;border-color:#fecdd3;">
+                            <h4 style="color:#9f1239;"><i class="fas fa-triangle-exclamation mr-2"></i> Critical Soil Vulnerabilities</h4>
+                            <ul style="list-style:none;font-size:0.8rem;color:#881337;line-height:1.75;margin-top:8px;">
+                                <li>&bull; <strong>Acidification &amp; Salinization:</strong> Over-application of Diammonium Phosphate (DAP) and Urea disrupting natural soil microflora.</li>
+                                <li>&bull; <strong>Micro-nutrient Deficiencies:</strong> Hidden hunger in apple orchards (Zinc, Boron, and Iron depletion leading to leaf-drop).</li>
+                                <li>&bull; <strong>Organic Carbon Depletion:</strong> Severe decline in organic matter due to lack of crop residue incorporation.</li>
+                                <li>&bull; <strong>Information Gap:</strong> Farmers had no scientific guidance, applying synthetic inputs purely by guesswork.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer"><span>Soil Lab Presentation</span><span>Slide 2 of 20</span></div>
+        </section>
+
+        <!-- SLIDE 3: Project Vision & Objectives -->
+        <section class="slide" data-notes="Outline the primary vision: complete digitization of soil health tracking, achieving 100% parcel GPS linkage, bringing turnaround down to 48 hours, eliminating chemical waste, and ensuring every farmer receives personalized fertilizer dosage.">
+            <div class="slide-header">
+                <div>
+                    <span class="tag"><i class="fas fa-bullseye"></i> Vision &amp; Mandate</span>
+                    <h2>Project Vision &amp; Strategic Objectives</h2>
+                </div>
+                <div class="subtext">Modernizing agricultural extension services through automation</div>
+            </div>
+            <div class="slide-body">
+                <div class="grid-3">
+                    <div class="feature-card">
+                        <div class="icon-box" style="background:#059669;"><i class="fas fa-eye"></i></div>
+                        <h4>Core Vision</h4>
+                        <p>To establish a transparent, high-precision soil testing and advisory infrastructure that doubles farm profitability through scientific nutrient stewardship.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="icon-box" style="background:#2563eb;"><i class="fas fa-rocket"></i></div>
+                        <h4>Operational Mission</h4>
+                        <p>Provide completely free, GPS-tagged soil testing to every village in District Pulwama, reducing result turnaround time from 30 days to under 48 hours.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="icon-box" style="background:#7c3aed;"><i class="fas fa-scale-balanced"></i></div>
+                        <h4>Strategic Objectives</h4>
+                        <p>Achieve 100% village coverage under Soil Health Cards, automate lab reagent depletion, and eliminate fertilizer misapplication through customized prescriptions.</p>
+                    </div>
+                </div>
+
+                <div class="feature-card" style="margin-top:16px;">
+                    <h4 style="margin-bottom:8px;"><i class="fas fa-list-check text-primary mr-2"></i> Key Key Performance Indicators (KPIs) Targeted</h4>
+                    <div class="grid-4" style="text-align:center;">
+                        <div style="background:#f1f5f9;padding:10px;border-radius:8px;"><strong>&le; 48 Hours</strong><div style="font-size:0.7rem;color:#64748b;">Turnaround Time</div></div>
+                        <div style="background:#f1f5f9;padding:10px;border-radius:8px;"><strong>100% Traceability</strong><div style="font-size:0.7rem;color:#64748b;">GPS Plot Matching</div></div>
+                        <div style="background:#f1f5f9;padding:10px;border-radius:8px;"><strong>Zero Stock Pilferage</strong><div style="font-size:0.7rem;color:#64748b;">Per-Test Reagent Tracking</div></div>
+                        <div style="background:#f1f5f9;padding:10px;border-radius:8px;"><strong>24/7 Accessibility</strong><div style="font-size:0.7rem;color:#64748b;">Instant SMS/Web Lookup</div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer"><span>Soil Lab Presentation</span><span>Slide 3 of 20</span></div>
+        </section>
+
+        <!-- SLIDE 4: High-Level System Architecture -->
+        <section class="slide" data-notes="Walk through the technical architecture: multi-tier topology with Presentation (Web Blade/Livewire and Flutter), API Layer with Sanctum authentication, Domain Service Layer (Audit, Scoring, Chemical Engine), and MySQL storage with utf8mb4.">
+            <div class="slide-header">
+                <div>
+                    <span class="tag"><i class="fas fa-sitemap"></i> Engineering</span>
+                    <h2>High-Level System Architecture</h2>
+                </div>
+                <div class="subtext">Multi-tier modular topology ensuring high availability and offline capability</div>
+            </div>
+            <div class="slide-body">
+                <div class="grid-4">
+                    <div class="feature-card" style="border-top:4px solid #10b981;">
+                        <h4 style="color:#059669;"><i class="fas fa-display mr-2"></i> Presentation Tier</h4>
+                        <ul style="list-style:none;font-size:0.75rem;color:var(--text-muted);line-height:1.7;">
+                            <li>&bull; <strong>Citizen Web:</strong> Blade + Livewire 4</li>
+                            <li>&bull; <strong>Admin &amp; Lab:</strong> AdminLTE 3.2</li>
+                            <li>&bull; <strong>Mobile:</strong> Flutter (Android/iOS)</li>
+                            <li>&bull; <strong>Reports:</strong> DomPDF Vector Renderer</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card" style="border-top:4px solid #3b82f6;">
+                        <h4 style="color:#2563eb;"><i class="fas fa-network-wired mr-2"></i> API Gateway</h4>
+                        <ul style="list-style:none;font-size:0.75rem;color:var(--text-muted);line-height:1.7;">
+                            <li>&bull; <strong>Auth:</strong> Laravel Sanctum Tokens</li>
+                            <li>&bull; <strong>Throttle:</strong> Route Rate Limiters</li>
+                            <li>&bull; <strong>Push:</strong> FCM HTTP v1 OAuth2</li>
+                            <li>&bull; <strong>Format:</strong> Standard JSON Envelopes</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card" style="border-top:4px solid #f59e0b;">
+                        <h4 style="color:#d97706;"><i class="fas fa-gears mr-2"></i> Domain Services</h4>
+                        <ul style="list-style:none;font-size:0.75rem;color:var(--text-muted);line-height:1.7;">
+                            <li>&bull; <strong>Nutrient Scoring Engine</strong></li>
+                            <li>&bull; <strong>Chemical Depletion Engine</strong></li>
+                            <li>&bull; <strong>Recommendation Rule Evaluator</strong></li>
+                            <li>&bull; <strong>Polymorphic Audit Trail</strong></li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card" style="border-top:4px solid #8b5cf6;">
+                        <h4 style="color:#7c3aed;"><i class="fas fa-database mr-2"></i> Persistence Tier</h4>
+                        <ul style="list-style:none;font-size:0.75rem;color:var(--text-muted);line-height:1.7;">
+                            <li>&bull; <strong>MySQL 8:</strong> utf8mb4 Unicode</li>
+                            <li>&bull; <strong>Eloquent ORM</strong> Relations</li>
+                            <li>&bull; <strong>Cache:</strong> Database Store</li>
+                            <li>&bull; <strong>Storage:</strong> Symlinked Media Disk</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="feature-card" style="margin-top:16px;background:#f8fafc;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;">
+                        <span style="font-size:0.8rem;font-weight:700;color:var(--dark);"><i class="fas fa-shield-halved text-success mr-2"></i> Security Architecture Highlights:</span>
+                        <span style="font-size:0.75rem;color:var(--text-muted);">Strict CORS &bull; CSRF Protection &bull; Rate Limiting &bull; Bcrypt Round 12 &bull; SQL Injection Defense</span>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer"><span>Soil Lab Presentation</span><span>Slide 4 of 20</span></div>
+        </section>
+
+        <!-- SLIDE 5: The Four Ecosystem Surfaces -->
+        <section class="slide" data-notes="Emphasize that the platform is intentionally split into four tailored user experiences. The public doesn't need to learn a complex dashboard; lab staff don't have to struggle with mobile keyboards; field officials have an app built for bright sunlight and camera scanning.">
+            <div class="slide-header">
+                <div>
+                    <span class="tag"><i class="fas fa-table-columns"></i> User Experience</span>
+                    <h2>Four Purpose-Built Ecosystem Surfaces</h2>
+                </div>
+                <div class="subtext">Custom user journeys for citizens, field technicians, chemists, and executives</div>
+            </div>
+            <div class="slide-body">
+                <table class="deck-table">
+                    <thead>
+                        <tr>
+                            <th>Surface</th>
+                            <th>Target Users</th>
+                            <th>Key Interfaces &amp; Capabilities</th>
+                            <th>Tech Stack</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>1. Public Citizen Portal</strong></td>
+                            <td>Farmers, Citizens, General Public</td>
+                            <td>Online sample request form, Notice ticker, live metrics, mobile number report tracking, multi-lingual header (Urdu/Hindi).</td>
+                            <td>Blade &bull; Livewire &bull; Tailwind CSS</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2. Field Mobile App</strong></td>
+                            <td>Horticulture Field Assistants</td>
+                            <td>Farmer onboarding, GPS plot geocoding, camera QR optical scanning, zone push notifications, offline local sync.</td>
+                            <td>Flutter &bull; Dart &bull; Provider Pattern</td>
+                        </tr>
+                        <tr>
+                            <td><strong>3. Lab Testing Hub</strong></td>
+                            <td>Lab Technicians, Chemist Analysts</td>
+                            <td>Barcode reception queue, 12-parameter entry, scientific rating calculations, reagent inventory consumption, batch validation.</td>
+                            <td>Livewire 4 &bull; AdminLTE 3.2</td>
+                        </tr>
+                        <tr>
+                            <td><strong>4. Executive Admin Center</strong></td>
+                            <td>Chief Horticulture Officer, Lab Managers</td>
+                            <td>Quota &amp; target tracking, Spatie RBAC, chemical master inventory, audit logs, CMS frontpage customization, zone analytics.</td>
+                            <td>Laravel 12 &bull; Spatie RBAC &bull; MySQL</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="slide-footer"><span>Soil Lab Presentation</span><span>Slide 5 of 20</span></div>
+        </section>
+
+        <!-- SLIDE 6: 6-Phase Pipeline -->
+        <section class="slide" data-notes="Walk the panel through the complete 6-phase journey of a soil sample: Intake -> Field Tagging -> Reception -> Chemical Analysis -> Recommendation Engine -> Delivery. Point out that the system guarantees no lost or unassigned samples.">
+            <div class="slide-header">
+                <div>
+                    <span class="tag"><i class="fas fa-arrows-split-up-and-left"></i> Workflow Engine</span>
+                    <h2>The 6-Phase Soil Sample Lifecycle</h2>
+                </div>
+                <div class="subtext">End-to-end atomic transitions backed by the sample status history ledger</div>
+            </div>
+            <div class="slide-body">
+                <div class="workflow-row">
+                    <div class="workflow-step">
+                        <div class="step-no">1</div>
+                        <i class="fas fa-hand-holding-heart step-icon"></i>
+                        <h5>1. Citizen Intake</h5>
+                        <p>Farmer submits online request or attends village extension camp.</p>
+                    </div>
+                    <i class="fas fa-chevron-right workflow-arrow"></i>
+                    <div class="workflow-step">
+                        <div class="step-no">2</div>
+                        <i class="fas fa-location-crosshairs step-icon"></i>
+                        <h5>2. GPS Field Tag</h5>
+                        <p>Field official records latitude/longitude and scans QR sticker.</p>
+                    </div>
+                    <i class="fas fa-chevron-right workflow-arrow"></i>
+                    <div class="workflow-step">
+                        <div class="step-no">3</div>
+                        <i class="fas fa-barcode step-icon"></i>
+                        <h5>3. Lab Receiving</h5>
+                        <p>Lab scans QR code, confirms physical sample &amp; batches it.</p>
+                    </div>
+                    <i class="fas fa-chevron-right workflow-arrow"></i>
+                    <div class="workflow-step">
+                        <div class="step-no">4</div>
+                        <i class="fas fa-vial-circle-check step-icon"></i>
+                        <h5>4. Chemical Test</h5>
+                        <p>12 parameters tested; automated reagent stock deductions.</p>
+                    </div>
+                    <i class="fas fa-chevron-right workflow-arrow"></i>
+                    <div class="workflow-step">
+                        <div class="step-no">5</div>
+                        <i class="fas fa-calculator step-icon"></i>
+                        <h5>5. Advisory Logic</h5>
+                        <p>Rule engine matches crop needs and generates dosage advice.</p>
+                    </div>
+                    <i class="fas fa-chevron-right workflow-arrow"></i>
+                    <div class="workflow-step">
+                        <div class="step-no">6</div>
+                        <i class="fas fa-file-shield step-icon"></i>
+                        <h5>6. Health Card</h5>
+                        <p>Encrypted PDF generated; SMS sent; instant farmer download.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer"><span>Soil Lab Presentation</span><span>Slide 6 of 20</span></div>
+        </section>
+
+        <!-- SLIDE 7: Flutter Mobile Application -->
+        <section class="slide" data-notes="Deep dive on the Flutter mobile app. Field officials work in remote valleys where network connectivity is intermittent. The Flutter app caches reference data, takes optical camera scans, records GPS with high precision, and syncs via Sanctum token authentication.">
+            <div class="slide-header">
+                <div>
+                    <span class="tag"><i class="fas fa-mobile-screen-button"></i> Mobile Tech</span>
+                    <h2>Field Official Mobile Application (Flutter)</h2>
+                </div>
+                <div class="subtext">On-ground mobility, camera QR capture, and spatial mapping</div>
+            </div>
+            <div class="slide-body">
+                <div class="grid-2">
+                    <div>
+                        <div class="feature-card" style="margin-bottom:12px;">
+                            <h4><i class="fas fa-camera text-primary mr-2"></i> Optical QR Scanner &amp; Validation</h4>
+                            <p>Integrated camera scanner automatically detects pre-printed lab QR stickers. Verifies against API endpoint <code>/api/qr-codes/validate</code> in real time to prevent duplicate assignment.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4><i class="fas fa-satellite-dish text-success mr-2"></i> High-Precision GPS Geocoding</h4>
+                            <p>Captures hardware GPS coordinates (latitude, longitude, accuracy) to link every soil bag to the exact coordinates where the soil core was pulled.</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="feature-card" style="margin-bottom:12px;">
+                            <h4><i class="fas fa-bell text-warning mr-2"></i> Push Notification Dispatcher</h4>
+                            <p>Integrated with Firebase Cloud Messaging (FCM HTTP v1). When a farmer in Kakapora requests testing, Field Assistants assigned to Kakapora receive immediate push notifications.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4><i class="fas fa-arrows-rotate text-info mr-2"></i> Architecture &amp; State Management</h4>
+                            <p>Built using the <strong>Provider Pattern</strong> with clean decoupling of API service, Auth provider, Sample provider, and UI layers for smooth 60fps mobile performance.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer"><span>Soil Lab Presentation</span><span>Slide 7 of 20</span></div>
+        </section>
+
+        <!-- SLIDE 8: Land Parcel & Plot Data Modeling -->
+        <section class="slide" data-notes="Explain the land modeling. Agriculture in Kashmir uses traditional measurement units: Kanals and Marlas. The system maps the cadastral Khasra number, area in Kanals, crop variety, and age of plants. It automatically inherits the 5-tier location hierarchy from the farmer.">
+            <div class="slide-header">
+                <div>
+                    <span class="tag"><i class="fas fa-map-location-dot"></i> Land Cadastre</span>
+                    <h2>Plot Data Modeling &amp; Horticultural Attributes</h2>
+                </div>
+                <div class="subtext">Custom land parcel architecture tailored to Jammu &amp; Kashmir horticultural practices</div>
+            </div>
+            <div class="slide-body">
+                <div class="grid-2">
+                    <div class="feature-card">
+                        <h4><i class="fas fa-database text-primary mr-2"></i> Plot Cadastral Attributes</h4>
+                        <table class="deck-table" style="margin-top:8px;">
+                            <tr><td><strong>Khasra Number:</strong></td><td>Revenue record identifier for official land registration</td></tr>
+                            <tr><td><strong>Area in Kanals:</strong></td><td>Local land measurement unit (1 Kanal &asymp; 5,445 sq ft)</td></tr>
+                            <tr><td><strong>Perennial Crop:</strong></td><td>Apple (Delicious, Gala, Kulu), Walnut, Saffron, Cherry</td></tr>
+                            <tr><td><strong>Age of Orchard:</strong></td><td>Plantation age (critical for fertilizer dosage calculations)</td></tr>
+                            <tr><td><strong>Soil Texture &amp; Color:</strong></td><td>Clay loam, Sandy loam, Karewa red, Silt alluvial</td></tr>
+                        </table>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4><i class="fas fa-layer-group text-success mr-2"></i> 5-Level Cascading Hierarchy</h4>
+                        <p style="margin-bottom:10px;">Self-referential location hierarchy preventing geographic ambiguity:</p>
+                        <div style="background:#f8fafc;padding:12px;border-radius:8px;font-size:0.75rem;line-height:1.7;">
+                            <span class="badge-pill" style="background:#dbeafe;color:#1e40af;">1. State</span> Jammu &amp; Kashmir (UT)<br>
+                            <span class="badge-pill" style="background:#e0e7ff;color:#3730a3;">2. District</span> Pulwama<br>
+                            <span class="badge-pill" style="background:#ede9fe;color:#5b21b6;">3. Zone</span> Kakapora / Tral / Rajpora / Pulwama<br>
+                            <span class="badge-pill" style="background:#fae8ff;color:#86198f;">4. Panchayat</span> Local Governance Council<br>
+                            <span class="badge-pill" style="background:#fce7f3;color:#9d174d;">5. Village</span> Hamlet Revenue Estate
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer"><span>Soil Lab Presentation</span><span>Slide 8 of 20</span></div>
+        </section>
+
+        <!-- SLIDE 9: Pre-Printed Batch QR Codes -->
+        <section class="slide" data-notes="Explain the QR code lifecycle. Labs print physical batches of QR stickers (e.g. 500 stickers with prefix SL-N-0001 to 0500). Field assistants take them into orchards. Once scanned, the QR code transitions from Available to Bound to Consumed. This eliminates duplicate labels and transcription errors.">
+            <div class="slide-header">
+                <div>
+                    <span class="tag"><i class="fas fa-qrcode"></i> Physical-to-Digital</span>
+                    <h2>Batch QR Code Generation &amp; Physical Tracking</h2>
+                </div>
+                <div class="subtext">Eliminating handwritten tag confusion with pre-printed cryptographic QR labels</div>
+            </div>
+            <div class="slide-body">
+                <div class="grid-3">
+                    <div class="feature-card">
+                        <div class="icon-box" style="background:#0284c7;"><i class="fas fa-print"></i></div>
+                        <h4>1. Batch Print Generation</h4>
+                        <p>Lab Managers generate batches (e.g. 500 QR codes with custom prefix like <code>PLW-2026-</code>). System renders printable A4 sheets ready for thermal sticker printers.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="icon-box" style="background:#d97706;"><i class="fas fa-link"></i></div>
+                        <h4>2. Atomic Field Binding</h4>
+                        <p>When an official collects a sample, scanning the QR sticker atomically locks the code to that farmer and plot GPS. Concurrency locks prevent race conditions.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="icon-box" style="background:#059669;"><i class="fas fa-check-to-slot"></i></div>
+                        <h4>3. Non-Repudiation</h4>
+                        <p>The QR code follows the physical bag into the lab drying racks, through chemical titrations, and is finally embedded on the issued Soil Health Card.</p>
+                    </div>
+                </div>
+
+                <div class="feature-card" style="margin-top:16px;">
+                    <h4><i class="fas fa-diagram-project text-secondary mr-2"></i> QR State Machine Lifecycle</h4>
+                    <div class="grid-4" style="margin-top:8px;text-align:center;">
+                        <div style="background:#f1f5f9;padding:10px;border-radius:8px;"><strong>GENERATED</strong><div style="font-size:0.7rem;color:#64748b;">Printed in batch</div></div>
+                        <div style="background:#dbeafe;padding:10px;border-radius:8px;color:#1e40af;"><strong>ASSIGNED</strong><div style="font-size:0.7rem;">Issued to field worker</div></div>
+                        <div style="background:#fef3c7;padding:10px;border-radius:8px;color:#92400e;"><strong>BOUND</strong><div style="font-size:0.7rem;">Linked to GPS &amp; sample</div></div>
+                        <div style="background:#dcfce7;padding:10px;border-radius:8px;color:#166534;"><strong>CONSUMED</strong><div style="font-size:0.7rem;">Locked on reported SHC</div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer"><span>Soil Lab Presentation</span><span>Slide 9 of 20</span></div>
+        </section>
+
+        <!-- SLIDE 10: 12 Soil Test Parameters -->
+        <section class="slide" data-notes="Present the 12 certified parameters tested in the laboratory. Explain that each test follows standard agricultural chemistry protocols — pH via pH meter, EC via conductivity meter, Organic Carbon via Walkley-Black titration, Nitrogen via alkaline permanganate, and micronutrients via DTPA extraction on atomic absorption spectrophotometer.">
+            <div class="slide-header">
+                <div>
+                    <span class="tag"><i class="fas fa-flask"></i> Soil Chemistry</span>
+                    <h2>Laboratory Testing: 12 Soil Health Parameters</h2>
+                </div>
+                <div class="subtext">Standard analytical protocols compliant with Indian Council of Agricultural Research (ICAR)</div>
+            </div>
+            <div class="slide-body">
+                <table class="deck-table">
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Symbol</th>
+                            <th>Unit</th>
+                            <th>Standard Testing Method</th>
+                            <th>Agronomic Significance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>Soil Reaction (pH)</strong></td><td>pH</td><td>Scale (1-14)</td><td>1:2.5 Soil-Water Suspension pH Meter</td><td>Nutrient availability &amp; acidity/alkalinity</td></tr>
+                        <tr><td><strong>Electrical Conductivity</strong></td><td>EC</td><td>dS/m</td><td>Conductivity Bridge Method</td><td>Total soluble salts &amp; salinity hazard</td></tr>
+                        <tr><td><strong>Organic Carbon</strong></td><td>OC</td><td>%</td><td>Walkley &amp; Black's Rapid Titration</td><td>Soil biology, structure &amp; moisture retention</td></tr>
+                        <tr><td><strong>Available Nitrogen</strong></td><td>N</td><td>kg/ha</td><td>Subbiah &amp; Asija Alkaline Permanganate</td><td>Vegetative shoot growth &amp; leaf formation</td></tr>
+                        <tr><td><strong>Available Phosphorus</strong></td><td>P</td><td>kg/ha</td><td>Olsen's Colorimetric Spectrophotometer</td><td>Root development, flowering &amp; fruit setting</td></tr>
+                        <tr><td><strong>Available Potassium</strong></td><td>K</td><td>kg/ha</td><td>Neutral Normal Ammonium Flame Photometer</td><td>Drought tolerance, fruit firmness &amp; sugar</td></tr>
+                        <tr><td><strong>Available Sulphur</strong></td><td>S</td><td>ppm</td><td>0.15% CaCl2 Turbidimetric Method</td><td>Protein synthesis &amp; oil formation</td></tr>
+                        <tr><td><strong>Micronutrients (Zn, Fe, Cu, Mn, B)</strong></td><td>Micros</td><td>ppm</td><td>DTPA Extraction &bull; Atomic Absorption / AAS</td><td>Enzyme activation, chlorophyll &amp; pollination</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="slide-footer"><span>Soil Lab Presentation</span><span>Slide 10 of 20</span></div>
+        </section>
+
+        <!-- SLIDE 11: Scientific Rating Algorithm -->
+        <section class="slide" data-notes="Explain the rating algorithm. Rather than relying on technician memory, the system executes an automated mathematical rating function: values below rating_low_max are Low; between low and medium_max are Medium; above high_min are High. Labs can calibrate custom thresholds per agro-climatic zone.">
+            <div class="slide-header">
+                <div>
+                    <span class="tag"><i class="fas fa-calculator"></i> Scientific Evaluation</span>
+                    <h2>Scientific Nutrient Rating Algorithm</h2>
+                </div>
+                <div class="subtext">Dynamic categorization eliminating manual calculation errors</div>
+            </div>
+            <div class="slide-body">
+                <div class="grid-2">
+                    <div class="feature-card">
+                        <h4><i class="fas fa-code text-primary mr-2"></i> Algorithmic Evaluation Logic</h4>
+                        <pre class="code-snip">
+// Automated threshold evaluation
+if ($value >= $param->rating_high_min) {
+    return 'high';   // Green rating
+} elseif ($value > $param->rating_low_max 
+       && $value <= $param->rating_medium_max) {
+    return 'medium'; // Amber rating
+} elseif ($value <= $param->rating_low_max) {
+    return 'low';    // Red rating
+}
+return null;
+                        </pre>
+                        <p style="margin-top:10px;font-size:0.75rem;">Configurable per lab: Custom thresholds can be tailored to sandy soils, alluvial plains, or mountainous karewas via the <code>lab_test_parameter</code> table.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4><i class="fas fa-traffic-light text-warning mr-2"></i> Agronomic Interpretation Bands</h4>
+                        <div style="background:#fee2e2;border-left:4px solid #ef4444;padding:10px 14px;border-radius:0 8px 8px 0;margin-bottom:8px;">
+                            <strong style="color:#991b1b;font-size:0.85rem;">LOW (Deficient):</strong>
+                            <div style="font-size:0.72rem;color:#7f1d1d;">Crop yield limited. Full basal dose + 25% additional fertilizer recommended.</div>
+                        </div>
+                        <div style="background:#fef3c7;border-left:4px solid #f59e0b;padding:10px 14px;border-radius:0 8px 8px 0;margin-bottom:8px;">
+                            <strong style="color:#92400e;font-size:0.85rem;">MEDIUM (Sufficient):</strong>
+                            <div style="font-size:0.72rem;color:#78350f;">Optimum nutrient reservoir. Standard recommended maintenance dosage applied.</div>
+                        </div>
+                        <div style="background:#dcfce7;border-left:4px solid #10b981;padding:10px 14px;border-radius:0 8px 8px 0;">
+                            <strong style="color:#166534;font-size:0.85rem;">HIGH (Excessive):</strong>
+                            <div style="font-size:0.72rem;color:#14532d;">Risk of nutrient toxicity or antagonism. Chemical fertilizer application reduced by 25-50%.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer"><span>Soil Lab Presentation</span><span>Slide 11 of 20</span></div>
+        </section>
+
+        <!-- SLIDE 12: Chemical Inventory Management -->
+        <section class="slide" data-notes="Highlight the chemical inventory engine. Government laboratories frequently suffer from stockouts or unaccounted chemical usage. In Soil Lab, each parameter defines exact reagent consumption per sample. When 100 samples are tested, the system automatically logs stock movements and triggers reorder alerts.">
+            <div class="slide-header">
+                <div>
+                    <span class="tag"><i class="fas fa-boxes-stacked"></i> Lab ERP</span>
+                    <h2>Automated Chemical Reagent Stock Ledger</h2>
+                </div>
+                <div class="subtext">Material requirements planning and automated double-entry consumption ledger</div>
+            </div>
+            <div class="slide-body">
+                <div class="grid-3">
+                    <div class="feature-card">
+                        <div class="icon-box" style="background:#0284c7;"><i class="fas fa-ruler-combined"></i></div>
+                        <h4>1. Consumption Recipes</h4>
+                        <p>Configurable consumption rules: e.g. 1 Nitrogen test consumes <strong>10ml H2SO4</strong> and <strong>2g Catalyst Mixture</strong>.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="icon-box" style="background:#059669;"><i class="fas fa-receipt"></i></div>
+                        <h4>2. Atomic Stock Movements</h4>
+                        <p>Every sample approval triggers an atomic <code>IN</code> or <code>OUT</code> ledger row recording <code>balance_before</code> and <code>balance_after</code>.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="icon-box" style="background:#ef4444;"><i class="fas fa-bell"></i></div>
+                        <h4>3. Low Stock Alerts</h4>
+                        <p>Automatic warning badges and notifications when critical chemicals drop below pre-configured safety buffer thresholds.</p>
+                    </div>
+                </div>
+
+                <div class="feature-card" style="margin-top:16px;">
+                    <h4><i class="fas fa-database text-primary mr-2"></i> Inventory Ledger Schema</h4>
+                    <table class="deck-table" style="margin-top:8px;">
+                        <tr><th>Table</th><th>Key Fields</th><th>Business Function</th></tr>
+                        <tr><td><code>lab_chemicals</code></td><td>name, sku, unit, current_stock, minimum_stock</td><td>Master chemical reagent catalog</td></tr>
+                        <tr><td><code>chemical_stock_movements</code></td><td>chemical_id, type (in/out), quantity, balance_after</td><td>Immutable double-entry stock transaction ledger</td></tr>
+                        <tr><td><code>chemical_parameter_consumption</code></td><td>chemical_id, parameter_id, consumption_per_test</td><td>Formula definition: reagent consumption per test</td></tr>
+                    </table>
+                </div>
+            </div>
+            <div class="slide-footer"><span>Soil Lab Presentation</span><span>Slide 12 of 20</span></div>
+        </section>
+
+        <!-- SLIDE 13: Fertilizer Recommendation Engine -->
+        <section class="slide" data-notes="Explain the recommendation engine. Raw numbers don't help farmers; they need exact instructions. The engine evaluates crop rules and outputs specific quantities: e.g., 850 grams of Urea, 400 grams of DAP, and 500 grams of MOP per apple tree, split across Dormancy, Fruit Set, and Post-Harvest stages.">
+            <div class="slide-header">
+                <div>
+                    <span class="tag"><i class="fas fa-seedling"></i> Advisory Brain</span>
+                    <h2>Intelligent Fertilizer Advisory &amp; Dosage Engine</h2>
+                </div>
+                <div class="subtext">Customized crop-specific recommendations calculated from soil test deficit</div>
+            </div>
+            <div class="slide-body">
+                <div class="grid-2">
+                    <div class="feature-card">
+                        <h4><i class="fas fa-tree text-success mr-2"></i> Crop-Specific Dosage Calculation</h4>
+                        <p style="margin-bottom:8px;">Engine tailors recommendations based on crop biology and tree age:</p>
+                        <ul style="list-style:none;font-size:0.78rem;color:var(--text-muted);line-height:1.75;">
+                            <li>&bull; <strong>Apple Orchards:</strong> Dosage calculated per tree according to trunk girth and age; split into 3 seasonal splits (Bud-break, Fruit let, Post-harvest).</li>
+                            <li>&bull; <strong>Saffron (Karewa soils):</strong> Focus on Phosphorus and organic compost incorporation to stimulate corm multiplication.</li>
+                            <li>&bull; <strong>Walnut &amp; Almond:</strong> Potassium emphasis to ensure nut shell hardness and kernel oil content.</li>
+                            <li>&bull; <strong>Vegetables (Pulwama Belt):</strong> High Organic Carbon + balanced NPK for cabbage, tomato, and exotic brassicas.</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4><i class="fas fa-sliders text-primary mr-2"></i> Soil Amelioration Prescriptions</h4>
+                        <div style="background:#f8fafc;padding:12px;border-radius:8px;font-size:0.75rem;line-height:1.7;">
+                            <strong>Acidic Soils (pH &lt; 6.0):</strong><br>
+                            Recommends Agricultural Lime (CaCO3) application rate per Kanal to neutralize active soil acidity.<br><br>
+                            <strong>Alkaline / Calcareous Soils (pH &gt; 8.0):</strong><br>
+                            Recommends Gypsum (CaSO4) + elemental Sulphur + farmyard manure to displace exchangeable sodium.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer"><span>Soil Lab Presentation</span><span>Slide 13 of 20</span></div>
+        </section>
+
+        <!-- SLIDE 14: Digital Soil Health Card -->
+        <section class="slide" data-notes="Show the final output: The Soil Health Card. Rendered as a vector PDF using DomPDF. It features government seals, bilingual English/Urdu headers, the 12-parameter rating matrix, fertilizer recommendations, and an encrypted QR code for instant public verification.">
+            <div class="slide-header">
+                <div>
+                    <span class="tag"><i class="fas fa-file-invoice"></i> Final Product</span>
+                    <h2>Digital Soil Health Card (SHC) Architecture</h2>
+                </div>
+                <div class="subtext">Official vector PDF document with cryptographic anti-tamper QR code</div>
+            </div>
+            <div class="slide-body">
+                <div class="grid-3">
+                    <div class="feature-card">
+                        <div class="icon-box" style="background:#10b981;"><i class="fas fa-file-pdf"></i></div>
+                        <h4>Vector PDF Generation</h4>
+                        <p>Built using <strong>DomPDF</strong>. Renders crisp typography, official Jammu &amp; Kashmir emblems, farmer details, and structured parameter tables.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="icon-box" style="background:#0284c7;"><i class="fas fa-lock"></i></div>
+                        <h4>Cryptographic Report Token</h4>
+                        <p>Every report receives a 32-character high-entropy token (<code>Str::random(32)</code>). Prevents ID enumeration and unauthorized viewing.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="icon-box" style="background:#8b5cf6;"><i class="fas fa-mobile"></i></div>
+                        <h4>Zero-Login Citizen Access</h4>
+                        <p>Farmers scan the physical card with any phone camera to verify authenticity online or enter their mobile number to download duplicate cards.</p>
+                    </div>
+                </div>
+
+                <div class="feature-card" style="margin-top:16px;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;">
+                        <span style="font-size:0.8rem;font-weight:700;"><i class="fas fa-language text-success mr-2"></i> Multi-Lingual Presentation:</span>
+                        <span style="font-size:0.75rem;color:var(--text-muted);">Urdu Nastaliq Calligraphy (محکمہ باغبانی) &bull; Hindi Script &bull; English Standard</span>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer"><span>Soil Lab Presentation</span><span>Slide 14 of 20</span></div>
+        </section>
+
+        <!-- SLIDE 15: 10-Tier Anti-Spam Security Gauntlet -->
+        <section class="slide" data-notes="Highlight our cybersecurity engineering. When a government form is opened to the public, bots and scrapers spam it. Instead of forcing farmers to solve difficult captchas, we built an invisible 10-tier defense gauntlet that filters bots silently while maintaining a seamless user experience.">
+            <div class="slide-header">
+                <div>
+                    <span class="tag"><i class="fas fa-shield-virus"></i> Cybersecurity</span>
+                    <h2>10-Tier Invisible Anti-Spam Security Gauntlet</h2>
+                </div>
+                <div class="subtext">Protecting citizen sample request endpoints without cumbersome CAPTCHAs for rural farmers</div>
+            </div>
+            <div class="slide-body">
+                <div class="grid-2">
+                    <div class="feature-card">
+                        <h4><i class="fas fa-shield text-danger mr-2"></i> Automated Bot Defense Layers</h4>
+                        <ul style="list-style:none;font-size:0.78rem;color:var(--text-muted);line-height:1.8;">
+                            <li><strong>1. Invisible Honeypot Trap:</strong> Hidden field enticing bots; silent fake-success.</li>
+                            <li><strong>2. Cryptographic Session Token:</strong> 30-min TTL single-use nonce.</li>
+                            <li><strong>3. Submission Speed Check:</strong> Rejects submissions completed in under 3s.</li>
+                            <li><strong>4. Strict IP Rate Limiter:</strong> Max 3 submissions per IP address per hour.</li>
+                            <li><strong>5. Input Sanitization:</strong> Complete HTML strip and whitespace trimming.</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4><i class="fas fa-filter text-primary mr-2"></i> Business Logic Safeguards</h4>
+                        <ul style="list-style:none;font-size:0.78rem;color:var(--text-muted);line-height:1.8;">
+                            <li><strong>6. URL / Link Blocking:</strong> Rejects spam messages containing <code>http://</code> or <code>www</code>.</li>
+                            <li><strong>7. Regex Phone Validation:</strong> Enforces standard 10-digit mobile numbering.</li>
+                            <li><strong>8. Phone Number Cooldown:</strong> Blocks new requests while a prior request is pending.</li>
+                            <li><strong>9. Duplicate Name + Zone Filter:</strong> Prevents multiple bookings for same plot.</li>
+                            <li><strong>10. Zone Capacity Throttling:</strong> Protects field staff when zone queue &ge; 50.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer"><span>Soil Lab Presentation</span><span>Slide 15 of 20</span></div>
+        </section>
+
+        <!-- SLIDE 16: RBAC & Governance -->
+        <section class="slide" data-notes="Explain the security and permissions model: 5 roles backed by Spatie permissions. Lab staff only see their own lab; field officials only see their zone; farmers only see their own tests. Full audit logging tracks every create/update/delete/login.">
+            <div class="slide-header">
+                <div>
+                    <span class="tag"><i class="fas fa-user-lock"></i> Governance</span>
+                    <h2>Role-Based Access Control (RBAC) &amp; Multi-Tenancy</h2>
+                </div>
+                <div class="subtext">Fine-grained Spatie permission matrices and tenant data isolation</div>
+            </div>
+            <div class="slide-body">
+                <table class="deck-table">
+                    <thead>
+                        <tr>
+                            <th>Role</th>
+                            <th>Data Scope Filter</th>
+                            <th>Permitted Operations</th>
+                            <th>Security Restrictions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Admin</strong></td>
+                            <td>All UT data (Unrestricted)</td>
+                            <td>Full system configuration, user management, audit logs, CMS frontpage, master data.</td>
+                            <td>Bypasses role checks via <code>AdminBypassRole</code> middleware.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Lab Manager</strong></td>
+                            <td>Assigned Lab (<code>lab_id</code>)</td>
+                            <td>Manage lab staff, approve batches, generate QR sets, view zone targets, adjust inventory.</td>
+                            <td>Cannot modify other labs or global system configuration.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Lab Technician</strong></td>
+                            <td>Assigned Lab (<code>lab_id</code>)</td>
+                            <td>Receive samples into queue, input chemical test results, trigger analysis.</td>
+                            <td>Cannot manage users, delete samples, or alter parameter thresholds.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Field Official</strong></td>
+                            <td>Assigned Zone (<code>zone_id</code>)</td>
+                            <td>Collect samples via mobile, register farmers, record GPS coordinates, scan QRs.</td>
+                            <td>Cannot access lab testing or view samples outside their assigned zone.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Farmer</strong></td>
+                            <td>Own Farmer ID</td>
+                            <td>View own sample records, track real-time test progress, download PDF report.</td>
+                            <td>Read-only access strictly bounded to linked mobile identity.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="slide-footer"><span>Soil Lab Presentation</span><span>Slide 16 of 20</span></div>
+        </section>
+
+        <!-- SLIDE 17: Enterprise Audit Trail -->
+        <section class="slide" data-notes="Explain our audit logging. Government systems require compliance and legal accountability. Every model uses our Auditable trait. When a record is updated, the system stores the old values, new values, user ID, IP address, and browser fingerprint in the audit log table.">
+            <div class="slide-header">
+                <div>
+                    <span class="tag"><i class="fas fa-history"></i> Accountability</span>
+                    <h2>Enterprise Audit Trail &amp; Regulatory Compliance</h2>
+                </div>
+                <div class="subtext">Immutable digital paper-trail tracking every database mutation and authentication event</div>
+            </div>
+            <div class="slide-body">
+                <div class="grid-2">
+                    <div class="feature-card">
+                        <h4><i class="fas fa-fingerprint text-secondary mr-2"></i> The <code>Auditable</code> Eloquent Trait</h4>
+                        <p style="margin-bottom:8px;">16 core Eloquent models automatically track lifecycle events via Eloquent model observers:</p>
+                        <ul style="list-style:none;font-size:0.78rem;color:var(--text-muted);line-height:1.75;">
+                            <li>&bull; <code>created</code>: New record birth with initial attributes.</li>
+                            <li>&bull; <code>updated</code>: Precise JSON diff of modified attributes only.</li>
+                            <li>&bull; <code>deleted</code>: Full capture of record prior to deletion.</li>
+                            <li>&bull; <code>login / logout</code>: Session authentication timestamps.</li>
+                            <li>&bull; <code>settings_changed</code>: Configuration tweaks by administrators.</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4><i class="fas fa-file-shield text-success mr-2"></i> Audit Record Metadata Captured</h4>
+                        <div style="background:#f8fafc;padding:12px;border-radius:8px;font-size:0.75rem;line-height:1.7;">
+                            <strong>User Identity:</strong> User ID, Role, Email<br>
+                            <strong>Action Type:</strong> <code>created | updated | deleted | login | settings</code><br>
+                            <strong>State Delta:</strong> Old Values JSON &rarr; New Values JSON<br>
+                            <strong>Network Origin:</strong> IPv4 / IPv6 Address (45 char field)<br>
+                            <strong>Client Device:</strong> Full User-Agent browser fingerprint<br>
+                            <strong>URL Route:</strong> Exact HTTP endpoint where mutation occurred
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer"><span>Soil Lab Presentation</span><span>Slide 17 of 20</span></div>
+        </section>
+
+        <!-- SLIDE 18: Database Schema & ER Architecture -->
+        <section class="slide" data-notes="Present the database design: 25 normalized tables designed for high performance and integrity. Foreign keys are constrained with cascade/nullOnDelete; tables use auto-increment IDs and timestamping. Indices are placed on sample_code, phone numbers, and foreign keys.">
+            <div class="slide-header">
+                <div>
+                    <span class="tag"><i class="fas fa-database"></i> Data Architecture</span>
+                    <h2>Relational Database Schema (~25 Core Tables)</h2>
+                </div>
+                <div class="subtext">Normalized schema adhering to strict foreign key integrity and performance indexing</div>
+            </div>
+            <div class="slide-body">
+                <div class="grid-3">
+                    <div class="feature-card">
+                        <h4><i class="fas fa-user-group text-primary mr-2"></i> Identity &amp; Geography</h4>
+                        <ul style="list-style:none;font-size:0.75rem;color:var(--text-muted);line-height:1.7;">
+                            <li>&bull; <code>users</code> (Staff &amp; Admins)</li>
+                            <li>&bull; <code>roles / permissions</code> (Spatie)</li>
+                            <li>&bull; <code>labs</code> (Testing centers)</li>
+                            <li>&bull; <code>locations</code> (Hierarchy)</li>
+                            <li>&bull; <code>farmers</code> (Aadhar, Phone)</li>
+                            <li>&bull; <code>plots</code> (Khasra, Kanals)</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4><i class="fas fa-vial text-success mr-2"></i> Testing &amp; Operations</h4>
+                        <ul style="list-style:none;font-size:0.75rem;color:var(--text-muted);line-height:1.7;">
+                            <li>&bull; <code>soil_samples</code> (Core lifecycle)</li>
+                            <li>&bull; <code>soil_test_parameters</code> (12 tests)</li>
+                            <li>&bull; <code>soil_sample_results</code> (Values &amp; Ratings)</li>
+                            <li>&bull; <code>sample_status_histories</code> (Ledger)</li>
+                            <li>&bull; <code>qr_codes</code> (Physical stickers)</li>
+                            <li>&bull; <code>sample_requests</code> (Citizen forms)</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4><i class="fas fa-cubes text-warning mr-2"></i> Inventory &amp; System</h4>
+                        <ul style="list-style:none;font-size:0.75rem;color:var(--text-muted);line-height:1.7;">
+                            <li>&bull; <code>lab_chemicals</code> (Reagent stock)</li>
+                            <li>&bull; <code>chemical_stock_movements</code></li>
+                            <li>&bull; <code>chemical_parameter_consumption</code></li>
+                            <li>&bull; <code>recommendation_rules</code></li>
+                            <li>&bull; <code>settings</code> (Key-value app config)</li>
+                            <li>&bull; <code>audit_logs</code> (Immutable log)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer"><span>Soil Lab Presentation</span><span>Slide 18 of 20</span></div>
+        </section>
+
+        <!-- SLIDE 19: Tech Stack & Benchmarks -->
+        <section class="slide" data-notes="Summarize the technological stack. Laravel 12 and PHP 8.2 give us modern PHP performance with JIT compilation. Livewire 4 provides reactive frontend updates without the overhead of heavy SPAs. Flutter delivers 60fps mobile interaction. Response times average under 100ms.">
+            <div class="slide-header">
+                <div>
+                    <span class="tag"><i class="fas fa-gauge-high"></i> Performance</span>
+                    <h2>Technology Stack &amp; Performance Benchmarks</h2>
+                </div>
+                <div class="subtext">Engineered for lightweight deployment on government servers without heavy cloud fees</div>
+            </div>
+            <div class="slide-body">
+                <div class="grid-3">
+                    <div class="feature-card">
+                        <div class="icon-box" style="background:#ef4444;"><i class="fab fa-laravel"></i></div>
+                        <h4>Backend Framework</h4>
+                        <ul style="font-size:0.75rem;color:var(--text-muted);line-height:1.7;list-style:none;">
+                            <li>&bull; <strong>Laravel 12.x</strong> (PHP 8.2)</li>
+                            <li>&bull; <strong>Livewire 4.3</strong> Reactive UI</li>
+                            <li>&bull; <strong>Sanctum</strong> Bearer Tokens</li>
+                            <li>&bull; <strong>Spatie</strong> Role Management</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="icon-box" style="background:#0284c7;"><i class="fas fa-mobile"></i></div>
+                        <h4>Mobile &amp; Services</h4>
+                        <ul style="font-size:0.75rem;color:var(--text-muted);line-height:1.7;list-style:none;">
+                            <li>&bull; <strong>Flutter SDK</strong> (Dart)</li>
+                            <li>&bull; <strong>FCM HTTP v1</strong> Push API</li>
+                            <li>&bull; <strong>DomPDF</strong> Vector Engine</li>
+                            <li>&bull; <strong>SimpleQRCode</strong> SVG Engine</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="icon-box" style="background:#059669;"><i class="fas fa-bolt"></i></div>
+                        <h4>Performance Profile</h4>
+                        <ul style="font-size:0.75rem;color:var(--text-muted);line-height:1.7;list-style:none;">
+                            <li>&bull; <strong>&lt; 100ms</strong> Average API Latency</li>
+                            <li>&bull; <strong>Database Cache</strong> Store</li>
+                            <li>&bull; <strong>Vite Asset Bundling</strong></li>
+                            <li>&bull; <strong>Zero External Fonts Block</strong></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer"><span>Soil Lab Presentation</span><span>Slide 19 of 20</span></div>
+        </section>
+
+        <!-- SLIDE 20: Impact, Roadmap & Conclusion -->
+        <section class="slide slide-cover" data-notes="Conclude the presentation. Summarize the major strategic impact: 90% reduction in turnaround, zero lost samples, 25-30% farmer cost savings, and scalable across all 20 districts of J&K. Thank the panel and open the floor for Q&A and live demo.">
+            <div class="cover-content">
+                <div class="cover-badge"><i class="fas fa-award"></i> Strategic Impact &amp; Scalability</div>
+                <h1>Measurable Impact &amp; Future Roadmap</h1>
+                <p class="desc">Soil Lab sets a new benchmark for digital agricultural administration &mdash; turning chemical soil data into real-world prosperity for thousands of farmers across Jammu &amp; Kashmir.</p>
+                <div class="grid-3" style="margin:24px 0;text-align:left;">
+                    <div style="background:rgba(255,255,255,0.1);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.15);">
+                        <strong style="color:#4ade80;font-size:1.3rem;display:block;">90% Faster</strong>
+                        <span style="font-size:0.75rem;opacity:0.85;">Turnaround cut from 30 days to 48 hours</span>
+                    </div>
+                    <div style="background:rgba(255,255,255,0.1);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.15);">
+                        <strong style="color:#fde68a;font-size:1.3rem;display:block;">25-30% Savings</strong>
+                        <span style="font-size:0.75rem;opacity:0.85;">Reduced farmer expenditure on excess fertilizers</span>
+                    </div>
+                    <div style="background:rgba(255,255,255,0.1);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.15);">
+                        <strong style="color:#60a5fa;font-size:1.3rem;display:block;">UT-Wide Scale</strong>
+                        <span style="font-size:0.75rem;opacity:0.85;">Ready for expansion across all 20 districts of J&amp;K</span>
+                    </div>
+                </div>
+
+                <div style="display:inline-flex;gap:14px;margin-top:4px;">
+                    <a href="/" target="_blank" style="background:#fff;color:var(--dark);padding:9px 22px;border-radius:50px;text-decoration:none;font-weight:700;font-size:0.82rem;"><i class="fas fa-globe mr-2"></i> Public Portal</a>
+                    <a href="/login" target="_blank" style="background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);padding:9px 22px;border-radius:50px;text-decoration:none;font-weight:700;font-size:0.82rem;"><i class="fas fa-lock mr-2"></i> Admin Panel Login</a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Speaker Notes Popup -->
+    <div class="speaker-notes" id="notesDrawer">
+        <strong><i class="fas fa-microphone mr-1"></i> Speaker Talking Points / Script:</strong>
+        <span id="notesContent"></span>
+    </div>
+
+    <!-- Overview Modal (All Slides) -->
+    <div class="modal-overview" id="overviewModal">
+        <div class="modal-head">
+            <h3><i class="fas fa-th-large mr-2"></i> Master 20-Slide Overview</h3>
+            <button class="btn-ctrl" onclick="toggleOverview()"><i class="fas fa-times"></i> Close</button>
+        </div>
+        <div class="overview-grid" id="overviewGrid"></div>
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <footer class="deck-nav">
+        <div class="slide-counter">
+            <span id="currentSlideNum">1</span> / <span id="totalSlideNum">20</span>
+        </div>
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="nav-btn-group">
+            <button class="btn-nav" id="prevBtn" onclick="prevSlide()" title="Previous (Left Arrow)"><i class="fas fa-chevron-left"></i></button>
+            <button class="btn-nav" id="nextBtn" onclick="nextSlide()" title="Next (Right Arrow or Space)"><i class="fas fa-chevron-right"></i></button>
+        </div>
+    </footer>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        let currentIdx = 0;
+        const totalSlides = slides.length;
+
+        const currentSlideNum = document.getElementById('currentSlideNum');
+        const totalSlideNum = document.getElementById('totalSlideNum');
+        const progressBar = document.getElementById('progressBar');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const notesDrawer = document.getElementById('notesDrawer');
+        const notesContent = document.getElementById('notesContent');
+        const notesBtn = document.getElementById('notesBtn');
+        const overviewModal = document.getElementById('overviewModal');
+        const overviewGrid = document.getElementById('overviewGrid');
+
+        // Audio Elements
+        const playAudioBtn = document.getElementById('playAudioBtn');
+        const audioIcon = document.getElementById('audioIcon');
+        const audioBtnText = document.getElementById('audioBtnText');
+        const soundWave = document.getElementById('soundWave');
+        const autoPlayBtn = document.getElementById('autoPlayBtn');
+        const autoPlayText = document.getElementById('autoPlayText');
+        const voiceSelect = document.getElementById('voiceSelect');
+        const speedBtn = document.getElementById('speedBtn');
+
+        totalSlideNum.textContent = totalSlides;
+
+        // --- Audio Voiceover Engine (Web Speech API) ---
+        const synth = window.speechSynthesis;
+        let voices = [];
+        let selectedVoice = null;
+        let isAudioPlaying = false;
+        let isAutoPlaying = false;
+        let currentSpeed = 1.0;
+        const speedOptions = [0.85, 1.0, 1.15, 1.35];
+        let speedIdx = 1;
+        let autoPlayTimer = null;
+
+        function populateVoices() {
+            if (!synth) {
+                if (voiceSelect) voiceSelect.innerHTML = '<option>Voice not supported</option>';
+                return;
+            }
+            voices = synth.getVoices();
+            if (!voices || voices.length === 0) return;
+
+            let englishVoices = voices.filter(v => v.lang.startsWith('en'));
+            if (englishVoices.length === 0) englishVoices = voices;
+
+            voiceSelect.innerHTML = '';
+            englishVoices.forEach((voice, index) => {
+                const opt = document.createElement('option');
+                opt.value = index;
+                let cleanName = voice.name.replace(/Google|Microsoft|Apple|Natural/g, '').replace(/Desktop/g, '').trim();
+                if (cleanName.length > 18) cleanName = cleanName.substring(0, 18) + '...';
+                opt.textContent = `${cleanName} (${voice.lang})`;
+                voiceSelect.appendChild(opt);
+            });
+
+            const preferredVoice = englishVoices.find(v => 
+                v.name.includes('Natural') || v.name.includes('Neural') || v.name.includes('English (United States)') || v.name.includes('English (India)')
+            ) || englishVoices[0];
+
+            if (preferredVoice) {
+                selectedVoice = preferredVoice;
+                const matchIdx = englishVoices.indexOf(preferredVoice);
+                if (matchIdx >= 0) voiceSelect.value = matchIdx;
+            } else {
+                selectedVoice = voices[0];
+            }
+        }
+
+        if (synth) {
+            populateVoices();
+            if (synth.onvoiceschanged !== undefined) {
+                synth.onvoiceschanged = populateVoices;
+            }
+        }
+
+        function changeVoice() {
+            if (!voices || voices.length === 0) return;
+            let englishVoices = voices.filter(v => v.lang.startsWith('en'));
+            if (englishVoices.length === 0) englishVoices = voices;
+            const chosenIdx = parseInt(voiceSelect.value);
+            if (englishVoices[chosenIdx]) {
+                selectedVoice = englishVoices[chosenIdx];
+            }
+            if (isAudioPlaying) {
+                playAudio();
+            }
+        }
+
+        function cycleSpeed() {
+            speedIdx = (speedIdx + 1) % speedOptions.length;
+            currentSpeed = speedOptions[speedIdx];
+            speedBtn.textContent = currentSpeed + 'x';
+            if (isAudioPlaying) {
+                playAudio();
+            }
+        }
+
+        function playAudio() {
+            if (!synth) {
+                alert('Web Speech API is not supported in this browser. Please use Chrome, Edge, or Safari.');
+                return;
+            }
+            synth.cancel();
+            clearTimeout(autoPlayTimer);
+
+            const activeNotes = slides[currentIdx].getAttribute('data-notes') || '';
+            if (!activeNotes.trim()) {
+                if (isAutoPlaying) {
+                    autoPlayTimer = setTimeout(() => {
+                        if (currentIdx < totalSlides - 1) {
+                            nextSlide();
+                        } else {
+                            stopAutoPlay();
+                        }
+                    }, 2000);
+                }
+                return;
+            }
+
+            const utterance = new SpeechSynthesisUtterance(activeNotes);
+            if (selectedVoice) {
+                utterance.voice = selectedVoice;
+            }
+            utterance.rate = currentSpeed;
+            utterance.pitch = 1.0;
+
+            utterance.onstart = () => {
+                isAudioPlaying = true;
+                if (playAudioBtn) playAudioBtn.classList.add('playing');
+                if (audioBtnText) audioBtnText.textContent = 'Pause (A)';
+                if (audioIcon) audioIcon.className = 'fas fa-pause';
+                if (soundWave) soundWave.style.display = 'inline-flex';
+            };
+
+            utterance.onend = () => {
+                isAudioPlaying = false;
+                if (playAudioBtn) playAudioBtn.classList.remove('playing');
+                if (audioBtnText) audioBtnText.textContent = 'Play Voice (A)';
+                if (audioIcon) audioIcon.className = 'fas fa-volume-high';
+                if (soundWave) soundWave.style.display = 'none';
+
+                if (isAutoPlaying) {
+                    autoPlayTimer = setTimeout(() => {
+                        if (currentIdx < totalSlides - 1) {
+                            nextSlide();
+                        } else {
+                            stopAutoPlay();
+                        }
+                    }, 1400);
+                }
+            };
+
+            utterance.onerror = (e) => {
+                console.warn('SpeechSynthesis error:', e);
+                isAudioPlaying = false;
+                if (playAudioBtn) playAudioBtn.classList.remove('playing');
+                if (audioBtnText) audioBtnText.textContent = 'Play Voice (A)';
+                if (audioIcon) audioIcon.className = 'fas fa-volume-high';
+                if (soundWave) soundWave.style.display = 'none';
+            };
+
+            synth.speak(utterance);
+        }
+
+        function stopAudio() {
+            if (synth) synth.cancel();
+            clearTimeout(autoPlayTimer);
+            isAudioPlaying = false;
+            if (playAudioBtn) playAudioBtn.classList.remove('playing');
+            if (audioBtnText) audioBtnText.textContent = 'Play Voice (A)';
+            if (audioIcon) audioIcon.className = 'fas fa-volume-high';
+            if (soundWave) soundWave.style.display = 'none';
+        }
+
+        function toggleAudio() {
+            if (isAudioPlaying) {
+                stopAudio();
+            } else {
+                playAudio();
+            }
+        }
+
+        function toggleAutoPlay() {
+            if (isAutoPlaying) {
+                stopAutoPlay();
+            } else {
+                startAutoPlay();
+            }
+        }
+
+        function startAutoPlay() {
+            isAutoPlaying = true;
+            if (autoPlayBtn) autoPlayBtn.classList.add('active');
+            if (autoPlayText) autoPlayText.textContent = 'Auto-Playing...';
+            playAudio();
+        }
+
+        function stopAutoPlay() {
+            isAutoPlaying = false;
+            clearTimeout(autoPlayTimer);
+            if (autoPlayBtn) autoPlayBtn.classList.remove('active');
+            if (autoPlayText) autoPlayText.textContent = 'Auto-Play (P)';
+            stopAudio();
+        }
+
+        function updateSlide() {
+            slides.forEach((s, idx) => {
+                s.classList.toggle('active', idx === currentIdx);
+            });
+
+            currentSlideNum.textContent = currentIdx + 1;
+            progressBar.style.width = ((currentIdx + 1) / totalSlides * 100) + '%';
+            prevBtn.disabled = currentIdx === 0;
+            nextBtn.disabled = currentIdx === totalSlides - 1;
+
+            const activeNotes = slides[currentIdx].getAttribute('data-notes') || 'No speaker notes for this slide.';
+            notesContent.textContent = activeNotes;
+
+            renderOverview();
+
+            // If audio was playing or autoplay active, trigger narration for the new slide
+            if (isAutoPlaying || isAudioPlaying) {
+                playAudio();
+            }
+        }
+
+        function nextSlide() {
+            if (currentIdx < totalSlides - 1) {
+                currentIdx++;
+                updateSlide();
+            }
+        }
+
+        function prevSlide() {
+            if (currentIdx > 0) {
+                currentIdx--;
+                updateSlide();
+            }
+        }
+
+        function goToSlide(idx) {
+            currentIdx = idx;
+            updateSlide();
+            overviewModal.classList.remove('active');
+        }
+
+        function toggleNotes() {
+            notesDrawer.classList.toggle('visible');
+            notesBtn.classList.toggle('active');
+        }
+
+        function toggleOverview() {
+            overviewModal.classList.toggle('active');
+            renderOverview();
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(() => {});
+            } else {
+                document.exitFullscreen().catch(() => {});
+            }
+        }
+
+        function renderOverview() {
+            if (!overviewGrid) return;
+            overviewGrid.innerHTML = '';
+            slides.forEach((s, idx) => {
+                const titleEl = s.querySelector('h1, h2');
+                const title = titleEl ? titleEl.textContent : `Slide ${idx + 1}`;
+                const card = document.createElement('div');
+                card.className = `overview-thumb ${idx === currentIdx ? 'current' : ''}`;
+                card.innerHTML = `
+                    <div class="thumb-idx">SLIDE ${String(idx + 1).padStart(2, '0')}</div>
+                    <div class="thumb-title">${title}</div>
+                `;
+                card.onclick = () => goToSlide(idx);
+                overviewGrid.appendChild(card);
+            });
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                e.preventDefault();
+                prevSlide();
+            } else if (e.key.toLowerCase() === 'a') {
+                toggleAudio();
+            } else if (e.key.toLowerCase() === 'p') {
+                toggleAutoPlay();
+            } else if (e.key.toLowerCase() === 'n') {
+                toggleNotes();
+            } else if (e.key.toLowerCase() === 'f') {
+                toggleFullscreen();
+            } else if (e.key.toLowerCase() === 'o' || e.key === 'Escape') {
+                if (overviewModal.classList.contains('active')) {
+                    overviewModal.classList.remove('active');
+                } else if (e.key.toLowerCase() === 'o') {
+                    toggleOverview();
+                }
+            }
+        });
+
+        updateSlide();
+    </script>
+</body>
+</html>
