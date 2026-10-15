@@ -22,7 +22,7 @@
     @if($ogUrl)<meta name="twitter:image" content="{{ $ogUrl }}">@endif
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css">
     <style>
@@ -87,7 +87,7 @@
         .gov-header .govt-meta { color:rgba(255,255,255,.9); }
         .gov-header .govt-meta .ministry { font-size:.65rem; font-weight:500; text-transform:uppercase; letter-spacing:.4px; opacity:.7; }
         .gov-header .govt-meta .dept-en { font-size:.82rem; font-weight:700; }
-        .gov-header .govt-meta .dept-urdu { font-size:.88rem; font-weight:600; opacity:.65; direction:rtl; font-family:'Noto Nastaliq Urdu','Traditional Arabic',serif; }
+        .gov-header .govt-meta .dept-urdu { font-size:.84rem; font-weight:600; opacity:.85; font-family:'Noto Sans Arabic', -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, Arial, sans-serif; line-height:1.25; margin-top:1px; margin-bottom:1px; }
         .gov-header .govt-meta .dept-hindi { font-size:.68rem; font-weight:500; opacity:.5; }
 
         @media (min-width:768px) {
