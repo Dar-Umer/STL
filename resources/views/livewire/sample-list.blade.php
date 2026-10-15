@@ -1,34 +1,64 @@
 <div>
     @php $isFarmer = auth()->user()->hasRole('Farmer'); @endphp
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h4 class="mb-1 font-weight-bold"><i class="fas fa-flask text-success mr-2"></i> {{ $isFarmer ? 'My Samples' : 'All Samples' }}</h4>
-            <p class="text-muted mb-0 small">{{ $totalCount }} total &middot; {{ $samples->total() }} filtered</p>
+    {{-- Page Header --}}
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-2 border-bottom">
+        <div class="mb-3 mb-md-0">
+            <div class="d-flex align-items-center">
+                <span class="d-inline-flex align-items-center justify-content-center rounded-circle mr-3 shadow-sm" 
+                      style="width: 44px; height: 44px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #fff;">
+                    <i class="fas fa-flask fa-lg"></i>
+                </span>
+                <div>
+                    <h3 class="mb-0 font-weight-bold" style="letter-spacing: -0.02em; color: #0f172a;">
+                        {{ $isFarmer ? 'My Soil Samples' : 'Soil Sample Directory' }}
+                    </h3>
+                    <p class="text-muted small mb-0">
+                        {{ number_format($totalCount) }} total registered &bull; {{ number_format($samples->total()) }} matching active filters
+                    </p>
+                </div>
+            </div>
         </div>
         @if(!$isFarmer)
         <div>
-            <button wire:click="exportExcel" wire:loading.attr="disabled" class="btn btn-success shadow-sm">
-                <i class="fas fa-file-excel mr-1"></i>
-                <span wire:loading.remove>Export Excel</span>
-                <span wire:loading><i class="fas fa-spinner fa-spin mr-1"></i> Exporting...</span>
+            <button wire:click="exportExcel" wire:loading.attr="disabled" class="btn btn-primary rounded-pill px-4 shadow-sm font-weight-medium">
+                <i class="fas fa-file-excel mr-1" wire:loading.remove wire:target="exportExcel"></i>
+                <i class="fas fa-spinner fa-spin mr-1" wire:loading wire:target="exportExcel"></i>
+                <span wire:loading.remove wire:target="exportExcel">Export Excel</span>
+                <span wire:loading wire:target="exportExcel">Generating...</span>
             </button>
         </div>
         @endif
     </div>
 
-    @if(!$isFarmer)
+    {{-- Stat Cards (Admins / Staff) --}}
+    @if(!$isFarmer && !empty($stats))
     <div class="row mb-4">
         @foreach($stats as $stat)
-        <div class="col-md-4 col-6 mb-3">
-            <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid {{ $stat['value'] === 'reported' ? '#28a745' : ($stat['value'] === 'received' ? '#17a2b8' : '#ffc107') }} !important;">
-                <div class="card-body py-3 d-flex justify-content-between align-items-center">
-                    <div>
-                        <p class="mb-0 small text-uppercase text-muted letter-spacing">{{ $stat['label'] }}</p>
-                        <h3 class="mb-0 font-weight-bold">{{ $stat['count'] }}</h3>
+        @php
+            $statColor = match($stat['value']) {
+                'reported' => 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                'received' => 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                'testing' => 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                default => 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)',
+            };
+            $statIcon = match($stat['value']) {
+                'reported' => 'fa-check-circle',
+                'received' => 'fa-inbox',
+                'testing' => 'fa-vial',
+                default => 'fa-clipboard-list',
+            };
+        @endphp
+        <div class="col-md-4 col-sm-6 mb-3">
+            <div class="card card-hover border-0 shadow-sm h-100">
+                <div class="card-body p-3 d-flex align-items-center">
+                    <div class="d-flex align-items-center justify-content-center rounded-lg mr-3 shadow-sm text-white" 
+                         style="width: 48px; height: 48px; min-width: 48px; border-radius: 12px; background: {{ $statColor }};">
+                        <i class="fas {{ $statIcon }} fa-lg"></i>
                     </div>
-                    <div class="text-{{ $stat['value'] === 'reported' ? 'success' : ($stat['value'] === 'received' ? 'info' : 'warning') }}">
-                        <i class="fas fa-{{ $stat['value'] === 'reported' ? 'check-circle' : ($stat['value'] === 'received' ? 'inbox' : 'hourglass-half') }} fa-2x opacity-50"></i>
+                    <div>
+                        <span class="d-block text-muted text-uppercase font-weight-bold" style="font-size: 0.7rem; letter-spacing: 0.05em;">{{ $stat['label'] }}</span>
+                        <h4 class="mb-0 font-weight-bold text-dark" style="letter-spacing: -0.02em;">{{ number_format($stat['count']) }}</h4>
                     </div>
                 </div>
             </div>
@@ -37,139 +67,172 @@
     </div>
     @endif
 
-    <div class="card border-0 shadow-sm rounded-lg">
-        <div class="card-body px-4 py-4">
-            @if(!$isFarmer)
-            <div class="row mb-3">
-                <div class="col-md-3 mb-2 mb-md-0">
-                    <input wire:model.live.debounce="search" type="text" class="form-control form-control-sm border-0 bg-light rounded-pill" placeholder="Search code, farmer, plot...">
+    {{-- Main Directory Card --}}
+    <div class="card border-0 shadow-sm">
+        {{-- Filters Bar --}}
+        @if(!$isFarmer)
+        <div class="card-header bg-white py-3 border-bottom">
+            <div class="row align-items-center">
+                <div class="col-lg-4 col-md-6 mb-2 mb-lg-0">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text bg-light border-right-0 rounded-left" style="border-radius: 9999px 0 0 9999px;">
+                                <i class="fas fa-search text-muted small"></i>
+                            </span>
+                        </div>
+                        <input wire:model.live.debounce.300ms="search" type="text" 
+                               class="form-control bg-light border-left-0" 
+                               style="border-radius: 0 9999px 9999px 0;"
+                               placeholder="Search sample code, farmer, phone...">
+                    </div>
                 </div>
-                <div class="col-md-2 mb-2 mb-md-0">
-                    <select wire:model.live="statusFilter" class="form-control form-control-sm border-0 bg-light rounded-pill">
+                <div class="col-lg-2 col-md-3 col-6 mb-2 mb-lg-0">
+                    <select wire:model.live="statusFilter" class="form-control rounded-pill bg-light border-0">
                         <option value="">All Statuses</option>
                         @foreach($statuses as $s)
                         <option value="{{ $s->value }}">{{ $s->label() }}</option>
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-2 mb-2 mb-md-0">
-                    <input wire:model.live="dateFrom" type="date" class="form-control form-control-sm border-0 bg-light rounded-pill" placeholder="From" max="{{ $dateTo ?: '' }}">
+                <div class="col-lg-2 col-md-3 col-6 mb-2 mb-lg-0">
+                    <input wire:model.live="dateFrom" type="date" class="form-control rounded-pill bg-light border-0" placeholder="From" max="{{ $dateTo ?: '' }}">
                 </div>
-                <div class="col-md-2 mb-2 mb-md-0">
-                    <input wire:model.live="dateTo" type="date" class="form-control form-control-sm border-0 bg-light rounded-pill" placeholder="To" min="{{ $dateFrom ?: '' }}">
+                <div class="col-lg-2 col-md-3 col-6 mb-2 mb-lg-0">
+                    <input wire:model.live="dateTo" type="date" class="form-control rounded-pill bg-light border-0" placeholder="To" min="{{ $dateFrom ?: '' }}">
                 </div>
-                <div class="col-md-3 mb-2 mb-md-0 text-md-right">
-                    <button wire:click="$set('search',''); $set('statusFilter',''); $set('dateFrom',''); $set('dateTo','')" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
-                        <i class="fas fa-times mr-1"></i> Clear Filters
+                <div class="col-lg-2 col-md-3 col-6 text-right">
+                    @if($search || $statusFilter || $dateFrom || $dateTo)
+                    <button wire:click="$set('search',''); $set('statusFilter',''); $set('dateFrom',''); $set('dateTo','')" class="btn btn-sm btn-outline-secondary rounded-pill px-3 shadow-none">
+                        <i class="fas fa-times mr-1"></i> Reset Filters
                     </button>
+                    @endif
                 </div>
-            </div>
-            @endif
-
-            <div class="table-responsive">
-                <table class="table table-hover table-sm mb-0">
-                    <thead class="thead-light">
-                        <tr class="small text-uppercase text-muted border-bottom">
-                            <th class="border-top-0 font-weight-bold">Sample Code</th>
-                            @if(!$isFarmer)<th class="border-top-0 font-weight-bold">Farmer</th>@endif
-                            <th class="border-top-0 font-weight-bold">Plot / Crop</th>
-                            <th class="border-top-0 font-weight-bold">Source</th>
-                            <th class="border-top-0 font-weight-bold">Status</th>
-                            @if(!$isFarmer)<th class="border-top-0 font-weight-bold">Lab</th>@endif
-                            <th class="border-top-0 font-weight-bold">Collected</th>
-                            @if($isFarmer)<th class="border-top-0 font-weight-bold">Report</th>@endif
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($samples as $sample)
-                        <tr class="align-middle border-bottom">
-                            <td class="py-3">
-                                @if($isFarmer)
-                                <a href="{{ route('farmer.samples.detail', $sample->id) }}" class="font-weight-bold text-success">{{ $sample->sample_code }}</a>
-                                @else
-                                <a href="{{ route('field.samples.detail', $sample->id) }}" class="font-weight-bold text-dark">{{ $sample->sample_code }}</a>
-                                <br><small class="text-muted">#{{ $sample->id }}</small>
-                                @endif
-                            </td>
-                            @if(!$isFarmer)
-                            <td class="py-3">
-                                <span class="font-weight-bold">{{ $sample->farmer->name ?? '—' }}</span>
-                                @if($sample->farmer?->phone)
-                                <br><small class="text-muted">{{ $sample->farmer->phone }}</small>
-                                @endif
-                            </td>
-                            @endif
-                            <td class="py-3">
-                                <span>{{ $sample->plot->plot_name ?? '—' }}</span>
-                                @if($sample->plot?->crop)
-                                <br><small class="text-muted">{{ $sample->plot->crop->name }}</small>
-                                @endif
-                            </td>
-                            <td class="py-3">
-                                @if($sample->source === 'self')
-                                <span class="badge badge-info rounded-pill px-3 py-1"><i class="fas fa-hand-holding mr-1"></i>Self</span>
-                                @else
-                                <span class="badge badge-secondary rounded-pill px-3 py-1"><i class="fas fa-tractor mr-1"></i>Field</span>
-                                @endif
-                            </td>
-                            <td class="py-3">
-                                <span class="badge badge-{{ $sample->status->value === 'reported' ? 'success' : ($sample->status->value === 'received' ? 'info' : 'warning') }} rounded-pill px-3 py-1">
-                                    {{ $sample->status->label() }}
-                                </span>
-                            </td>
-                            @if(!$isFarmer)
-                            <td class="py-3 small text-muted">{{ $sample->lab->name ?? '—' }}</td>
-                            @endif
-                            <td class="py-3 small text-muted">
-                                {{ $sample->collected_at?->format('d M Y') ?? $sample->created_at->format('d M Y') }}
-                            </td>
-                            @if($isFarmer)
-                            <td class="py-3">
-                                @if($sample->status->value === 'reported')
-                                <a href="{{ route('farmer.samples.report', $sample->id) }}" class="btn btn-sm btn-success rounded-pill px-3 shadow-sm">
-                                    <i class="fas fa-download mr-1"></i> Report
-                                </a>
-                                @else
-                                <span class="text-muted small">In progress</span>
-                                @endif
-                            </td>
-                            @endif
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="9" class="text-center py-5">
-                                <div class="py-4">
-                                    <i class="fas fa-flask fa-4x text-muted mb-3 d-block" style="opacity:.3;"></i>
-                                    <h5 class="text-muted font-weight-normal mb-1">No samples found</h5>
-                                    <p class="text-muted small mb-0">
-                                        @if($search || $statusFilter || $dateFrom || $dateTo)
-                                            Try adjusting your filters.
-                                        @else
-                                            No samples have been created yet.
-                                        @endif
-                                    </p>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="mt-4 d-flex justify-content-between align-items-center">
-                <small class="text-muted">
-                    <i class="fas fa-file mr-1"></i> Page {{ $samples->currentPage() }} &middot;
-                    {{ $samples->firstItem() ?? 0 }}–{{ $samples->lastItem() ?? 0 }} of {{ $samples->total() }}
-                </small>
-                <div>{{ $samples->links() }}</div>
             </div>
         </div>
-    </div>
+        @endif
 
-    <style>
-        .letter-spacing { letter-spacing: .05em; }
-        .opacity-50 { opacity: .5; }
-        .align-middle td, .align-middle th { vertical-align: middle !important; }
-        .table th { border-top: 0; }
-    </style>
+        {{-- Table --}}
+        <div class="card-body p-0 table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Sample Code</th>
+                        @if(!$isFarmer)<th>Farmer</th>@endif
+                        <th>Plot / Crop</th>
+                        <th>Source</th>
+                        <th>Status</th>
+                        @if(!$isFarmer)<th>Laboratory</th>@endif
+                        <th>Collection Date</th>
+                        @if($isFarmer)<th class="text-right">Actions</th>@endif
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($samples as $sample)
+                    <tr>
+                        <td>
+                            @if($isFarmer)
+                            <a href="{{ route('farmer.samples.detail', $sample->id) }}" class="font-weight-bold text-success">
+                                {{ $sample->sample_code }}
+                            </a>
+                            @else
+                            <a href="{{ route('field.samples.detail', $sample->id) }}" class="font-weight-bold text-dark font-monospace">
+                                {{ $sample->sample_code }}
+                            </a>
+                            <small class="text-muted d-block">ID #{{ $sample->id }}</small>
+                            @endif
+                        </td>
+                        @if(!$isFarmer)
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle mr-2 d-flex align-items-center justify-content-center text-muted" style="width: 26px; height: 26px; background: #f1f5f9; font-size: 0.7rem;">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div>
+                                    <span class="font-weight-bold text-dark d-block">{{ $sample->farmer->name ?? '—' }}</span>
+                                    @if($sample->farmer?->phone)
+                                    <small class="text-muted"><i class="fas fa-phone-alt mr-1" style="font-size: 0.65rem;"></i>{{ $sample->farmer->phone }}</small>
+                                    @endif
+                                </div>
+                            </div>
+                        </td>
+                        @endif
+                        <td>
+                            <span class="text-dark font-weight-medium">{{ $sample->plot->plot_name ?? '—' }}</span>
+                            @if($sample->plot?->crop)
+                            <small class="text-muted d-block">{{ $sample->plot->crop->name }}</small>
+                            @endif
+                        </td>
+                        <td>
+                            @if($sample->source === 'self')
+                            <span class="badge badge-info px-3 py-1"><i class="fas fa-hand-holding mr-1"></i>Self</span>
+                            @else
+                            <span class="badge badge-secondary px-3 py-1"><i class="fas fa-tractor mr-1"></i>Field</span>
+                            @endif
+                        </td>
+                        <td>
+                            @php
+                                $val = $sample->status->value ?? 'collected';
+                                $badgeClass = match($val) {
+                                    'reported' => 'badge-success',
+                                    'testing' => 'badge-warning',
+                                    'received' => 'badge-primary',
+                                    default => 'badge-info',
+                                };
+                            @endphp
+                            <span class="badge {{ $badgeClass }} px-3 py-1">
+                                {{ $sample->status->label() }}
+                            </span>
+                        </td>
+                        @if(!$isFarmer)
+                        <td class="small text-muted">
+                            @if($sample->lab)
+                            <i class="fas fa-flask text-info mr-1"></i> {{ $sample->lab->name }}
+                            @else
+                            —
+                            @endif
+                        </td>
+                        @endif
+                        <td class="small text-muted">
+                            {{ $sample->collected_at?->format('d M Y') ?? $sample->created_at->format('d M Y') }}
+                        </td>
+                        @if($isFarmer)
+                        <td class="text-right">
+                            @if($sample->status->value === 'reported')
+                            <a href="{{ route('farmer.samples.report', $sample->id) }}" class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm">
+                                <i class="fas fa-file-pdf mr-1"></i> Report
+                            </a>
+                            @else
+                            <span class="badge badge-light border text-muted">Processing</span>
+                            @endif
+                        </td>
+                        @endif
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="{{ $isFarmer ? 6 : 7 }}" class="text-center py-5 text-muted">
+                            <i class="fas fa-vial fa-3x mb-3 text-muted opacity-50 d-block"></i>
+                            <h6 class="font-weight-bold text-dark">No samples found</h6>
+                            <p class="small text-muted mb-0">
+                                @if($search || $statusFilter || $dateFrom || $dateTo)
+                                    Try clearing your search criteria or date filters.
+                                @else
+                                    No soil samples have been registered yet.
+                                @endif
+                            </p>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        @if($samples->hasPages())
+        <div class="card-footer bg-white border-top py-3 d-flex flex-column flex-md-row justify-content-between align-items-center">
+            <small class="text-muted mb-2 mb-md-0">
+                Showing {{ $samples->firstItem() ?? 0 }}–{{ $samples->lastItem() ?? 0 }} of {{ number_format($samples->total()) }} records
+            </small>
+            <div>{{ $samples->links() }}</div>
+        </div>
+        @endif
+    </div>
 </div>

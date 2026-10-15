@@ -1,54 +1,86 @@
 <div wire:poll.60s="refresh">
+    {{-- Header --}}
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-2 border-bottom">
+        <div class="mb-3 mb-md-0">
+            <div class="d-flex align-items-center">
+                <span class="d-inline-flex align-items-center justify-content-center rounded-circle mr-3 shadow-sm" 
+                      style="width: 44px; height: 44px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #fff;">
+                    <i class="fas fa-microscope fa-lg"></i>
+                </span>
+                <div>
+                    <h3 class="mb-0 font-weight-bold" style="letter-spacing: -0.02em; color: #0f172a;">Laboratory Operations</h3>
+                    <p class="text-muted small mb-0">Daily sample intake, testing queues, and result reporting</p>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex align-items-center">
+            <button wire:click="refresh" wire:loading.attr="disabled" class="btn btn-sm btn-white border rounded-pill px-3 shadow-sm font-weight-medium text-secondary">
+                <i class="fas fa-sync-alt mr-1" wire:loading.class="fa-spin" wire:target="refresh"></i> Refresh
+            </button>
+        </div>
+    </div>
+
     {{-- Stats Row --}}
     <div class="row mb-4">
-        <div class="col-lg-3 col-6 mb-3 mb-lg-0">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body py-3 d-flex align-items-center">
-                    <div class="d-flex align-items-center justify-content-center rounded-circle mr-3 shadow-sm" style="width:52px;height:52px;background:rgba(23,162,184,.12);">
-                        <i class="fas fa-download text-info fa-lg"></i>
+        {{-- Received Today --}}
+        <div class="col-lg-3 col-sm-6 mb-3 mb-lg-0">
+            <div class="card card-hover border-0 shadow-sm h-100">
+                <div class="card-body p-3 d-flex align-items-center">
+                    <div class="d-flex align-items-center justify-content-center rounded-lg mr-3 shadow-sm text-white" 
+                         style="width: 48px; height: 48px; min-width: 48px; border-radius: 12px; background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);">
+                        <i class="fas fa-download fa-lg"></i>
                     </div>
                     <div>
-                        <p class="mb-0 small text-uppercase text-muted" style="letter-spacing:.05em;">Received Today</p>
-                        <h2 class="mb-0 font-weight-bold text-info">{{ $todayReceived }}</h2>
+                        <span class="d-block text-muted text-uppercase font-weight-bold" style="font-size: 0.7rem; letter-spacing: 0.05em;">Received Today</span>
+                        <h3 class="mb-0 font-weight-bold text-dark" style="letter-spacing: -0.02em;">{{ number_format($todayReceived) }}</h3>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-3 col-6 mb-3 mb-lg-0">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body py-3 d-flex align-items-center">
-                    <div class="d-flex align-items-center justify-content-center rounded-circle mr-3 shadow-sm" style="width:52px;height:52px;background:rgba(255,193,7,.12);">
-                        <i class="fas fa-inbox text-warning fa-lg"></i>
+
+        {{-- To Receive --}}
+        <div class="col-lg-3 col-sm-6 mb-3 mb-lg-0">
+            <div class="card card-hover border-0 shadow-sm h-100">
+                <div class="card-body p-3 d-flex align-items-center">
+                    <div class="d-flex align-items-center justify-content-center rounded-lg mr-3 shadow-sm text-white" 
+                         style="width: 48px; height: 48px; min-width: 48px; border-radius: 12px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                        <i class="fas fa-inbox fa-lg"></i>
                     </div>
                     <div>
-                        <p class="mb-0 small text-uppercase text-muted" style="letter-spacing:.05em;">To Receive</p>
-                        <h2 class="mb-0 font-weight-bold text-warning">{{ $collectedCount }}</h2>
+                        <span class="d-block text-muted text-uppercase font-weight-bold" style="font-size: 0.7rem; letter-spacing: 0.05em;">Awaiting Intake</span>
+                        <h3 class="mb-0 font-weight-bold text-dark" style="letter-spacing: -0.02em;">{{ number_format($collectedCount) }}</h3>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-3 col-6 mb-3 mb-lg-0">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body py-3 d-flex align-items-center">
-                    <div class="d-flex align-items-center justify-content-center rounded-circle mr-3 shadow-sm" style="width:52px;height:52px;background:rgba(52,152,219,.12);">
-                        <i class="fas fa-flask text-primary fa-lg"></i>
+
+        {{-- Pending Testing --}}
+        <div class="col-lg-3 col-sm-6 mb-3 mb-lg-0">
+            <div class="card card-hover border-0 shadow-sm h-100">
+                <div class="card-body p-3 d-flex align-items-center">
+                    <div class="d-flex align-items-center justify-content-center rounded-lg mr-3 shadow-sm text-white" 
+                         style="width: 48px; height: 48px; min-width: 48px; border-radius: 12px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">
+                        <i class="fas fa-flask fa-lg"></i>
                     </div>
                     <div>
-                        <p class="mb-0 small text-uppercase text-muted" style="letter-spacing:.05em;">Pending Testing</p>
-                        <h2 class="mb-0 font-weight-bold text-primary">{{ $pendingTesting }}</h2>
+                        <span class="d-block text-muted text-uppercase font-weight-bold" style="font-size: 0.7rem; letter-spacing: 0.05em;">Testing Queue</span>
+                        <h3 class="mb-0 font-weight-bold text-dark" style="letter-spacing: -0.02em;">{{ number_format($pendingTesting) }}</h3>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-3 col-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body py-3 d-flex align-items-center">
-                    <div class="d-flex align-items-center justify-content-center rounded-circle mr-3 shadow-sm" style="width:52px;height:52px;background:rgba(40,167,69,.12);">
-                        <i class="fas fa-check-circle text-success fa-lg"></i>
+
+        {{-- Completed This Week --}}
+        <div class="col-lg-3 col-sm-6">
+            <div class="card card-hover border-0 shadow-sm h-100">
+                <div class="card-body p-3 d-flex align-items-center">
+                    <div class="d-flex align-items-center justify-content-center rounded-lg mr-3 shadow-sm text-white" 
+                         style="width: 48px; height: 48px; min-width: 48px; border-radius: 12px; background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                        <i class="fas fa-check-circle fa-lg"></i>
                     </div>
                     <div>
-                        <p class="mb-0 small text-uppercase text-muted" style="letter-spacing:.05em;">Completed This Week</p>
-                        <h2 class="mb-0 font-weight-bold text-success">{{ $completedThisWeek }}</h2>
+                        <span class="d-block text-muted text-uppercase font-weight-bold" style="font-size: 0.7rem; letter-spacing: 0.05em;">Completed (7 Days)</span>
+                        <h3 class="mb-0 font-weight-bold text-dark" style="letter-spacing: -0.02em;">{{ number_format($completedThisWeek) }}</h3>
                     </div>
                 </div>
             </div>
@@ -60,11 +92,11 @@
         <div class="col-md-12 mb-3">
             <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center rounded-lg shadow-sm" role="alert">
                 <i class="fas fa-exclamation-triangle fa-2x mr-3"></i>
-                <div>
+                <div class="flex-grow-1">
                     @php $threshold = (int) setting('overdue_days', 2); @endphp
                     <strong class="mr-1">{{ $overdueCount }}</strong> {{ \Illuminate\Support\Str::plural('sample', $overdueCount) }} overdue for testing —
                     received more than {{ $threshold }} {{ \Illuminate\Support\Str::plural('day', $threshold) }} ago and not yet tested.
-                    <a href="{{ route('lab.testing-list') }}" class="alert-link ml-1">View in Testing</a>
+                    <a href="{{ route('lab.testing-list') }}" class="alert-link font-weight-bold ml-1">Go to Testing &rarr;</a>
                 </div>
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
             </div>
@@ -72,24 +104,21 @@
     </div>
     @endif
 
-    {{-- Action Buttons --}}
-    <div class="row">
-        <div class="col-md-12 mb-3">
+    {{-- Quick Action Buttons --}}
+    <div class="row mb-4">
+        <div class="col-md-12">
             <div class="card border-0 shadow-sm">
-                <div class="card-body py-3">
+                <div class="card-body p-3">
                     <div class="d-flex align-items-center flex-wrap gap-2">
-                        <a href="{{ route('lab.queue') }}" class="btn btn-success rounded-pill px-4 mr-2 shadow-sm font-weight-bold">
+                        <a href="{{ route('lab.queue') }}" class="btn btn-primary rounded-pill px-4 mr-2 shadow-sm font-weight-medium">
                             <i class="fas fa-inbox mr-1"></i> Receive Samples
                         </a>
-                        <a href="{{ route('lab.self-sample') }}" class="btn btn-info rounded-pill px-4 mr-2 shadow-sm font-weight-bold text-white">
-                            <i class="fas fa-user-plus mr-1"></i> Self Sample
+                        <a href="{{ route('lab.self-sample') }}" class="btn btn-outline-primary rounded-pill px-4 mr-2 shadow-sm font-weight-medium">
+                            <i class="fas fa-user-plus mr-1"></i> Self Sample Collection
                         </a>
-                        <a href="{{ route('lab.testing-list') }}" class="btn btn-primary rounded-pill px-4 mr-2 shadow-sm font-weight-bold">
-                            <i class="fas fa-flask mr-1"></i> Sample Testing
+                        <a href="{{ route('lab.testing-list') }}" class="btn btn-outline-secondary rounded-pill px-4 shadow-sm font-weight-medium">
+                            <i class="fas fa-flask mr-1"></i> Sample Testing Queue
                         </a>
-                        <button wire:click="refresh" class="btn btn-outline-secondary rounded-pill px-4 shadow-sm">
-                            <i class="fas fa-sync-alt mr-1"></i> Refresh
-                        </button>
                     </div>
                 </div>
             </div>

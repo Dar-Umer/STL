@@ -36,7 +36,7 @@
                 <h5 class="mt-4" style="color:#018840;">Feedback</h5>
                 <p>We welcome your feedback on the accessibility of this portal. Please contact us at:</p>
                 <p><i class="fas fa-envelope mr-2" style="color:#018840;"></i> {{ setting('front.cho_email', 'cho.pulwama@jk.gov.in') }}</p>
-                <p><i class="fas fa-phone mr-2" style="color:#018840;"></i> {{ setting('front.cho_phone', '+91-XXXX-XXXXXX') }}</p>
+                <p><i class="fas fa-phone mr-2" style="color:#018840;"></i> {{ setting('front.cho_phone') ?: '+91 1933 260234' }}</p>
             </div>
         </div>
     </div>

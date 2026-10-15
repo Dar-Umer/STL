@@ -10,6 +10,7 @@ class Profile extends Component
 {
     public string $name;
     public string $email;
+    public ?string $phone = '';
     public string $currentPassword = '';
     public string $newPassword = '';
     public string $newPasswordConfirmation = '';
@@ -19,6 +20,7 @@ class Profile extends Component
         $user = Auth::user();
         $this->name = $user->name;
         $this->email = $user->email;
+        $this->phone = $user->phone ?? '';
     }
 
     public function save()
@@ -27,6 +29,7 @@ class Profile extends Component
 
         $rules = [
             'name' => 'required|string|max:255',
+            'phone' => 'nullable|string|max:20',
         ];
 
         if ($this->email !== $user->email || $this->newPassword) {
@@ -52,7 +55,12 @@ class Profile extends Component
 
         $user->name = $this->name;
         $user->email = $this->email;
+        $user->phone = $this->phone;
         $user->save();
+
+        $this->currentPassword = '';
+        $this->newPassword = '';
+        $this->newPasswordConfirmation = '';
 
         session()->flash('success', 'Profile updated successfully.');
     }

@@ -48,7 +48,7 @@
                 <div class="contact-card">
                     <div class="icon" style="background:linear-gradient(135deg,#f3b229,#d4941a);"><i class="fas fa-phone-alt"></i></div>
                     <h5 style="color:#0a3d22;font-weight:700;">Phone</h5>
-                    <p class="text-muted mb-0" style="font-size:.88rem;">{{ setting('front.cho_phone', '+91-XXXX-XXXXXX') }}</p>
+                    <p class="text-muted mb-0" style="font-size:.88rem;">{{ setting('front.cho_phone') ?: '+91 1933 260234' }}</p>
                 </div>
             </div>
             <div class="col-md-4 mb-3">
