@@ -40,20 +40,19 @@
     </div>
 
     {{-- Action Bar --}}
-    <div class="card border-0 shadow-sm rounded-lg">
-        <div class="card-body pb-2">
-            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div class="card border-0 shadow-sm rounded-lg mb-4">
+        <div class="card-body">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
                 <div>
-                    <button wire:click="create" class="btn btn-primary rounded-pill btn-sm px-3 shadow-sm"><i class="fas fa-plus"></i> Add</button>
-                    <button wire:click="toggleImport" class="btn btn-info rounded-pill btn-sm px-3 shadow-sm"><i class="fas fa-file-upload"></i> Import</button>
+                    <button wire:click="create" class="btn btn-primary rounded-pill btn-sm px-3 shadow-sm mr-1"><i class="fas fa-plus"></i> Add Location</button>
+                    <button wire:click="toggleImport" class="btn btn-info rounded-pill btn-sm px-3 shadow-sm"><i class="fas fa-file-upload"></i> Import CSV/Excel</button>
                     @if($search)
-                    <button wire:click="$set('search', '')" class="btn btn-outline-secondary rounded-pill btn-sm px-3"><i class="fas fa-times"></i> Clear</button>
+                    <button wire:click="$set('search', '')" class="btn btn-outline-secondary rounded-pill btn-sm px-3 ml-1"><i class="fas fa-times"></i> Clear</button>
                     @endif
                 </div>
-                <input wire:model.live.debounce.300ms="search" placeholder="Search locations..." class="form-control form-control-sm rounded-pill" style="min-width:200px;max-width:300px">
+                <input wire:model.live.debounce.300ms="search" placeholder="Search locations..." class="form-control form-control-sm rounded-pill" style="min-width:220px;max-width:320px">
             </div>
-        <div class="card-body">
-        <div class="card-body">
+
             {{-- Filter Tabs --}}
             <ul class="nav nav-pills mb-3">
                 <li class="nav-item"><a wire:click="$set('filterType', 'all')" class="nav-link {{ $filterType === 'all' ? 'active' : '' }}" href="#">All</a></li>
