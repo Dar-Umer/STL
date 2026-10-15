@@ -4,10 +4,324 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', setting('app_name', config('app.name'))) @php $d = setting('app_description', ''); @endphp @if($d)&mdash; {{ $d }} @endif</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-    <style>[x-cloak]{display:none!important}</style>
+    <style>
+        [x-cloak]{display:none!important}
+        
+        /* Modern Design System Overrides */
+        :root {
+            --primary-emerald: #059669;
+            --primary-emerald-hover: #047857;
+            --primary-emerald-light: #ecfdf5;
+            --slate-900: #0f172a;
+            --slate-800: #1e293b;
+            --slate-700: #334155;
+            --slate-600: #475569;
+            --slate-500: #64748b;
+            --slate-400: #94a3b8;
+            --slate-200: #e2e8f0;
+            --slate-100: #f1f5f9;
+            --slate-50: #f8fafc;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+            color: #1e293b;
+            background-color: var(--slate-50) !important;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .content-wrapper {
+            background-color: #f8fafc !important;
+        }
+
+        /* Modern Navbar */
+        .main-header.navbar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--slate-200) !important;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.03);
+            padding: 0.5rem 1rem;
+        }
+        .main-header .nav-link {
+            color: var(--slate-600) !important;
+            font-weight: 500;
+            transition: color 0.15s ease;
+        }
+        .main-header .nav-link:hover {
+            color: var(--slate-900) !important;
+        }
+        .navbar-user-chip {
+            display: inline-flex;
+            align-items: center;
+            background: #f1f5f9;
+            padding: 4px 12px 4px 8px;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #1e293b;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+        }
+        .navbar-user-chip:hover {
+            background: #e2e8f0;
+            text-decoration: none;
+        }
+        .navbar-user-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+
+        /* Modern Dark Slate Sidebar */
+        .main-sidebar {
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%) !important;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.06) !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .brand-link {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+            padding: 1rem 1.25rem !important;
+            background: transparent !important;
+        }
+        .brand-link .brand-text {
+            color: #ffffff !important;
+            font-weight: 700 !important;
+            letter-spacing: -0.01em;
+        }
+        .nav-sidebar .nav-item {
+            margin-bottom: 2px;
+        }
+        .nav-sidebar .nav-link {
+            border-radius: 8px !important;
+            margin: 1px 10px !important;
+            color: #94a3b8 !important;
+            font-weight: 500;
+            font-size: 0.88rem;
+            padding: 8px 12px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .nav-sidebar .nav-link i.nav-icon {
+            font-size: 0.95rem;
+            width: 24px;
+            margin-right: 8px;
+            color: #64748b;
+            transition: color 0.2s ease;
+        }
+        .nav-sidebar .nav-link:hover {
+            color: #ffffff !important;
+            background-color: rgba(255, 255, 255, 0.07) !important;
+        }
+        .nav-sidebar .nav-link:hover i.nav-icon {
+            color: #34d399 !important;
+        }
+        .nav-sidebar .nav-link.active,
+        .sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+            color: #ffffff !important;
+            font-weight: 600 !important;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35) !important;
+        }
+        .nav-sidebar .nav-link.active i.nav-icon {
+            color: #ffffff !important;
+        }
+        .nav-treeview .nav-link {
+            padding-left: 36px !important;
+            font-size: 0.84rem;
+        }
+        .nav-header {
+            color: #64748b !important;
+            font-size: 0.7rem !important;
+            font-weight: 700 !important;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 14px 16px 4px !important;
+        }
+
+        /* Modern Card Styling */
+        .card {
+            border-radius: 12px !important;
+            border: 1px solid var(--slate-200) !important;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.03) !important;
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+            background: #ffffff;
+        }
+        .card.card-hover:hover {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.07), 0 8px 10px -6px rgba(0, 0, 0, 0.04) !important;
+            transform: translateY(-2px);
+        }
+        .card-header {
+            background-color: transparent !important;
+            border-bottom: 1px solid var(--slate-100) !important;
+            font-weight: 600;
+            color: var(--slate-800);
+            padding: 0.9rem 1.25rem;
+        }
+
+        /* Modern Tables */
+        .table {
+            color: var(--slate-800);
+            vertical-align: middle;
+        }
+        .table thead th,
+        .table .thead-light th {
+            background-color: #f8fafc !important;
+            color: var(--slate-500) !important;
+            font-size: 0.75rem !important;
+            font-weight: 600 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.05em !important;
+            border-top: none !important;
+            border-bottom: 1px solid var(--slate-200) !important;
+            padding: 0.75rem 1rem !important;
+        }
+        .table td {
+            padding: 0.85rem 1rem !important;
+            vertical-align: middle !important;
+            border-top: 1px solid #f1f5f9 !important;
+            font-size: 0.875rem;
+        }
+        .table tbody tr {
+            transition: background-color 0.15s ease;
+        }
+        .table-hover tbody tr:hover {
+            background-color: #f8fafc !important;
+        }
+
+        /* Modern Badges (Soft Pill Style) */
+        .badge {
+            font-weight: 600 !important;
+            letter-spacing: 0.02em;
+            padding: 0.35rem 0.75rem;
+            border-radius: 9999px !important;
+            font-size: 0.75rem;
+        }
+        .badge-success {
+            background-color: #ecfdf5 !important;
+            color: #047857 !important;
+            border: 1px solid #a7f3d0 !important;
+        }
+        .badge-primary {
+            background-color: #eff6ff !important;
+            color: #1d4ed8 !important;
+            border: 1px solid #bfdbfe !important;
+        }
+        .badge-info {
+            background-color: #f0fdfa !important;
+            color: #0f766e !important;
+            border: 1px solid #99f6e4 !important;
+        }
+        .badge-warning {
+            background-color: #fffbeb !important;
+            color: #b45309 !important;
+            border: 1px solid #fde68a !important;
+        }
+        .badge-danger {
+            background-color: #fef2f2 !important;
+            color: #b91c1c !important;
+            border: 1px solid #fecaca !important;
+        }
+        .badge-secondary {
+            background-color: #f1f5f9 !important;
+            color: #475569 !important;
+            border: 1px solid #cbd5e1 !important;
+        }
+
+        /* Modern Buttons & Inputs */
+        .btn {
+            font-weight: 500;
+            letter-spacing: 0.01em;
+            transition: all 0.2s ease;
+        }
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+            border-color: #059669 !important;
+            color: #ffffff !important;
+            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.25);
+        }
+        .btn-primary:hover, .btn-primary:focus {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+            border-color: #047857 !important;
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.35);
+        }
+        .form-control {
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            color: #1e293b;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .form-control:focus {
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+        }
+
+        /* Progress Bars */
+        .progress {
+            background-color: #f1f5f9;
+            border-radius: 9999px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .progress-bar {
+            border-radius: 9999px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+        }
+
+        /* Modern Dropdowns */
+        .dropdown-menu {
+            border: 1px solid var(--slate-200);
+            border-radius: 10px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+            padding: 6px;
+        }
+        .dropdown-item {
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--slate-700);
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+        .dropdown-item:hover {
+            background-color: #f1f5f9;
+            color: var(--slate-900);
+        }
+        .dropdown-item i {
+            width: 18px;
+            margin-right: 6px;
+            color: var(--slate-400);
+        }
+
+        /* Footer */
+        .main-footer {
+            background-color: #ffffff !important;
+            border-top: 1px solid var(--slate-200) !important;
+            color: var(--slate-500) !important;
+            font-size: 0.84rem;
+            padding: 0.9rem 1.25rem;
+        }
+    </style>
     @livewireStyles
 </head>
 <body class="hold-transition sidebar-mini">
@@ -20,17 +334,30 @@
                 <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
             </li>
         </ul>
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
-                    <i class="fas fa-user"></i> {{ auth()->user()->name }}
+        <ul class="navbar-nav ml-auto align-items-center">
+            <li class="nav-item mr-2">
+                <a href="{{ url('/') }}" target="_blank" class="btn btn-sm btn-outline-secondary rounded-pill px-3 shadow-none" style="font-size: 0.8rem;">
+                    <i class="fas fa-external-link-alt mr-1"></i> Public Portal
                 </a>
-                <div class="dropdown-menu dropdown-menu-right">
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link p-0 dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="navbar-user-chip">
+                        <span class="navbar-user-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
+                        <span>{{ auth()->user()->name }}</span>
+                    </span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right mt-2" aria-labelledby="userDropdown">
+                    <div class="px-3 py-2 border-bottom mb-1">
+                        <div class="font-weight-bold text-dark" style="font-size: 0.875rem;">{{ auth()->user()->name }}</div>
+                        <div class="text-muted small">{{ auth()->user()->email }}</div>
+                        <div class="mt-1"><span class="badge badge-success">{{ auth()->user()->getRoleNames()->first() ?? 'User' }}</span></div>
+                    </div>
                     <a href="{{ route('profile') }}" class="dropdown-item"><i class="fas fa-user-circle"></i> Profile</a>
                     <div class="dropdown-divider"></div>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                        <button type="submit" class="dropdown-item text-danger"><i class="fas fa-sign-out-alt text-danger"></i> Logout</button>
                     </form>
                 </div>
             </li>
@@ -39,12 +366,17 @@
 
     <!-- Sidebar -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
-        <a href="{{ route('admin.dashboard') }}" class="brand-link text-center">
+        <a href="{{ route('admin.dashboard') }}" class="brand-link text-center d-flex align-items-center justify-content-center py-3">
             @php $brandLogo = setting('logo_path', ''); @endphp
             @if($brandLogo)
-                <img src="{{ asset('storage/' . $brandLogo) }}" alt="Logo" style="max-height:38px;width:auto;object-fit:contain;opacity:.9">
+                <img src="{{ asset('storage/' . $brandLogo) }}" alt="Logo" style="max-height:36px;width:auto;object-fit:contain;">
             @else
-                <span class="brand-text font-weight-bold" style="font-size:1.1rem;letter-spacing:.5px;"><i class="fas fa-flask mr-2" style="color:#28a745;"></i>{{ setting('app_name', 'Soil Lab') }}</span>
+                <div class="d-flex align-items-center">
+                    <span class="d-inline-flex align-items-center justify-content-center mr-2 rounded-circle" style="width:34px;height:34px;background:rgba(16,185,129,0.18);border:1px solid rgba(16,185,129,0.3);color:#34d399;">
+                        <i class="fas fa-flask"></i>
+                    </span>
+                    <span class="brand-text font-weight-bold text-white text-truncate" style="font-size:1.05rem;letter-spacing:-0.02em;">{{ setting('app_name', 'Soil Lab') }}</span>
+                </div>
             @endif
         </a>
         <div class="sidebar">

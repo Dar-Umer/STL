@@ -1,72 +1,209 @@
 <div wire:poll.60s="refresh">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="mb-0"><i class="fas fa-tachometer-alt mr-2"></i>Admin Dashboard</h4>
-        <div>
-            <small class="text-muted mr-2">Last updated: {{ now()->format('d/m/Y h:i A') }}</small>
-            <button wire:click="refresh" class="btn btn-sm btn-outline-secondary rounded-pill px-3 shadow-sm">
-                <i class="fas fa-sync-alt mr-1"></i> Refresh
+    {{-- Dashboard Header --}}
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-2 border-bottom">
+        <div class="mb-3 mb-md-0">
+            <div class="d-flex align-items-center">
+                <span class="d-inline-flex align-items-center justify-content-center rounded-circle mr-3 shadow-sm" 
+                      style="width: 44px; height: 44px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #fff;">
+                    <i class="fas fa-tachometer-alt fa-lg"></i>
+                </span>
+                <div>
+                    <h3 class="mb-0 font-weight-bold" style="letter-spacing: -0.02em; color: #0f172a;">Admin Dashboard</h3>
+                    <p class="text-muted small mb-0">System performance, sample lifecycle analytics & district lab operations</p>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex align-items-center">
+            <span class="badge badge-light border mr-3 px-3 py-2 text-muted" style="font-size: 0.8rem;">
+                <span class="d-inline-block rounded-circle bg-success mr-1" style="width: 8px; height: 8px; animation: pulse 2s infinite;"></span>
+                Live &bull; Updated {{ now()->format('h:i A') }}
+            </span>
+            <button wire:click="refresh" wire:loading.attr="disabled" class="btn btn-sm btn-white border rounded-pill px-3 shadow-sm font-weight-medium text-secondary">
+                <i class="fas fa-sync-alt mr-1" wire:loading.class="fa-spin" wire:target="refresh"></i> Refresh
             </button>
         </div>
     </div>
 
     {{-- System Overview KPIs --}}
     <div class="row mb-4">
-        <div class="col-lg-2 col-6 mb-3">
-            <div class="card border-0 shadow-sm h-100"><div class="card-body py-3 d-flex align-items-center">
-                <div class="d-flex align-items-center justify-content-center rounded-circle mr-3" style="width:48px;height:48px;background:rgba(23,162,184,.12);"><i class="fas fa-flask text-info fa-lg"></i></div>
-                <div><p class="mb-0 small text-uppercase text-muted" style="letter-spacing:.05em;">Labs</p><h3 class="mb-0 font-weight-bold">{{ number_format($totalLabs) }}</h3></div>
-            </div></div>
-        </div>
-        <div class="col-lg-2 col-6 mb-3">
-            <div class="card border-0 shadow-sm h-100"><div class="card-body py-3 d-flex align-items-center">
-                <div class="d-flex align-items-center justify-content-center rounded-circle mr-3" style="width:48px;height:48px;background:rgba(108,117,125,.12);"><i class="fas fa-users text-secondary fa-lg"></i></div>
-                <div><p class="mb-0 small text-uppercase text-muted" style="letter-spacing:.05em;">Users</p><h3 class="mb-0 font-weight-bold">{{ number_format($totalUsers) }}</h3></div>
-            </div></div>
-        </div>
-        <div class="col-lg-2 col-6 mb-3">
-            <div class="card border-0 shadow-sm h-100"><div class="card-body py-3 d-flex align-items-center">
-                <div class="d-flex align-items-center justify-content-center rounded-circle mr-3" style="width:48px;height:48px;background:rgba(255,193,7,.12);"><i class="fas fa-tractor text-warning fa-lg"></i></div>
-                <div><p class="mb-0 small text-uppercase text-muted" style="letter-spacing:.05em;">Farmers</p><h3 class="mb-0 font-weight-bold">{{ number_format($totalFarmers) }}</h3></div>
-            </div></div>
-        </div>
-        <div class="col-lg-2 col-6 mb-3">
-            <div class="card border-0 shadow-sm h-100"><div class="card-body py-3 d-flex align-items-center">
-                <div class="d-flex align-items-center justify-content-center rounded-circle mr-3" style="width:48px;height:48px;background:rgba(0,123,255,.12);"><i class="fas fa-vial text-primary fa-lg"></i></div>
-                <div><p class="mb-0 small text-uppercase text-muted" style="letter-spacing:.05em;">Total Samples</p><h3 class="mb-0 font-weight-bold">{{ number_format($totalSamples) }}</h3></div>
-            </div></div>
-        </div>
-        <div class="col-lg-2 col-6 mb-3">
-            <div class="card border-0 shadow-sm h-100"><div class="card-body py-3 d-flex align-items-center">
-                <div class="d-flex align-items-center justify-content-center rounded-circle mr-3" style="width:48px;height:48px;background:rgba(40,167,69,.12);"><i class="fas fa-calendar-check text-success fa-lg"></i></div>
-                <div><p class="mb-0 small text-uppercase text-muted" style="letter-spacing:.05em;">This Month</p><h3 class="mb-0 font-weight-bold">{{ number_format($samplesThisMonth) }}</h3>
-                    @if($samplesLastMonth > 0)
-                    <small class="text-muted d-block" style="font-size:.7rem;">{{ ($samplesThisMonth > $samplesLastMonth ? '+' : '').number_format((($samplesThisMonth - $samplesLastMonth) / $samplesLastMonth) * 100, 0) }}% vs last month</small>
-                    @endif
+        {{-- Labs --}}
+        <div class="col-xl-2 col-lg-4 col-sm-6 mb-3">
+            <div class="card card-hover border-0 shadow-sm h-100">
+                <div class="card-body p-3 d-flex align-items-center">
+                    <div class="d-flex align-items-center justify-content-center rounded-lg mr-3 shadow-sm" 
+                         style="width: 50px; height: 50px; min-width: 50px; border-radius: 12px; background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: #fff;">
+                        <i class="fas fa-flask fa-lg"></i>
+                    </div>
+                    <div class="overflow-hidden">
+                        <span class="d-block text-muted text-uppercase font-weight-bold" style="font-size: 0.7rem; letter-spacing: 0.06em;">Laboratories</span>
+                        <h4 class="mb-0 font-weight-bold text-dark" style="letter-spacing: -0.02em;">{{ number_format($totalLabs) }}</h4>
+                        <span class="text-muted small" style="font-size: 0.75rem;">Active Testing Centers</span>
+                    </div>
                 </div>
-            </div></div>
+            </div>
         </div>
-        <div class="col-lg-2 col-6 mb-3">
-            <div class="card border-0 shadow-sm h-100"><div class="card-body py-3 d-flex align-items-center">
-                <div class="d-flex align-items-center justify-content-center rounded-circle mr-3" style="width:48px;height:48px;background:rgba(220,53,69,.12);"><i class="fas fa-clock text-danger fa-lg"></i></div>
-                <div><p class="mb-0 small text-uppercase text-muted" style="letter-spacing:.05em;">Pending</p><h3 class="mb-0 font-weight-bold">{{ number_format($queueCount) }}</h3></div>
-            </div></div>
+
+        {{-- Users --}}
+        <div class="col-xl-2 col-lg-4 col-sm-6 mb-3">
+            <div class="card card-hover border-0 shadow-sm h-100">
+                <div class="card-body p-3 d-flex align-items-center">
+                    <div class="d-flex align-items-center justify-content-center rounded-lg mr-3 shadow-sm" 
+                         style="width: 50px; height: 50px; min-width: 50px; border-radius: 12px; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: #fff;">
+                        <i class="fas fa-users-cog fa-lg"></i>
+                    </div>
+                    <div class="overflow-hidden">
+                        <span class="d-block text-muted text-uppercase font-weight-bold" style="font-size: 0.7rem; letter-spacing: 0.06em;">Staff & Admins</span>
+                        <h4 class="mb-0 font-weight-bold text-dark" style="letter-spacing: -0.02em;">{{ number_format($totalUsers) }}</h4>
+                        <span class="text-muted small" style="font-size: 0.75rem;">Registered Accounts</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Farmers --}}
+        <div class="col-xl-2 col-lg-4 col-sm-6 mb-3">
+            <div class="card card-hover border-0 shadow-sm h-100">
+                <div class="card-body p-3 d-flex align-items-center">
+                    <div class="d-flex align-items-center justify-content-center rounded-lg mr-3 shadow-sm" 
+                         style="width: 50px; height: 50px; min-width: 50px; border-radius: 12px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #fff;">
+                        <i class="fas fa-tractor fa-lg"></i>
+                    </div>
+                    <div class="overflow-hidden">
+                        <span class="d-block text-muted text-uppercase font-weight-bold" style="font-size: 0.7rem; letter-spacing: 0.06em;">Farmers</span>
+                        <h4 class="mb-0 font-weight-bold text-dark" style="letter-spacing: -0.02em;">{{ number_format($totalFarmers) }}</h4>
+                        <span class="text-muted small" style="font-size: 0.75rem;">Enrolled Beneficiaries</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Total Samples --}}
+        <div class="col-xl-2 col-lg-4 col-sm-6 mb-3">
+            <div class="card card-hover border-0 shadow-sm h-100">
+                <div class="card-body p-3 d-flex align-items-center">
+                    <div class="d-flex align-items-center justify-content-center rounded-lg mr-3 shadow-sm" 
+                         style="width: 50px; height: 50px; min-width: 50px; border-radius: 12px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: #fff;">
+                        <i class="fas fa-vial fa-lg"></i>
+                    </div>
+                    <div class="overflow-hidden">
+                        <span class="d-block text-muted text-uppercase font-weight-bold" style="font-size: 0.7rem; letter-spacing: 0.06em;">Total Samples</span>
+                        <h4 class="mb-0 font-weight-bold text-dark" style="letter-spacing: -0.02em;">{{ number_format($totalSamples) }}</h4>
+                        <span class="text-muted small" style="font-size: 0.75rem;">All Time Registered</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- This Month --}}
+        <div class="col-xl-2 col-lg-4 col-sm-6 mb-3">
+            <div class="card card-hover border-0 shadow-sm h-100">
+                <div class="card-body p-3 d-flex align-items-center">
+                    <div class="d-flex align-items-center justify-content-center rounded-lg mr-3 shadow-sm" 
+                         style="width: 50px; height: 50px; min-width: 50px; border-radius: 12px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #fff;">
+                        <i class="fas fa-calendar-check fa-lg"></i>
+                    </div>
+                    <div class="overflow-hidden">
+                        <span class="d-block text-muted text-uppercase font-weight-bold" style="font-size: 0.7rem; letter-spacing: 0.06em;">This Month</span>
+                        <h4 class="mb-0 font-weight-bold text-dark" style="letter-spacing: -0.02em;">{{ number_format($samplesThisMonth) }}</h4>
+                        @if($samplesLastMonth > 0)
+                            @php $pctMonth = (($samplesThisMonth - $samplesLastMonth) / $samplesLastMonth) * 100; @endphp
+                            <span class="text-{{ $pctMonth >= 0 ? 'success' : 'danger' }} small font-weight-bold" style="font-size: 0.72rem;">
+                                <i class="fas fa-arrow-{{ $pctMonth >= 0 ? 'up' : 'down' }} mr-1"></i>{{ ($pctMonth > 0 ? '+' : '') . number_format($pctMonth, 0) }}% MoM
+                            </span>
+                        @else
+                            <span class="text-muted small" style="font-size: 0.75rem;">Current Cycle</span>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Pending --}}
+        <div class="col-xl-2 col-lg-4 col-sm-6 mb-3">
+            <div class="card card-hover border-0 shadow-sm h-100">
+                <div class="card-body p-3 d-flex align-items-center">
+                    <div class="d-flex align-items-center justify-content-center rounded-lg mr-3 shadow-sm" 
+                         style="width: 50px; height: 50px; min-width: 50px; border-radius: 12px; background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); color: #fff;">
+                        <i class="fas fa-clock fa-lg"></i>
+                    </div>
+                    <div class="overflow-hidden">
+                        <span class="d-block text-muted text-uppercase font-weight-bold" style="font-size: 0.7rem; letter-spacing: 0.06em;">In Queue</span>
+                        <h4 class="mb-0 font-weight-bold text-dark" style="letter-spacing: -0.02em;">{{ number_format($queueCount) }}</h4>
+                        <span class="text-muted small" style="font-size: 0.75rem;">Awaiting Testing</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     {{-- User Role Breakdown --}}
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card border-0 shadow-sm rounded-lg">
-                <div class="card-body py-3">
-                    <h6 class="mb-0"><i class="fas fa-user-shield mr-2"></i>Users by Role</h6>
-                </div>
-                <div class="card-body py-2">
-                    <div class="row text-center">
-                        <div class="col"><span class="badge badge-danger rounded-pill px-3 py-2">Admin: {{ $adminCount }}</span></div>
-                        <div class="col"><span class="badge badge-warning rounded-pill px-3 py-2">Lab Manager: {{ $labManagerCount }}</span></div>
-                        <div class="col"><span class="badge badge-info rounded-pill px-3 py-2">Field Official: {{ $fieldOfficialCount }}</span></div>
-                        <div class="col"><span class="badge badge-primary rounded-pill px-3 py-2">Lab Technician: {{ $labTechnicianCount }}</span></div>
-                        <div class="col"><span class="badge badge-secondary rounded-pill px-3 py-2">Farmer: {{ $farmerCount }}</span></div>
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-3">
+                    <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-user-shield text-primary mr-2"></i>
+                            <span class="font-weight-bold text-dark" style="font-size: 0.92rem;">User Distribution by Role</span>
+                        </div>
+                        <small class="text-muted">Total platform accounts: {{ number_format($totalUsers + $farmerCount) }}</small>
+                    </div>
+                    <div class="row">
+                        <div class="col-md col-sm-4 col-6 mb-2 mb-md-0">
+                            <div class="p-2 rounded-lg d-flex align-items-center" style="background: #fef2f2; border: 1px solid #fee2e2;">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center mr-2 text-danger bg-white shadow-xs" style="width:34px;height:34px;min-width:34px;">
+                                    <i class="fas fa-user-lock"></i>
+                                </div>
+                                <div class="overflow-hidden">
+                                    <div class="text-muted font-weight-bold text-uppercase" style="font-size:0.65rem;letter-spacing:0.05em;">Admin</div>
+                                    <div class="h6 mb-0 font-weight-bold text-danger">{{ number_format($adminCount) }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md col-sm-4 col-6 mb-2 mb-md-0">
+                            <div class="p-2 rounded-lg d-flex align-items-center" style="background: #fffbeb; border: 1px solid #fef3c7;">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center mr-2 text-warning bg-white shadow-xs" style="width:34px;height:34px;min-width:34px;">
+                                    <i class="fas fa-user-tie"></i>
+                                </div>
+                                <div class="overflow-hidden">
+                                    <div class="text-muted font-weight-bold text-uppercase" style="font-size:0.65rem;letter-spacing:0.05em;">Lab Manager</div>
+                                    <div class="h6 mb-0 font-weight-bold text-warning">{{ number_format($labManagerCount) }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md col-sm-4 col-6 mb-2 mb-md-0">
+                            <div class="p-2 rounded-lg d-flex align-items-center" style="background: #f0fdfa; border: 1px solid #ccfbf1;">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center mr-2 text-info bg-white shadow-xs" style="width:34px;height:34px;min-width:34px;">
+                                    <i class="fas fa-hard-hat"></i>
+                                </div>
+                                <div class="overflow-hidden">
+                                    <div class="text-muted font-weight-bold text-uppercase" style="font-size:0.65rem;letter-spacing:0.05em;">Field Official</div>
+                                    <div class="h6 mb-0 font-weight-bold text-info">{{ number_format($fieldOfficialCount) }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md col-sm-4 col-6 mb-2 mb-md-0">
+                            <div class="p-2 rounded-lg d-flex align-items-center" style="background: #eff6ff; border: 1px solid #dbeafe;">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center mr-2 text-primary bg-white shadow-xs" style="width:34px;height:34px;min-width:34px;">
+                                    <i class="fas fa-microscope"></i>
+                                </div>
+                                <div class="overflow-hidden">
+                                    <div class="text-muted font-weight-bold text-uppercase" style="font-size:0.65rem;letter-spacing:0.05em;">Lab Tech</div>
+                                    <div class="h6 mb-0 font-weight-bold text-primary">{{ number_format($labTechnicianCount) }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md col-sm-4 col-6 mb-2 mb-md-0">
+                            <div class="p-2 rounded-lg d-flex align-items-center" style="background: #f1f5f9; border: 1px solid #e2e8f0;">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center mr-2 text-secondary bg-white shadow-xs" style="width:34px;height:34px;min-width:34px;">
+                                    <i class="fas fa-tractor"></i>
+                                </div>
+                                <div class="overflow-hidden">
+                                    <div class="text-muted font-weight-bold text-uppercase" style="font-size:0.65rem;letter-spacing:0.05em;">Farmers</div>
+                                    <div class="h6 mb-0 font-weight-bold text-secondary">{{ number_format($farmerCount) }}</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -74,33 +211,43 @@
     </div>
 
     {{-- Status Distribution + Monthly Trend --}}
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card border-0 shadow-sm rounded-lg h-100">
-                <div class="card-body py-3 border-bottom d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0"><i class="fas fa-chart-pie mr-2"></i>Sample Status Distribution</h6>
-                    <small class="text-muted">{{ number_format($totalSamples) }} total</small>
+    <div class="row mb-4">
+        {{-- Status Distribution --}}
+        <div class="col-lg-6 mb-4 mb-lg-0">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header d-flex justify-content-between align-items-center py-3">
+                    <span class="font-weight-bold text-dark"><i class="fas fa-chart-pie text-success mr-2"></i>Sample Lifecycle Distribution</span>
+                    <span class="badge badge-light border text-muted">{{ number_format($totalSamples) }} total samples</span>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-4">
                     @php
                         $statuses = [
-                            ['label' => 'Collected', 'count' => $samplesCollected, 'color' => 'info', 'icon' => 'fa-clipboard-list'],
-                            ['label' => 'Received', 'count' => $samplesReceived, 'color' => 'primary', 'icon' => 'fa-download'],
-                            ['label' => 'Testing', 'count' => $samplesTesting, 'color' => 'warning', 'icon' => 'fa-flask'],
-                            ['label' => 'Reported', 'count' => $samplesReported, 'color' => 'success', 'icon' => 'fa-check-circle'],
+                            ['label' => 'Collected in Field', 'count' => $samplesCollected, 'color' => '#06b6d4', 'bg' => 'rgba(6, 182, 212, 0.1)', 'icon' => 'fa-clipboard-list'],
+                            ['label' => 'Received at Lab', 'count' => $samplesReceived, 'color' => '#3b82f6', 'bg' => 'rgba(59, 130, 246, 0.1)', 'icon' => 'fa-inbox'],
+                            ['label' => 'Testing in Progress', 'count' => $samplesTesting, 'color' => '#f59e0b', 'bg' => 'rgba(245, 158, 11, 0.1)', 'icon' => 'fa-flask'],
+                            ['label' => 'Reported & Completed', 'count' => $samplesReported, 'color' => '#10b981', 'bg' => 'rgba(16, 185, 129, 0.1)', 'icon' => 'fa-check-circle'],
                         ];
                     @endphp
                     @foreach($statuses as $s)
                         @php $pct = $totalSamples > 0 ? round(($s['count'] / $totalSamples) * 100) : 0; @endphp
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between mb-1">
-                                <span><i class="fas {{ $s['icon'] }} text-{{ $s['color'] }} mr-1"></i> {{ $s['label'] }}</span>
-                                <span class="font-weight-bold">{{ number_format($s['count']) }} <small class="text-muted">({{ $pct }}%)</small></span>
+                        <div class="mb-3 pb-2 {{ !$loop->last ? 'border-bottom' : '' }}">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="d-flex align-items-center">
+                                    <span class="d-inline-flex align-items-center justify-content-center rounded-circle mr-2" 
+                                          style="width: 28px; height: 28px; background: {{ $s['bg'] }}; color: {{ $s['color'] }};">
+                                        <i class="fas {{ $s['icon'] }}" style="font-size: 0.8rem;"></i>
+                                    </span>
+                                    <span class="font-weight-bold text-dark" style="font-size: 0.88rem;">{{ $s['label'] }}</span>
+                                </div>
+                                <div class="text-right">
+                                    <span class="font-weight-bold text-dark mr-1">{{ number_format($s['count']) }}</span>
+                                    <span class="badge badge-light border text-muted" style="font-size: 0.75rem;">{{ $pct }}%</span>
+                                </div>
                             </div>
-                            <div class="progress" style="height: 24px;">
-                                <div class="progress-bar bg-{{ $s['color'] }} progress-bar-striped" role="progressbar"
-                                    style="width: {{ $pct }}%" aria-valuenow="{{ $pct }}" aria-valuemin="0" aria-valuemax="100">
-                                    @if($pct > 8){{ $pct }}%@endif
+                            <div class="progress" style="height: 10px; background-color: #f1f5f9;">
+                                <div class="progress-bar" role="progressbar" 
+                                     style="width: {{ $pct }}%; background-color: {{ $s['color'] }}; transition: width 0.6s ease;" 
+                                     aria-valuenow="{{ $pct }}" aria-valuemin="0" aria-valuemax="100">
                                 </div>
                             </div>
                         </div>
@@ -108,22 +255,40 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="card border-0 shadow-sm rounded-lg h-100">
-                <div class="card-body py-3 border-bottom">
-                    <h6 class="mb-0"><i class="fas fa-chart-bar mr-2"></i>Monthly Trend (Last 6 Months)</h6>
+
+        {{-- Monthly Trend --}}
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header d-flex justify-content-between align-items-center py-3">
+                    <span class="font-weight-bold text-dark"><i class="fas fa-chart-bar text-primary mr-2"></i>Sample Inflow Trend (Last 6 Months)</span>
+                    <span class="badge badge-light border text-muted">Monthly Volume</span>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-4 d-flex flex-column justify-content-between">
                     @php $maxMonthly = max(max($monthlyCounts), 1); @endphp
-                    <div class="d-flex align-items-end" style="height: 200px; gap: 8px;">
+                    <div class="d-flex align-items-end justify-content-between" style="height: 180px; gap: 14px; padding-bottom: 8px;">
                         @foreach($monthlyCounts as $i => $count)
-                            @php $height = max(($count / $maxMonthly) * 170, 4); @endphp
-                            <div class="d-flex flex-column align-items-center flex-fill">
-                                <small class="mb-1 font-weight-bold text-{{ $count > 0 ? 'primary' : 'muted' }}">{{ $count }}</small>
-                                <div class="bg-gradient-primary w-100 rounded" style="height: {{ $height }}px; transition: height 0.3s;"></div>
-                                <small class="mt-1 text-muted" style="font-size: 10px;">{{ \Carbon\Carbon::parse($monthlyLabels[$i])->format('M') }}</small>
+                            @php 
+                                $height = max(($count / $maxMonthly) * 140, 8); 
+                                $isLatest = $i === (count($monthlyCounts) - 1);
+                            @endphp
+                            <div class="d-flex flex-column align-items-center flex-fill position-relative">
+                                <span class="mb-1 font-weight-bold {{ $count > 0 ? ($isLatest ? 'text-success' : 'text-primary') : 'text-muted' }}" 
+                                      style="font-size: 0.8rem;">
+                                    {{ $count }}
+                                </span>
+                                <div class="w-100 rounded-pill shadow-xs" 
+                                     style="height: {{ $height }}px; min-height: 8px; background: {{ $isLatest ? 'linear-gradient(180deg, #10b981 0%, #059669 100%)' : 'linear-gradient(180deg, #60a5fa 0%, #2563eb 100%)' }}; transition: all 0.4s ease;"
+                                     title="{{ \Carbon\Carbon::parse($monthlyLabels[$i])->format('F Y') }}: {{ $count }} samples">
+                                </div>
+                                <span class="mt-2 text-muted font-weight-medium" style="font-size: 0.75rem;">
+                                    {{ \Carbon\Carbon::parse($monthlyLabels[$i])->format('M') }}
+                                </span>
                             </div>
                         @endforeach
+                    </div>
+                    <div class="pt-3 border-top d-flex justify-content-between align-items-center text-muted small">
+                        <span><i class="fas fa-info-circle mr-1"></i> Bars depict total samples collected across all districts</span>
+                        <span class="badge badge-success px-2 py-1"><i class="fas fa-check mr-1"></i>Current Month</span>
                     </div>
                 </div>
             </div>
@@ -131,103 +296,76 @@
     </div>
 
     {{-- Lab-wise Performance --}}
-    <div class="row">
+    <div class="row mb-4">
         <div class="col-12">
-            <div class="card border-0 shadow-sm rounded-lg">
-                <div class="card-body py-3 border-bottom d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0"><i class="fas fa-microscope mr-2"></i>Lab-wise Performance</h6>
-                    <small class="text-muted">Active labs performance overview</small>
+            <div class="card border-0 shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center py-3">
+                    <div>
+                        <span class="font-weight-bold text-dark"><i class="fas fa-microscope text-info mr-2"></i>Laboratory Performance Metrics</span>
+                        <span class="text-muted small ml-2 d-none d-md-inline">&bull; Sample progress by testing facility</span>
+                    </div>
+                    <a href="{{ route('admin.labs') }}" class="btn btn-xs btn-outline-secondary rounded-pill px-3">
+                        Manage Labs <i class="fas fa-arrow-right ml-1"></i>
+                    </a>
                 </div>
-                <div class="card-body p-0">
+                <div class="card-body p-0 table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead class="thead-light">
+                        <thead>
                             <tr>
-                                <th>Lab</th>
-                                <th class="text-right">Samples</th>
-                                <th class="text-right">Collected</th>
-                                <th class="text-right">Received</th>
-                                <th class="text-right">Testing</th>
-                                <th class="text-right">Reported</th>
-                                <th class="text-right">Farmers</th>
-                                <th class="text-right">Users</th>
-                                <th>Report Rate</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($labStats as $lab)
-                                @php $reportPct = $lab->soil_samples_count > 0 ? round(($lab->reported_count / $lab->soil_samples_count) * 100) : 0; @endphp
-                                <tr>
-                                    <td class="font-weight-bold">{{ $lab->name }} <small class="text-muted">({{ $lab->code }})</small></td>
-                                    <td class="text-right">{{ number_format($lab->soil_samples_count) }}</td>
-                                    <td class="text-right">{{ number_format($lab->collected_count) }}</td>
-                                    <td class="text-right">{{ number_format($lab->received_count) }}</td>
-                                    <td class="text-right">{{ number_format($lab->testing_count) }}</td>
-                                    <td class="text-right">{{ number_format($lab->reported_count) }}</td>
-                                    <td class="text-right">{{ number_format($lab->farmers_count) }}</td>
-                                    <td class="text-right">{{ number_format($lab->users_count) }}</td>
-                                    <td>
-                                        <div class="progress" style="height: 18px;">
-                                            <div class="progress-bar bg-{{ $reportPct >= 80 ? 'success' : ($reportPct >= 50 ? 'warning' : 'danger') }}"
-                                                style="width: {{ $reportPct }}%">
-                                                {{ $reportPct }}%
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr><td colspan="9" class="text-center py-4 text-muted">No labs found.</td></tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- Zone-wise Sample Distribution --}}
-    <div class="row">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm rounded-lg">
-                <div class="card-body py-3 border-bottom d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0"><i class="fas fa-map-marked-alt mr-2"></i>Zone-wise Sample Distribution</h6>
-                    <small class="text-muted">Samples collected per zone</small>
-                </div>
-                <div class="card-body p-0">
-                    <table class="table table-hover mb-0">
-                        <thead class="thead-light">
-                            <tr>
-                                <th>Zone</th>
+                                <th>Laboratory</th>
                                 <th class="text-right">Total Samples</th>
                                 <th class="text-right">Collected</th>
                                 <th class="text-right">Received</th>
                                 <th class="text-right">Testing</th>
                                 <th class="text-right">Reported</th>
-                                <th class="text-right">Field Officials</th>
-                                <th>Completion</th>
+                                <th class="text-right">Farmers</th>
+                                <th class="text-right">Staff</th>
+                                <th style="min-width: 170px;">Completion Rate</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($zoneStats as $zone)
-                                @php $compPct = $zone->samples_count > 0 ? round(($zone->reported_count / $zone->samples_count) * 100) : 0; @endphp
+                            @forelse($labStats as $lab)
+                                @php 
+                                    $reportPct = $lab->soil_samples_count > 0 ? round(($lab->reported_count / $lab->soil_samples_count) * 100) : 0; 
+                                    $barColor = $reportPct >= 80 ? '#10b981' : ($reportPct >= 40 ? '#f59e0b' : '#3b82f6');
+                                @endphp
                                 <tr>
-                                    <td class="font-weight-bold">{{ $zone->name }}</td>
-                                    <td class="text-right">{{ number_format($zone->samples_count) }}</td>
-                                    <td class="text-right">{{ number_format($zone->collected_count) }}</td>
-                                    <td class="text-right">{{ number_format($zone->received_count) }}</td>
-                                    <td class="text-right">{{ number_format($zone->testing_count) }}</td>
-                                    <td class="text-right">{{ number_format($zone->reported_count) }}</td>
-                                    <td class="text-right">{{ number_format($zone->field_officials_count) }}</td>
                                     <td>
-                                        <div class="progress" style="height: 18px;">
-                                            <div class="progress-bar bg-{{ $compPct >= 80 ? 'success' : ($compPct >= 50 ? 'warning' : 'danger') }}"
-                                                style="width: {{ $compPct }}%">
-                                                {{ $compPct }}%
+                                        <div class="d-flex align-items-center">
+                                            <span class="d-inline-flex align-items-center justify-content-center rounded-circle mr-2" style="width:30px;height:30px;background:#e0f2fe;color:#0284c7;">
+                                                <i class="fas fa-flask" style="font-size:0.75rem;"></i>
+                                            </span>
+                                            <div>
+                                                <span class="font-weight-bold text-dark d-block">{{ $lab->name }}</span>
+                                                <span class="text-muted small">Code: {{ $lab->code }}</span>
                                             </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-right font-weight-bold">{{ number_format($lab->soil_samples_count) }}</td>
+                                    <td class="text-right text-muted">{{ number_format($lab->collected_count) }}</td>
+                                    <td class="text-right text-primary">{{ number_format($lab->received_count) }}</td>
+                                    <td class="text-right text-warning">{{ number_format($lab->testing_count) }}</td>
+                                    <td class="text-right text-success font-weight-bold">{{ number_format($lab->reported_count) }}</td>
+                                    <td class="text-right">{{ number_format($lab->farmers_count) }}</td>
+                                    <td class="text-right">{{ number_format($lab->users_count) }}</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="progress flex-fill mr-2" style="height: 10px; background-color: #f1f5f9;">
+                                                <div class="progress-bar" role="progressbar" 
+                                                     style="width: {{ $reportPct }}%; background-color: {{ $barColor }};">
+                                                </div>
+                                            </div>
+                                            <span class="font-weight-bold small text-muted" style="min-width: 36px;">{{ $reportPct }}%</span>
                                         </div>
                                     </td>
                                 </tr>
                             @empty
-                                <tr><td colspan="8" class="text-center py-4 text-muted">No zones found.</td></tr>
+                                <tr>
+                                    <td colspan="9" class="text-center py-4 text-muted">
+                                        <i class="fas fa-flask fa-2x mb-2 text-muted d-block opacity-50"></i>
+                                        No active laboratories found.
+                                    </td>
+                                </tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -236,94 +374,195 @@
         </div>
     </div>
 
-    {{-- Zone Target Overview --}}
-    @if($zoneTargets->count())
-    <div class="row">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm rounded-lg">
-                <div class="card-body py-3 border-bottom d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0"><i class="fas fa-bullseye text-success mr-2"></i>Zone Target Overview</h6>
-                    <small class="text-muted mr-3">
-                        <strong>{{ number_format($totalAchievedCount) }}</strong> / {{ number_format($totalTargetCount) }} achieved
-                        ({{ $totalTargetCount > 0 ? round(($totalAchievedCount / $totalTargetCount) * 100) : 0 }}%)
-                    </small>
+    {{-- Zone-wise Distribution & Zone Target Overview --}}
+    <div class="row mb-4">
+        {{-- Zone Distribution --}}
+        <div class="col-lg-6 mb-4 mb-lg-0">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header d-flex justify-content-between align-items-center py-3">
+                    <span class="font-weight-bold text-dark"><i class="fas fa-map-marked-alt text-warning mr-2"></i>Zone-wise Sample Distribution</span>
+                    <span class="text-muted small">By Geographic Zone</span>
                 </div>
-                <div class="card-body p-0">
+                <div class="card-body p-0 table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead class="thead-light">
+                        <thead>
                             <tr>
                                 <th>Zone</th>
-                                <th class="text-right">Target</th>
-                                <th class="text-right">Achieved</th>
-                                <th class="text-right">Collected</th>
-                                <th class="text-right">Left</th>
-                                <th style="min-width:200px">Progress</th>
+                                <th class="text-right">Total</th>
+                                <th class="text-right">Reported</th>
+                                <th class="text-right">Officials</th>
+                                <th style="min-width: 140px;">Completion</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($zoneTargets as $zt)
-                            @php
-                                $ach = $zt->achievedCount();
-                                $rem = $zt->remainingCount();
-                                $col = $zt->collectedCount();
-                                $pct = $zt->progressPercent();
-                                $barColor = $pct >= 80 ? 'success' : ($pct >= 50 ? 'warning' : 'danger');
-                            @endphp
-                            <tr>
-                                <td class="font-weight-bold">{{ $zt->zone->name ?? 'N/A' }}</td>
-                                <td class="text-right">{{ number_format($zt->target_count) }}</td>
-                                <td class="text-right">{{ number_format($ach) }}</td>
-                                <td class="text-right">{{ number_format($col) }}</td>
-                                <td class="text-right {{ $rem > 0 ? 'text-info font-weight-bold' : 'text-danger font-weight-bold' }}">{{ number_format($rem) }}</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="progress flex-fill" style="height:22px">
-                                            <div class="progress-bar bg-{{ $barColor }}" style="width:{{ $pct }}%">
-                                                {{ $pct }}%
+                            @forelse($zoneStats as $zone)
+                                @php 
+                                    $compPct = $zone->samples_count > 0 ? round(($zone->reported_count / $zone->samples_count) * 100) : 0; 
+                                    $barColor = $compPct >= 80 ? '#10b981' : ($compPct >= 40 ? '#f59e0b' : '#3b82f6');
+                                @endphp
+                                <tr>
+                                    <td class="font-weight-bold text-dark">
+                                        <i class="fas fa-map-pin text-muted mr-1"></i> {{ $zone->name }}
+                                    </td>
+                                    <td class="text-right font-weight-bold">{{ number_format($zone->samples_count) }}</td>
+                                    <td class="text-right text-success font-weight-bold">{{ number_format($zone->reported_count) }}</td>
+                                    <td class="text-right">{{ number_format($zone->field_officials_count) }}</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="progress flex-fill mr-2" style="height: 8px; background-color: #f1f5f9;">
+                                                <div class="progress-bar" style="width: {{ $compPct }}%; background-color: {{ $barColor }};"></div>
                                             </div>
+                                            <span class="small font-weight-bold text-muted">{{ $compPct }}%</span>
                                         </div>
-                                        <small class="ml-2 text-muted">{{ number_format($col) }} / {{ number_format($ach) }}</small>
-                                    </div>
-                                </td>
-                            </tr>
-                            @endforeach
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr><td colspan="5" class="text-center py-4 text-muted">No zones registered.</td></tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
+
+        {{-- Zone Target Overview --}}
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header d-flex justify-content-between align-items-center py-3">
+                    <div>
+                        <span class="font-weight-bold text-dark"><i class="fas fa-bullseye text-danger mr-2"></i>Zone Target Progress</span>
+                    </div>
+                    @if(isset($totalTargetCount) && $totalTargetCount > 0)
+                        <span class="badge badge-success px-3 py-1 font-weight-bold">
+                            {{ round(($totalAchievedCount / $totalTargetCount) * 100) }}% Achieved
+                        </span>
+                    @endif
+                </div>
+                <div class="card-body p-0 table-responsive">
+                    @if($zoneTargets->count())
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Zone</th>
+                                    <th class="text-right">Target</th>
+                                    <th class="text-right">Reported</th>
+                                    <th class="text-right">Pending</th>
+                                    <th style="min-width: 140px;">Target Pace</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($zoneTargets as $zt)
+                                    @php
+                                        $ach = $zt->achievedCount();
+                                        $rem = $zt->remainingCount();
+                                        $col = $zt->collectedCount();
+                                        $pct = $zt->progressPercent();
+                                        $barColor = $pct >= 80 ? '#10b981' : ($pct >= 50 ? '#f59e0b' : '#ef4444');
+                                    @endphp
+                                    <tr>
+                                        <td class="font-weight-bold text-dark">{{ $zt->zone->name ?? 'Zone' }}</td>
+                                        <td class="text-right font-weight-bold">{{ number_format($zt->target_count) }}</td>
+                                        <td class="text-right text-success font-weight-bold">{{ number_format($ach) }}</td>
+                                        <td class="text-right {{ $rem > 0 ? 'text-primary font-weight-bold' : 'text-muted' }}">{{ number_format($rem) }}</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="progress flex-fill mr-2" style="height: 8px; background-color: #f1f5f9;">
+                                                    <div class="progress-bar" style="width: {{ min($pct, 100) }}%; background-color: {{ $barColor }};"></div>
+                                                </div>
+                                                <span class="small font-weight-bold text-muted">{{ $pct }}%</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @else
+                        <div class="text-center py-5 text-muted">
+                            <i class="fas fa-bullseye fa-2x mb-2 text-muted opacity-50"></i>
+                            <p class="mb-0 small">No active zone targets set for the current period.</p>
+                            <a href="{{ route('admin.zone-targets') }}" class="btn btn-sm btn-outline-primary rounded-pill mt-2">
+                                <i class="fas fa-plus mr-1"></i> Set Zone Targets
+                            </a>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
     </div>
-    @endif
 
     {{-- Recent Samples --}}
     <div class="row">
         <div class="col-12">
-            <div class="card border-0 shadow-sm rounded-lg">
-                <div class="card-body py-3 border-bottom d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0"><i class="fas fa-history mr-2"></i>Recent Samples</h6>
-                    <a href="{{ route('samples.index') }}" class="btn btn-sm btn-outline-primary rounded-pill px-3 shadow-sm">View All <i class="fas fa-arrow-right ml-1"></i></a>
+            <div class="card border-0 shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center py-3">
+                    <span class="font-weight-bold text-dark"><i class="fas fa-history text-secondary mr-2"></i>Recently Registered Soil Samples</span>
+                    <a href="{{ route('samples.index') }}" class="btn btn-sm btn-outline-primary rounded-pill px-3 shadow-none">
+                        View All Samples <i class="fas fa-arrow-right ml-1"></i>
+                    </a>
                 </div>
-                <div class="card-body p-0">
+                <div class="card-body p-0 table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead class="thead-light">
-                            <tr><th>Code</th><th>Farmer</th><th>Lab</th><th>Zone</th><th>Status</th><th>Date</th></tr>
+                        <thead>
+                            <tr>
+                                <th>Sample Code</th>
+                                <th>Farmer Name</th>
+                                <th>Assigned Lab</th>
+                                <th>Zone / District</th>
+                                <th>Status</th>
+                                <th class="text-right">Collection Date</th>
+                            </tr>
                         </thead>
                         <tbody>
                             @forelse($recentSamples as $sample)
-                            <tr>
-                                <td class="font-weight-bold">{{ $sample->sample_code }}</td>
-                                <td>{{ $sample->farmer->name ?? '—' }}</td>
-                                <td>{{ $sample->lab->name ?? '—' }}</td>
-                                <td>{{ $sample->farmer->zone->name ?? '—' }}</td>
-                                <td>
-                                                    <span class="badge badge-{{ $sample->status->value == 'reported' ? 'success' : ($sample->status->value == 'testing' ? 'warning' : ($sample->status->value == 'received' ? 'primary' : 'info')) }} rounded-pill px-3 py-1">
-                                                        {{ $sample->status->label() }}
-                                                    </span>
-                                </td>
-                                <td>{{ $sample->created_at->format('d/m/Y') }}</td>
-                            </tr>
+                                <tr>
+                                    <td>
+                                        <span class="font-weight-bold text-dark font-monospace" style="letter-spacing: 0.03em;">
+                                            {{ $sample->sample_code }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="rounded-circle mr-2 d-flex align-items-center justify-content-center text-muted" style="width: 26px; height: 26px; background: #f1f5f9; font-size: 0.7rem;">
+                                                <i class="fas fa-user"></i>
+                                            </div>
+                                            <span class="text-dark font-weight-medium">{{ $sample->farmer->name ?? '—' }}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted small">
+                                            <i class="fas fa-flask mr-1 text-info"></i> {{ $sample->lab->name ?? '—' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted small">
+                                            <i class="fas fa-map-marker-alt mr-1 text-danger"></i> {{ $sample->farmer->zone->name ?? '—' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @php
+                                            $val = $sample->status->value ?? 'collected';
+                                            $badgeClass = match($val) {
+                                                'reported' => 'badge-success',
+                                                'testing' => 'badge-warning',
+                                                'received' => 'badge-primary',
+                                                default => 'badge-info',
+                                            };
+                                        @endphp
+                                        <span class="badge {{ $badgeClass }} px-3 py-1">
+                                            {{ $sample->status->label() }}
+                                        </span>
+                                    </td>
+                                    <td class="text-right text-muted small">
+                                        {{ $sample->created_at->format('d M Y') }}
+                                    </td>
+                                </tr>
                             @empty
-                            <tr><td colspan="6" class="text-center py-4 text-muted">No samples yet.</td></tr>
+                                <tr>
+                                    <td colspan="6" class="text-center py-4 text-muted">
+                                        <i class="fas fa-vial fa-2x mb-2 text-muted opacity-50 d-block"></i>
+                                        No recent samples registered yet.
+                                    </td>
+                                </tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -331,6 +570,4 @@
             </div>
         </div>
     </div>
-
-
 </div>
