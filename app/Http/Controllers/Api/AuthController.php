@@ -15,8 +15,17 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
+        $loginInput = $request->input('phone') 
+            ?? $request->input('login') 
+            ?? $request->input('email');
+
+        if (!$loginInput) {
+            throw ValidationException::withMessages([
+                'login' => 'Mobile number or email is required.',
+            ]);
+        }
+
         $request->validate([
-            'email' => 'required|email',
             'password' => 'required',
         ]);
 
@@ -25,14 +34,24 @@ class AuthController extends Controller
         if (RateLimiter::tooManyAttempts($key, 5)) {
             $seconds = RateLimiter::availableIn($key);
             throw ValidationException::withMessages([
-                'email' => 'Too many attempts. Try again in ' . ceil($seconds / 60) . ' min.',
+                'login' => 'Too many attempts. Try again in ' . ceil($seconds / 60) . ' min.',
             ]);
         }
 
-        if (!Auth::attempt($request->only('email', 'password'))) {
+        $fieldType = filter_var($loginInput, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+        $loginValue = $fieldType === 'phone' ? preg_replace('/[^0-9]/', '', (string)$loginInput) : $loginInput;
+
+        $attemptSuccess = Auth::attempt([$fieldType => $loginValue, 'password' => $request->password]);
+
+        if (!$attemptSuccess && $fieldType === 'phone' && strlen($loginValue) > 10) {
+            $last10 = substr($loginValue, -10);
+            $attemptSuccess = Auth::attempt([$fieldType => $last10, 'password' => $request->password]);
+        }
+
+        if (!$attemptSuccess) {
             RateLimiter::hit($key, 60);
             throw ValidationException::withMessages([
-                'email' => 'Invalid credentials.',
+                'login' => 'Invalid credentials.',
             ]);
         }
 
@@ -42,7 +61,7 @@ class AuthController extends Controller
             Auth::logout();
             RateLimiter::hit($key, 60);
             throw ValidationException::withMessages([
-                'email' => 'Your account has been deactivated.',
+                'login' => 'Your account has been deactivated.',
             ]);
         }
 
