@@ -39,23 +39,50 @@ class AuthController extends Controller
         }
 
         $fieldType = filter_var($loginInput, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
-        $loginValue = $fieldType === 'phone' ? preg_replace('/[^0-9]/', '', (string)$loginInput) : $loginInput;
+        $user = null;
 
-        $attemptSuccess = Auth::attempt([$fieldType => $loginValue, 'password' => $request->password]);
+        if ($fieldType === 'phone') {
+            $rawPhone = trim((string)$loginInput);
+            $digits = preg_replace('/[^0-9]/', '', $rawPhone);
+            $last10 = strlen($digits) >= 10 ? substr($digits, -10) : $digits;
 
-        if (!$attemptSuccess && $fieldType === 'phone' && strlen($loginValue) > 10) {
-            $last10 = substr($loginValue, -10);
-            $attemptSuccess = Auth::attempt([$fieldType => $last10, 'password' => $request->password]);
+            $user = \App\Models\User::where('phone', $rawPhone)
+                ->orWhere('phone', $digits)
+                ->orWhere('phone', '+91' . $last10)
+                ->orWhere('phone', '+91 ' . $last10)
+                ->orWhere('phone', '91' . $last10)
+                ->orWhere('phone', '0' . $last10)
+                ->orWhere('phone', $last10)
+                ->orWhere('phone', 'like', "%{$last10}")
+                ->first();
+
+            if (!$user && strlen($last10) === 10) {
+                $user = \App\Models\User::whereNotNull('phone')
+                    ->get()
+                    ->first(function ($u) use ($last10) {
+                        $dbDigits = preg_replace('/[^0-9]/', '', (string)$u->phone);
+                        return substr($dbDigits, -10) === $last10;
+                    });
+            }
+
+            if (!$user || !Hash::check($request->password, $user->password)) {
+                RateLimiter::hit($key, 60);
+                throw ValidationException::withMessages([
+                    'login' => 'Invalid credentials.',
+                ]);
+            }
+
+            Auth::login($user);
+        } else {
+            $email = trim((string)$loginInput);
+            if (!Auth::attempt(['email' => $email, 'password' => $request->password])) {
+                RateLimiter::hit($key, 60);
+                throw ValidationException::withMessages([
+                    'login' => 'Invalid credentials.',
+                ]);
+            }
+            $user = Auth::user();
         }
-
-        if (!$attemptSuccess) {
-            RateLimiter::hit($key, 60);
-            throw ValidationException::withMessages([
-                'login' => 'Invalid credentials.',
-            ]);
-        }
-
-        $user = Auth::user();
 
         if (!$user->is_active) {
             Auth::logout();

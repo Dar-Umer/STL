@@ -117,25 +117,25 @@ class UserManagement extends Component
             }
 
             $data = [
-                'name' => $this->name,
-                'email' => $this->email,
-                'phone' => $this->phone,
+                'name' => trim($this->name),
+                'email' => strtolower(trim($this->email)),
+                'phone' => $this->phone ? trim($this->phone) : null,
                 'is_active' => $this->is_active,
                 'lab_id' => $this->lab_id,
                 'zone_id' => $this->role === 'Field Official' ? $this->zone_id : null,
             ];
             if ($this->password) {
-                $data['password'] = bcrypt($this->password);
+                $data['password'] = $this->password;
             }
             $user->update($data);
             $user->syncRoles([$this->role]);
             session()->flash('success', 'User updated successfully.');
         } else {
             $user = User::create([
-                'name' => $this->name,
-                'email' => $this->email,
-                'password' => bcrypt($this->password),
-                'phone' => $this->phone,
+                'name' => trim($this->name),
+                'email' => strtolower(trim($this->email)),
+                'password' => $this->password,
+                'phone' => $this->phone ? trim($this->phone) : null,
                 'is_active' => $this->is_active,
                 'lab_id' => $this->lab_id,
                 'zone_id' => $this->role === 'Field Official' ? $this->zone_id : null,
