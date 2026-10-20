@@ -4,6 +4,7 @@ namespace App\Livewire\Lab;
 
 use App\Models\SoilSample;
 use App\Models\SampleStatusHistory;
+use App\Services\LabEvaluationService;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -156,11 +157,7 @@ class SampleQueue extends Component
 
     public function markReceived($sampleId)
     {
-        $sample = $this->pendingQuery()->findOrFail($sampleId);
-
-        $this->transitionToReceived($sample);
-
-        session()->flash('success', "{$sample->sample_code} received.");
+        $this->receiveMany([$sampleId]);
     }
 
     public function receiveAllPending()
@@ -169,48 +166,37 @@ class SampleQueue extends Component
 
         if (empty($ids)) return;
 
-        foreach (array_chunk($ids, 100) as $chunk) {
-            $this->receiveManyQuietly($chunk);
-        }
-
-        session()->flash('success', count($ids) . ' samples received successfully.');
+        $this->receiveMany($ids);
     }
 
     protected function receiveMany(array $ids): void
     {
-        $count = $this->receiveManyQuietly($ids);
+        $eligible = $this->pendingQuery()->whereIn('id', $ids)->pluck('id')->all();
 
-        if ($count > 0) {
-            session()->flash('success', "{$count} sample(s) received successfully.");
-        } else {
+        if (empty($eligible)) {
             session()->flash('warning', 'No eligible samples found (they may have been received already).');
-        }
-    }
-
-    protected function receiveManyQuietly(array $ids): int
-    {
-        $samples = $this->pendingQuery()->whereIn('id', $ids)->get();
-
-        foreach ($samples as $sample) {
-            $this->transitionToReceived($sample);
+            return;
         }
 
-        return $samples->count();
-    }
+        try {
+            $batch = LabEvaluationService::receiveSamplesIntoBatch(
+                $eligible,
+                auth()->user()->lab_id,
+                auth()->id()
+            );
 
-    protected function transitionToReceived(SoilSample $sample): void
-    {
-        $oldStatus = $sample->status->value;
-        $sample->update([
-            'status' => 'received',
-            'received_at' => now(),
-        ]);
-        SampleStatusHistory::create([
-            'soil_sample_id' => $sample->id,
-            'from_status' => $oldStatus,
-            'to_status' => 'received',
-            'changed_by' => auth()->id(),
-        ]);
+            session()->flash('receivedBatch', [
+                'id' => $batch->id,
+                'batch_code' => $batch->batch_code,
+                'from' => $batch->lab_number_from,
+                'to' => $batch->lab_number_to,
+                'count' => $batch->sample_count,
+            ]);
+
+            session()->flash('success', "{$batch->sample_count} sample(s) received successfully into Evaluation Batch {$batch->batch_code} (Lab Codes: {$batch->lab_number_from} to {$batch->lab_number_to}).");
+        } catch (\Exception $e) {
+            session()->flash('error', 'Error receiving samples: ' . $e->getMessage());
+        }
     }
 
     public function render()

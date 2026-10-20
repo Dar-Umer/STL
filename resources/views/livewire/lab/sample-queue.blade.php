@@ -1,4 +1,4 @@
-<div>
+<div class="space-y-6">
     <script src="https://unpkg.com/html5-qrcode" defer></script>
     <script>
     let beepCtx = null;
@@ -50,17 +50,15 @@
                 html5QrCode = null;
                 container.style.display = 'none';
                 scannerActive = false;
-                btn.classList.remove('btn-danger');
-                btn.classList.add('btn-outline-light');
-                btn.innerHTML = '<i class="fas fa-camera mr-1"></i> Camera';
+                btn.className = 'inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl transition';
+                btn.innerHTML = '<i class="fas fa-camera"></i> Camera';
                 refocusScanInput();
                 return;
             }
 
             container.style.display = 'block';
-            btn.classList.remove('btn-outline-light');
-            btn.classList.add('btn-danger');
-            btn.innerHTML = '<i class="fas fa-stop mr-1"></i> Stop';
+            btn.className = 'inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-xl transition';
+            btn.innerHTML = '<i class="fas fa-stop"></i> Stop';
 
             html5QrCode = new Html5Qrcode('qr-reader');
 
@@ -91,9 +89,8 @@
                 }
             ).catch((err) => {
                 container.style.display = 'none';
-                btn.classList.remove('btn-danger');
-                btn.classList.add('btn-outline-light');
-                btn.innerHTML = '<i class="fas fa-camera mr-1"></i> Camera';
+                btn.className = 'inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl transition';
+                btn.innerHTML = '<i class="fas fa-camera"></i> Camera';
                 scannerActive = false;
             });
 
@@ -107,297 +104,389 @@
     </script>
 
     {{-- Header --}}
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
-        <div>
-            <h4 class="mb-1 font-weight-bold text-dark"><i class="fas fa-inbox text-warning mr-2"></i>Receive Samples</h4>
-            <p class="text-muted mb-0 small">Scan QR codes, search, or tick rows to receive samples into the lab.</p>
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-gray-100">
+        <div class="flex items-center gap-3">
+            <span class="w-11 h-11 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-lg font-bold shadow-md shadow-amber-500/20">
+                <i class="fas fa-inbox"></i>
+            </span>
+            <div>
+                <h2 class="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">Receive Soil Samples</h2>
+                <p class="text-xs sm:text-sm text-gray-500 mt-0.5">Scan QR codes or bulk check-in samples entering laboratory intake</p>
+            </div>
         </div>
-        <div class="mt-2 mt-sm-0">
-            <a href="{{ route('lab.dashboard') }}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 mr-1">
-                <i class="fas fa-arrow-left mr-1"></i> Dashboard
+        <div class="flex items-center gap-2">
+            <a href="{{ route('lab.evaluations') }}"
+               class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 rounded-xl shadow-xs transition active:scale-[0.98]">
+                <i class="fas fa-clipboard-list text-emerald-600"></i>
+                <span>Evaluations & Lab Sheets</span>
             </a>
-            <button wire:click="$refresh" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
-                <i class="fas fa-sync-alt mr-1"></i> Refresh
+            <a href="{{ route('lab.dashboard') }}"
+               class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 rounded-xl shadow-xs transition active:scale-[0.98]">
+                <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                <span>Lab Overview</span>
+            </a>
+            <button wire:click="$refresh"
+                    class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 rounded-xl shadow-xs transition active:scale-[0.98]">
+                <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                <span>Refresh</span>
             </button>
         </div>
     </div>
 
-    {{-- Scanner Section --}}
-    <div class="card bg-gradient-dark text-white border-0 shadow-lg mb-4 rounded-lg overflow-hidden">
-        <div class="card-body p-4">
-            <div class="row align-items-center">
-                <div class="col-lg-8 mb-3 mb-lg-0">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="rounded-circle bg-white p-2 mr-3" style="width:42px;height:42px; display:flex;align-items:center;justify-content:center;">
-                            <i class="fas fa-qrcode text-dark fa-lg"></i>
-                        </div>
-                        <div>
-                            <h6 class="mb-0 font-weight-bold text-white">QR Code Scanner</h6>
-                            <small class="text-white-50">Scan or type a QR code to queue for receiving &mdash; duplicates are detected automatically</small>
-                        </div>
-                    </div>
-                    <form wire:submit.prevent="addScannedCode" id="scanForm">
-                        <div class="d-flex flex-wrap align-items-center gap-2">
-                            <div class="input-group input-group-sm" style="max-width:280px;">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text bg-white border-0"><i class="fas fa-camera text-muted"></i></span>
-                                </div>
-                                <input wire:model="scanInput" type="text" id="scanInput" class="form-control form-control-sm border-0" placeholder="Type or scan QR code..." autofocus autocomplete="off">
-                            </div>
-                            <button type="submit" class="btn btn-sm btn-light font-weight-bold px-3 rounded-pill">
-                                <i class="fas fa-plus mr-1"></i> Add
-                            </button>
-                            <button type="button" id="scannerToggleBtn" onclick="toggleScanner()" class="btn btn-sm btn-outline-light rounded-pill px-3">
-                                <i class="fas fa-camera mr-1"></i> Camera
-                            </button>
-                            <span class="badge badge-light badge-pill px-3 py-2 ml-auto">
-                                <i class="fas fa-layer-group mr-1 text-muted"></i> {{ count($scannedSamples) }} scanned
-                            </span>
-                        </div>
-                    </form>
-                    @error('scanInput')
-                        <div class="text-warning small mt-2"><i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</div>
-                    @enderror
+    @if(session('receivedBatch'))
+        <div class="p-5 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-transparent border border-emerald-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm animate-fade-in">
+            <div class="flex items-center gap-3.5">
+                <div class="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-xl font-bold shadow-lg shadow-emerald-600/30 flex-shrink-0">
+                    <i class="fas fa-clipboard-check"></i>
                 </div>
-                <div class="col-lg-4 text-lg-right">
-                    @if(count($scannedSamples) > 0)
-                        <button wire:click="receiveScanned" wire:confirm="Receive {{ count($scannedSamples) }} scanned sample(s)?" class="btn btn-success btn-sm px-4 rounded-pill mr-1 shadow-sm font-weight-bold">
-                            <i class="fas fa-check-double mr-1"></i> Receive {{ count($scannedSamples) }}
-                        </button>
-                        <button wire:click="clearScanned" class="btn btn-outline-light btn-sm rounded-pill px-3">
-                            <i class="fas fa-times mr-1"></i> Clear
-                        </button>
-                    @endif
+                <div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <h4 class="text-sm font-bold text-gray-900">Samples Received &bull; Evaluation Sheet Generated!</h4>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                            {{ session('receivedBatch')['batch_code'] }}
+                        </span>
+                    </div>
+                    <p class="text-xs text-gray-600 mt-0.5">
+                        Assigned sequential Lab Codes <span class="font-mono font-bold text-emerald-700 bg-white px-1.5 py-0.5 rounded border border-emerald-200">{{ session('receivedBatch')['from'] }}</span> to 
+                        <span class="font-mono font-bold text-emerald-700 bg-white px-1.5 py-0.5 rounded border border-emerald-200">{{ session('receivedBatch')['to'] }}</span> 
+                        ({{ session('receivedBatch')['count'] }} sample{{ session('receivedBatch')['count'] > 1 ? 's' : '' }}). Print worksheet below for lab bench analysis.
+                    </p>
                 </div>
             </div>
+            <div class="flex items-center gap-2 w-full md:w-auto">
+                <a href="{{ route('lab.evaluations.batch.pdf', session('receivedBatch')['id']) }}" target="_blank"
+                   class="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-md shadow-emerald-600/25 transition">
+                    <i class="fas fa-file-pdf"></i>
+                    <span>Print Evaluation Sheet</span>
+                </a>
+                <a href="{{ route('lab.evaluations') }}"
+                   class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 text-xs font-semibold transition">
+                    <span>View Evaluations</span>
+                    <i class="fas fa-arrow-right text-[10px]"></i>
+                </a>
+            </div>
+        </div>
+    @endif
 
-            <div wire:ignore id="qr-reader" style="display:none; max-width:280px; margin-top:12px; background:#fff; border-radius:8px; padding:8px;"></div>
+    {{-- Modern PTA Dark Scanner Hero Card --}}
+    <div class="bg-gray-900 rounded-2xl shadow-xl border border-gray-800 text-white p-6 relative overflow-hidden">
+        <div class="absolute -right-16 -top-16 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div class="flex-1 space-y-3">
+                <div class="flex items-center gap-3">
+                    <span class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-emerald-400 text-base">
+                        <i class="fas fa-qrcode"></i>
+                    </span>
+                    <div>
+                        <h3 class="text-base font-bold text-white">Rapid QR Code Intake Scanner</h3>
+                        <p class="text-xs text-gray-400">Scan container barcode or type sample code &mdash; duplicate protection enabled</p>
+                    </div>
+                </div>
+
+                <form wire:submit.prevent="addScannedCode" id="scanForm" class="flex flex-wrap items-center gap-2.5 pt-1">
+                    <div class="relative flex-1 min-w-[260px] max-w-md">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                            <i class="fas fa-barcode"></i>
+                        </div>
+                        <input wire:model="scanInput" type="text" id="scanInput"
+                               placeholder="Type or scan QR code string..." autofocus autocomplete="off"
+                               class="w-full rounded-xl border border-gray-700 bg-gray-800/90 pl-9 pr-4 py-2.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:bg-gray-800 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition">
+                    </div>
+
+                    <button type="submit"
+                            class="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold text-gray-900 bg-white hover:bg-gray-100 rounded-xl shadow-xs transition active:scale-[0.98]">
+                        <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                        <span>Add</span>
+                    </button>
+
+                    <button type="button" id="scannerToggleBtn" onclick="toggleScanner()"
+                            class="inline-flex items-center gap-1.5 px-3.5 py-2.5 text-xs font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl transition active:scale-[0.98]">
+                        <i class="fas fa-camera"></i>
+                        <span>Camera</span>
+                    </button>
+
+                    <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-gray-800 border border-gray-700 text-gray-300 ml-auto">
+                        <i class="fas fa-layer-group text-emerald-400 text-[10px]"></i>
+                        {{ count($scannedSamples) }} staged
+                    </span>
+                </form>
+
+                @error('scanInput')
+                    <p class="text-xs font-medium text-amber-400 flex items-center gap-1.5">
+                        <i class="fas fa-circle-exclamation"></i>
+                        <span>{{ $message }}</span>
+                    </p>
+                @enderror
+            </div>
 
             @if(count($scannedSamples) > 0)
-                <div class="mt-3 d-flex flex-wrap align-items-center rounded p-2" style="background:rgba(255,255,255,.08);">
-                    <small class="text-white-50 mr-2 font-weight-bold text-uppercase" style="letter-spacing:.05em;">Queue:</small>
-                    @foreach($scannedSamples as $idx => $item)
-                        <span wire:key="chip-{{ $item['id'] }}" class="badge badge-light mr-1 mb-1 d-inline-flex align-items-center px-3 py-2 text-dark shadow-sm rounded-pill">
-                            <i class="fas fa-check-circle text-success mr-1"></i>
-                            <span class="font-weight-bold">{{ $item['sample_code'] }}</span>
-                            <span class="mx-1 text-muted">&middot;</span>
-                            <span>{{ Str::limit($item['farmer'], 18) }}</span>
-                            <button type="button" class="close ml-2 text-dark" style="font-size:14px;line-height:1;opacity:.5;" wire:click="removeScannedSample({{ $idx }})" title="Remove">&times;</button>
-                        </span>
-                    @endforeach
+                <div class="flex items-center gap-2">
+                    <button wire:click="receiveScanned" wire:confirm="Receive {{ count($scannedSamples) }} scanned sample(s)?"
+                            class="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 rounded-xl shadow-lg shadow-emerald-600/30 transition active:scale-[0.98]">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        <span>Commit Intake ({{ count($scannedSamples) }})</span>
+                    </button>
+                    <button wire:click="clearScanned"
+                            class="inline-flex items-center gap-1.5 px-3.5 py-2.5 text-xs font-medium text-gray-400 hover:text-white bg-gray-800 hover:bg-gray-700 rounded-xl border border-gray-700 transition">
+                        <span>Clear</span>
+                    </button>
                 </div>
             @endif
         </div>
+
+        {{-- Camera preview container --}}
+        <div wire:ignore id="qr-reader" style="display:none; max-width:280px; margin-top:16px; background:#fff; border-radius:12px; padding:8px;"></div>
+
+        {{-- Staged Scanned Chips --}}
+        @if(count($scannedSamples) > 0)
+            <div class="mt-4 pt-4 border-t border-gray-800 flex flex-wrap items-center gap-2">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-gray-400 mr-1">Staged for Intake:</span>
+                @foreach($scannedSamples as $idx => $item)
+                    <span wire:key="chip-{{ $item['id'] }}"
+                          class="inline-flex items-center gap-2 px-3 py-1 bg-gray-800 border border-gray-700 rounded-full text-xs text-white">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                        <strong class="font-mono text-emerald-300">{{ $item['sample_code'] }}</strong>
+                        <span class="text-gray-400">&middot;</span>
+                        <span class="text-gray-300 truncate max-w-[140px]">{{ $item['farmer'] }}</span>
+                        <button type="button" wire:click="removeScannedSample({{ $idx }})" class="text-gray-400 hover:text-rose-400 ml-1 transition" title="Remove">
+                            <i class="fas fa-times text-[10px]"></i>
+                        </button>
+                    </span>
+                @endforeach
+            </div>
+        @endif
     </div>
 
     {{-- Stats Row --}}
-    <div class="row mb-4">
-        <div class="col-md-4 mb-3 mb-md-0">
-            <div class="d-flex align-items-center p-3 h-100 rounded-lg" style="background:rgba(255,193,7,.08);">
-                <div class="rounded-circle bg-warning d-flex align-items-center justify-content-center mr-3 shadow-sm" style="width:48px;height:48px;">
-                    <i class="fas fa-inbox text-white"></i>
-                </div>
-                <div>
-                    <span class="d-block text-muted small text-uppercase" style="letter-spacing:.05em;">Pending Receipt</span>
-                    <span class="h4 mb-0 font-weight-bold">{{ $stats['toReceive'] }}</span>
-                    <small class="text-muted ml-1">
-                        (<i class="fas fa-tractor mr-1"></i>{{ $stats['fieldPending'] }}
-                        <i class="fas fa-hand-holding mx-1"></i>{{ $stats['selfPending'] }})
-                    </small>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-3 mb-md-0">
-            <div class="d-flex align-items-center p-3 h-100 rounded-lg" style="background:rgba(40,167,69,.08);">
-                <div class="rounded-circle bg-success d-flex align-items-center justify-content-center mr-3 shadow-sm" style="width:48px;height:48px;">
-                    <i class="fas fa-check-double text-white"></i>
-                </div>
-                <div>
-                    <span class="d-block text-muted small text-uppercase" style="letter-spacing:.05em;">Received Today</span>
-                    <span class="h4 mb-0 font-weight-bold">{{ $stats['receivedToday'] }}</span>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <a href="{{ route('lab.testing-list') }}" class="text-decoration-none">
-                <div class="d-flex align-items-center p-3 h-100 rounded-lg" style="background:rgba(220,53,69,.08);">
-                    <div class="rounded-circle bg-danger d-flex align-items-center justify-content-center mr-3 shadow-sm" style="width:48px;height:48px;">
-                        <i class="fas fa-flask text-white"></i>
-                    </div>
-                    <div>
-                        <span class="d-block text-muted small text-uppercase" style="letter-spacing:.05em;">Testing</span>
-                        <span class="h5 mb-0 font-weight-bold text-danger"><i class="fas fa-arrow-right mr-1"></i> Go to Testing</span>
-                    </div>
-                </div>
-            </a>
-        </div>
-    </div>
-
-    {{-- Table Card --}}
-    <div class="card shadow-sm border-0 rounded-lg">
-        <div class="card-body p-4">
-
-            {{-- Filters + Receive All --}}
-            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-                <div class="d-flex flex-wrap align-items-center gap-2">
-                    {{-- Search --}}
-                    <div class="input-group input-group-sm" style="max-width:280px;">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text bg-light border-0 rounded-pill-left"><i class="fas fa-search text-muted"></i></span>
-                        </div>
-                        <input wire:model.live.debounce.400ms="search" type="text" class="form-control form-control-sm bg-light border-0" placeholder="Search sample code or farmer..." style="border-radius:0 50px 50px 0;">
-                    </div>
-                    {{-- Source pills --}}
-                    <div class="btn-group btn-group-toggle btn-group-sm" data-toggle="buttons">
-                        <button type="button" class="btn {{ $sourceFilter === '' ? 'btn-dark' : 'btn-outline-secondary' }} rounded-pill px-3" wire:click="$set('sourceFilter', '')">
-                            All
-                        </button>
-                        <button type="button" class="btn {{ $sourceFilter === 'field' ? 'btn-dark' : 'btn-outline-secondary' }} rounded-pill px-3" wire:click="$set('sourceFilter', 'field')">
-                            <i class="fas fa-tractor mr-1"></i>Field ({{ $stats['fieldPending'] }})
-                        </button>
-                        <button type="button" class="btn {{ $sourceFilter === 'self' ? 'btn-dark' : 'btn-outline-secondary' }} rounded-pill px-3" wire:click="$set('sourceFilter', 'self')">
-                            <i class="fas fa-hand-holding mr-1"></i>Self ({{ $stats['selfPending'] }})
-                        </button>
-                    </div>
-                </div>
-                <div class="d-flex align-items-center gap-2 mt-2 mt-sm-0">
-                    <select wire:model.live="sort" class="custom-select custom-select-sm border-0 bg-light rounded-pill px-3" style="width:auto;">
-                        <option value="desc">Newest first</option>
-                        <option value="asc">Oldest first</option>
-                    </select>
-                    @if($stats['toReceive'] > 0)
-                        <button wire:click="receiveAllPending" wire:confirm="Receive ALL {{ $stats['toReceive'] }} pending samples? This cannot be undone." class="btn btn-sm btn-success rounded-pill px-4 shadow-sm font-weight-bold">
-                            <i class="fas fa-check-double mr-1"></i> Receive All ({{ $stats['toReceive'] }})
-                        </button>
-                    @endif
-                </div>
-            </div>
-
-            {{-- Bulk action bar --}}
-            @if(count($selected) > 0)
-                <div class="alert alert-primary d-flex flex-wrap justify-content-between align-items-center py-2 px-3 rounded-lg mb-3">
-                    <span class="font-weight-bold"><i class="fas fa-tasks mr-1"></i> {{ count($selected) }} sample(s) selected</span>
-                    <span>
-                        <button wire:click="receiveSelected" wire:confirm="Receive {{ count($selected) }} selected sample(s)?" class="btn btn-sm btn-success rounded-pill px-3 mr-1 font-weight-bold">
-                            <i class="fas fa-check-double mr-1"></i> Receive Selected
-                        </button>
-                        <button wire:click="$set('selected', [])" class="btn btn-sm btn-outline-secondary rounded-pill px-3">Clear</button>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-white rounded-2xl shadow-xs border border-gray-100 p-5 flex items-center gap-4">
+            <span class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg flex-shrink-0">
+                <i class="fas fa-inbox"></i>
+            </span>
+            <div>
+                <p class="text-xs font-semibold uppercase tracking-wider text-gray-500">Pending Receipt</p>
+                <div class="flex items-baseline gap-2 mt-0.5">
+                    <span class="text-2xl font-bold text-gray-900">{{ number_format($stats['toReceive']) }}</span>
+                    <span class="text-[11px] text-gray-400">
+                        ({{ $stats['fieldPending'] }} Field &middot; {{ $stats['selfPending'] }} Self)
                     </span>
                 </div>
-            @endif
+            </div>
+        </div>
 
-            {{-- Table --}}
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="thead-light">
-                        <tr class="small text-uppercase text-muted">
-                            <th class="border-top-0 font-weight-bold py-3" style="width:36px;">
-                                <input type="checkbox"
-                                       {{ !empty($pageIds) && count(array_intersect($pageIds, $selected)) === count($pageIds) ? 'checked' : '' }}
-                                       wire:click="toggleSelectAll"
-                                       title="Select all on this page">
-                            </th>
-                            <th class="border-top-0 font-weight-bold py-3">Sample Code</th>
-                            <th class="border-top-0 font-weight-bold py-3">QR Code</th>
-                            <th class="border-top-0 font-weight-bold py-3">Farmer</th>
-                            <th class="border-top-0 font-weight-bold py-3">Location</th>
-                            <th class="border-top-0 font-weight-bold py-3">Plot</th>
-                            <th class="border-top-0 font-weight-bold py-3">Waiting</th>
-                            <th class="border-top-0 font-weight-bold py-3">Source</th>
-                            <th class="border-top-0 font-weight-bold py-3 text-center">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($samples as $sample)
+        <div class="bg-white rounded-2xl shadow-xs border border-gray-100 p-5 flex items-center gap-4">
+            <span class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg flex-shrink-0">
+                <i class="fas fa-circle-check"></i>
+            </span>
+            <div>
+                <p class="text-xs font-semibold uppercase tracking-wider text-gray-500">Received Today</p>
+                <div class="flex items-baseline gap-2 mt-0.5">
+                    <span class="text-2xl font-bold text-gray-900">{{ number_format($stats['receivedToday']) }}</span>
+                    <span class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">Checked In</span>
+                </div>
+            </div>
+        </div>
+
+        <a href="{{ route('lab.testing-list') }}" class="bg-gradient-to-br from-blue-50/50 via-white to-blue-50/30 rounded-2xl shadow-xs hover:shadow-md border border-blue-100 p-5 flex items-center justify-between group transition-all duration-200 hover:-translate-y-0.5">
+            <div class="flex items-center gap-4">
+                <span class="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-lg flex-shrink-0 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-flask"></i>
+                </span>
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-blue-700">Testing Workbench</p>
+                    <p class="text-sm font-bold text-gray-900 mt-0.5">Enter Test Results &rarr;</p>
+                </div>
+            </div>
+            <svg class="w-5 h-5 text-blue-400 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </a>
+    </div>
+
+    {{-- Intake Queue Table Card --}}
+    <div class="bg-white rounded-2xl shadow-xs border border-gray-100 overflow-hidden">
+        {{-- Filters & Bulk Action Header --}}
+        <div class="p-4 sm:p-5 border-b border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="flex flex-wrap items-center gap-3">
+                <div class="relative w-full sm:w-64">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+                    </div>
+                    <input wire:model.live.debounce.400ms="search" type="text" placeholder="Search code or farmer..."
+                           class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-9 pr-3 py-2 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition">
+                </div>
+
+                {{-- Segmented Source Filter --}}
+                <div class="inline-flex rounded-xl bg-gray-100 p-1 border border-gray-200 text-xs">
+                    <button type="button" wire:click="$set('sourceFilter', '')"
+                            class="px-3 py-1 rounded-lg font-semibold transition {{ $sourceFilter === '' ? 'bg-white text-gray-900 shadow-xs' : 'text-gray-500 hover:text-gray-900' }}">
+                        All ({{ $stats['toReceive'] }})
+                    </button>
+                    <button type="button" wire:click="$set('sourceFilter', 'field')"
+                            class="px-3 py-1 rounded-lg font-semibold transition {{ $sourceFilter === 'field' ? 'bg-white text-gray-900 shadow-xs' : 'text-gray-500 hover:text-gray-900' }}">
+                        <i class="fas fa-tractor mr-1 text-[10px]"></i> Field ({{ $stats['fieldPending'] }})
+                    </button>
+                    <button type="button" wire:click="$set('sourceFilter', 'self')"
+                            class="px-3 py-1 rounded-lg font-semibold transition {{ $sourceFilter === 'self' ? 'bg-white text-gray-900 shadow-xs' : 'text-gray-500 hover:text-gray-900' }}">
+                        <i class="fas fa-hand-holding mr-1 text-[10px]"></i> Self ({{ $stats['selfPending'] }})
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <select wire:model.live="sort"
+                        class="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-xs text-gray-900 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition">
+                    <option value="desc">Newest First</option>
+                    <option value="asc">Oldest First</option>
+                </select>
+
+                @if($stats['toReceive'] > 0)
+                    <button wire:click="receiveAllPending" wire:confirm="Receive ALL {{ $stats['toReceive'] }} pending samples? This cannot be undone."
+                            class="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-xs shadow-emerald-600/20 transition active:scale-[0.98]">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        <span>Receive All ({{ $stats['toReceive'] }})</span>
+                    </button>
+                @endif
+            </div>
+        </div>
+
+        {{-- Bulk Selection Alert Bar --}}
+        @if(count($selected) > 0)
+            <div class="bg-emerald-50 border-y border-emerald-200 px-6 py-3 flex flex-wrap items-center justify-between gap-3 animate-fade-in">
+                <div class="flex items-center gap-2 text-xs font-bold text-emerald-900">
+                    <span class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[11px]">
+                        {{ count($selected) }}
+                    </span>
+                    <span>samples selected from this view</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button wire:click="receiveSelected" wire:confirm="Receive {{ count($selected) }} selected sample(s)?"
+                            class="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-xs transition active:scale-[0.98]">
+                        <i class="fas fa-check-double text-[11px]"></i>
+                        <span>Receive Selected</span>
+                    </button>
+                    <button wire:click="$set('selected', [])"
+                            class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 bg-white border border-gray-200 rounded-xl transition">
+                        Clear
+                    </button>
+                </div>
+            </div>
+        @endif
+
+        {{-- Queue Table --}}
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left">
+                <thead class="bg-gray-50/80 border-b border-gray-100">
+                    <tr>
+                        <th class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-500 w-10">
+                            <input type="checkbox"
+                                   {{ !empty($pageIds) && count(array_intersect($pageIds, $selected)) === count($pageIds) ? 'checked' : '' }}
+                                   wire:click="toggleSelectAll"
+                                   class="rounded text-emerald-600 focus:ring-emerald-500 border-gray-300"
+                                   title="Select all on this page">
+                        </th>
+                        <th class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-500">Sample Code</th>
+                        <th class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-500">QR Code</th>
+                        <th class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-500">Beneficiary</th>
+                        <th class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-500">Location</th>
+                        <th class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-500">Plot</th>
+                        <th class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-500">Waiting</th>
+                        <th class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-500">Source</th>
+                        <th class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-500 text-right">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    @forelse($samples as $sample)
                         @php
                             $waitDays = (int) ($sample->collected_at ?? $sample->created_at)->diffInDays(now());
                             $isOverdue = $waitDays >= $overdueDays;
                         @endphp
-                        <tr wire:key="row-{{ $sample->id }}" class="border-bottom {{ $isOverdue ? 'table-warning' : '' }}">
-                            <td class="py-3">
-                                <input type="checkbox" value="{{ $sample->id }}" wire:model="selected">
+                        <tr wire:key="row-{{ $sample->id }}" class="hover:bg-gray-50/60 transition {{ $isOverdue ? 'bg-amber-50/20' : '' }}">
+                            <td class="px-6 py-4">
+                                <input type="checkbox" value="{{ $sample->id }}" wire:model="selected"
+                                       class="rounded text-emerald-600 focus:ring-emerald-500 border-gray-300">
                             </td>
-                            <td class="py-3">
-                                <span class="font-weight-bold text-dark">{{ $sample->sample_code }}</span>
-                                <br><small class="text-muted">#{{ $sample->id }}</small>
+                            <td class="px-6 py-4">
+                                <span class="font-mono font-bold text-gray-900">{{ $sample->sample_code }}</span>
+                                <span class="block text-[11px] text-gray-400">#{{ $sample->id }}</span>
                             </td>
-                            <td class="py-3">
-                                <code class="px-2 py-1 bg-light rounded small">{{ $sample->qr_code_path ?? $sample->qrCode?->code ?? '—' }}</code>
+                            <td class="px-6 py-4">
+                                <code class="px-2 py-0.5 bg-gray-100 rounded text-xs font-mono text-gray-700">
+                                    {{ $sample->qr_code_path ?? $sample->qrCode?->code ?? '—' }}
+                                </code>
                             </td>
-                            <td class="py-3">
-                                <span class="font-weight-bold">{{ $sample->farmer->name ?? '—' }}</span>
+                            <td class="px-6 py-4">
+                                <span class="font-semibold text-gray-900 block">{{ $sample->farmer->name ?? '—' }}</span>
                                 @if($sample->farmer?->phone)
-                                <br><small class="text-muted">{{ $sample->farmer->phone }}</small>
+                                    <span class="text-xs text-gray-400 font-mono">{{ $sample->farmer->phone }}</span>
                                 @endif
                             </td>
-                            <td class="py-3 text-muted small">
-                                {{ $sample->farmer->village?->name ?? '—' }}
+                            <td class="px-6 py-4 text-xs text-gray-600">
+                                <div>{{ $sample->farmer->village?->name ?? '—' }}</div>
                                 @if($sample->farmer?->district)
-                                <br><small>{{ $sample->farmer->district->name }} / {{ $sample->farmer->state?->name ?? '' }}</small>
+                                    <div class="text-[11px] text-gray-400">{{ $sample->farmer->district->name }} / {{ $sample->farmer->state?->name ?? '' }}</div>
                                 @endif
                             </td>
-                            <td class="py-3 small">{{ $sample->plot->plot_name ?? '—' }}</td>
-                            <td class="py-3">
-                                <span class="badge badge-pill px-2 py-1 {{ $isOverdue ? 'badge-danger' : 'badge-light text-muted border' }}"
-                                      title="{{ $sample->collected_at?->format('d M Y, h:i A') ?? $sample->created_at->format('d M Y, h:i A') }}">
-                                    <i class="fas {{ $isOverdue ? 'fa-exclamation-triangle' : 'fa-clock' }} mr-1"></i>{{ $waitDays }} {{ Str::plural('Day', $waitDays) }}
-                                </span>
-                                <br><small class="text-muted">{{ ($sample->collected_at ?? $sample->created_at)->format('d M') }}</small>
+                            <td class="px-6 py-4 text-xs text-gray-500">
+                                {{ $sample->plot->plot_name ?? '—' }}
                             </td>
-                            <td class="py-3">
-                                @if($sample->source === 'self')
-                                <span class="badge badge-pill badge-info px-3 py-1"><i class="fas fa-hand-holding mr-1"></i>Self</span>
+                            <td class="px-6 py-4">
+                                @if($isOverdue)
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                                        <i class="fas fa-triangle-exclamation text-[10px]"></i>
+                                        {{ $waitDays }} {{ Str::plural('Day', $waitDays) }}
+                                    </span>
                                 @else
-                                <span class="badge badge-pill badge-secondary px-3 py-1"><i class="fas fa-tractor mr-1"></i>Field</span>
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">
+                                        <i class="fas fa-clock text-[10px] text-gray-400"></i>
+                                        {{ $waitDays }} {{ Str::plural('Day', $waitDays) }}
+                                    </span>
+                                @endif
+                                <span class="block text-[11px] text-gray-400 mt-0.5">{{ ($sample->collected_at ?? $sample->created_at)->format('d M') }}</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                @if($sample->source === 'self')
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-cyan-50 text-cyan-700 border border-cyan-200">
+                                        <i class="fas fa-hand-holding text-[10px]"></i>
+                                        Self
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200">
+                                        <i class="fas fa-tractor text-[10px]"></i>
+                                        Field
+                                    </span>
                                 @endif
                             </td>
-                            <td class="py-3 text-center">
-                                <button wire:click="markReceived({{ $sample->id }})" class="btn btn-sm btn-success rounded-pill px-3 shadow-sm font-weight-bold">
-                                    <i class="fas fa-check mr-1"></i> Receive
+                            <td class="px-6 py-4 text-right">
+                                <button wire:click="markReceived({{ $sample->id }})"
+                                        class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-xs shadow-emerald-600/20 transition active:scale-[0.98]">
+                                    <i class="fas fa-check text-[10px]"></i>
+                                    <span>Receive</span>
                                 </button>
                             </td>
                         </tr>
-                        @empty
+                    @empty
                         <tr>
-                            <td colspan="9" class="text-center py-5">
-                                <div class="py-4">
-                                    <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center mb-3" style="width:64px;height:64px;">
-                                        <i class="fas fa-inbox fa-2x text-muted"></i>
-                                    </div>
-                                    <h5 class="text-muted font-weight-normal mb-1">
-                                        {{ $search || $sourceFilter ? 'No samples match your filters' : 'No samples to receive' }}
-                                    </h5>
-                                    <p class="text-muted small mb-0">
-                                        @if($search || $sourceFilter)
-                                            Try clearing the search or switching the source filter.
-                                        @else
-                                            All samples have been received into the lab.
-                                        @endif
-                                    </p>
-                                </div>
+                            <td colspan="9" class="px-6 py-12 text-center text-gray-400">
+                                <span class="w-12 h-12 rounded-2xl bg-gray-100 text-gray-400 flex items-center justify-center mx-auto text-xl mb-3">
+                                    <i class="fas fa-inbox"></i>
+                                </span>
+                                <h4 class="text-sm font-semibold text-gray-700">
+                                    {{ $search || $sourceFilter ? 'No samples match your filters' : 'Queue is clear — no pending intake' }}
+                                </h4>
+                                <p class="text-xs text-gray-400 mt-1">
+                                    {{ $search || $sourceFilter ? 'Try clearing search or changing the source pill filter.' : 'All collected samples have been received into the laboratory.' }}
+                                </p>
                             </td>
                         </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-
-            {{-- Pagination --}}
-            <div class="mt-4 d-flex flex-wrap justify-content-between align-items-center">
-                <small class="text-muted mb-2 mb-sm-0">
-                    <i class="fas fa-file mr-1"></i> Page {{ $samples->currentPage() }} &middot;
-                    {{ $samples->firstItem() ?? 0 }}–{{ $samples->lastItem() ?? 0 }} of {{ $samples->total() }}
-                </small>
-                <div>{{ $samples->links() }}</div>
-            </div>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
-    </div>
 
-    <style>
-        .bg-gradient-dark { background: linear-gradient(135deg, #2d3436 0%, #1a1a2e 100%); }
-        .rounded-pill-left { border-radius: 50px 0 0 50px !important; }
-        .align-middle td, .align-middle th { vertical-align: middle !important; }
-        .table th { border-top: 0; }
-        .gap-2 { gap: .5rem; }
-    </style>
+        {{-- Pagination --}}
+        @if($samples->hasPages())
+        <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50">
+            {{ $samples->links() }}
+        </div>
+        @endif
+    </div>
 </div>

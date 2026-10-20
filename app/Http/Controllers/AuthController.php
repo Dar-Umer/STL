@@ -33,7 +33,8 @@ class AuthController extends Controller
 
     protected function throttleKey(Request $request): string
     {
-        return Str::lower($request->input('email')) . '|' . $request->ip();
+        $login = Str::lower($request->input('login', $request->input('email', '')));
+        return $login . '|' . $request->ip();
     }
 
     protected function remainingAttempts(Request $request): int
@@ -45,8 +46,11 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => 'required|email',
+        $loginInput = trim((string) $request->input('login', $request->input('email', '')));
+        $request->merge(['login' => $loginInput]);
+
+        $request->validate([
+            'login' => 'required|string',
             'password' => 'required',
         ]);
 
@@ -61,22 +65,59 @@ class AuthController extends Controller
                 'remoteip' => $request->ip(),
             ]);
             if (!($response->json()['success'] ?? false)) {
-                return back()->withErrors(['g-recaptcha-response' => 'reCAPTCHA verification failed. Please try again.'])->onlyInput('email');
+                return back()->withErrors(['g-recaptcha-response' => 'reCAPTCHA verification failed. Please try again.'])->onlyInput('login');
             }
         }
 
         if ($limiter->tooManyAttempts($key, 5)) {
             $seconds = $limiter->availableIn($key);
             return back()->withErrors([
-                'email' => 'Too many login attempts. Please try again in ' . ceil($seconds / 60) . ' minute(s).',
-            ])->onlyInput('email');
+                'login' => 'Too many login attempts. Please try again in ' . ceil($seconds / 60) . ' minute(s).',
+            ])->onlyInput('login');
         }
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+        $password = $request->input('password');
+        $remember = $request->boolean('remember');
+        $user = null;
+
+        if (str_contains($loginInput, '@')) {
+            if (Auth::attempt(['email' => $loginInput, 'password' => $password], $remember)) {
+                $user = Auth::user();
+            }
+        } else {
+            $digits = preg_replace('/[^0-9]/', '', $loginInput);
+            $last10 = strlen($digits) >= 10 ? substr($digits, -10) : $digits;
+
+            $candidates = array_unique(array_filter([
+                $loginInput,
+                $digits,
+                $last10,
+                '+91' . $last10,
+                '+91 ' . $last10,
+                '91' . $last10,
+                '0' . $last10,
+            ]));
+
+            $candidateUsers = \App\Models\User::where(function ($q) use ($candidates, $last10) {
+                $q->whereIn('phone', $candidates);
+                if (strlen($last10) === 10) {
+                    $q->orWhere('phone', 'LIKE', '%' . $last10);
+                }
+            })->get();
+
+            foreach ($candidateUsers as $u) {
+                if (\Illuminate\Support\Facades\Hash::check($password, $u->password)) {
+                    $user = $u;
+                    Auth::login($u, $remember);
+                    break;
+                }
+            }
+        }
+
+        if ($user) {
             $limiter->clear($key);
             $request->session()->regenerate();
 
-            $user = Auth::user();
             AuditLogger::logLogin($user);
             if ($user->hasRole('Admin')) {
                 return redirect()->route('admin.dashboard');
@@ -102,8 +143,9 @@ class AuthController extends Controller
         }
 
         return back()->withErrors([
+            'login' => $msg,
             'email' => $msg,
-        ])->onlyInput('email');
+        ])->onlyInput('login');
     }
 
     public function logout(Request $request)

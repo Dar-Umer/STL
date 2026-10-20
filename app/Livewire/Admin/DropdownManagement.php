@@ -57,13 +57,13 @@ class DropdownManagement extends Component
             'soil_colors' => SoilColor::class,
             'crops' => Crop::class,
         };
-        $modelClass::updateOrCreate(['id' => $this->itemId], ['name' => $this->name]);
-        session()->flash('success', 'Saved.');
-        $this->reset();
+        $modelClass::updateOrCreate(['id' => $this->itemId], ['name' => trim($this->name)]);
+        session()->flash('success', 'Saved successfully.');
+        $this->reset(['itemId', 'name', 'showForm']);
     }
 
     public function cancel()
     {
-        $this->reset();
+        $this->reset(['itemId', 'name', 'showForm']);
     }
 }

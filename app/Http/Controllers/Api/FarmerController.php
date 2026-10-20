@@ -95,9 +95,9 @@ class FarmerController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'phone' => 'required|string|digits:10|regex:/^[6789]/unique:farmers,phone',
+            'phone' => ['required', 'string', 'digits:10', 'regex:/^[6789]/', 'unique:farmers,phone'],
             'parentage' => 'required|string|max:255',
-            'aadhar_no' => 'required|string|digits:12',
+            'aadhar_no' => ['required', 'string', 'digits:12', 'unique:farmers,aadhar_no'],
             'state_id' => 'required|exists:locations,id',
             'district_id' => 'required|exists:locations,id',
             'zone_id' => 'nullable|exists:locations,id',

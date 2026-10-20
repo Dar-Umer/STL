@@ -3,150 +3,152 @@
     $roleName = $user->getRoleNames()->first() ?? 'User';
 @endphp
 
-<div class="container-fluid py-2">
+<div class="space-y-6">
     {{-- Header --}}
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h4 class="mb-1 font-weight-bold" style="color: #0f172a;">
-                <i class="fas fa-id-card text-success mr-2"></i>My Profile
-            </h4>
-            <p class="text-muted small mb-0">Manage your account credentials, contact information, and password.</p>
+            <h1 class="text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-2.5">
+                <span class="w-2.5 h-6 rounded-full bg-emerald-500"></span>
+                User Account &amp; Profile Settings
+            </h1>
+            <p class="text-xs text-gray-500 mt-1 font-medium">Manage your personal details, operational contacts, and authentication security</p>
         </div>
     </div>
 
     @if(session('success'))
-    <div class="alert alert-success border-0 shadow-sm rounded-lg d-flex align-items-center mb-4">
-        <i class="fas fa-check-circle fa-lg mr-3 text-success"></i>
-        <div class="flex-grow-1">
-            <span class="font-weight-medium">{{ session('success') }}</span>
+    <div class="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl flex items-center justify-between text-sm shadow-xs">
+        <div class="flex items-center gap-2.5">
+            <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            <span>{{ session('success') }}</span>
         </div>
-        <button type="button" class="close text-success" data-dismiss="alert">&times;</button>
     </div>
     @endif
 
-    <div class="row">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {{-- Left: User Overview Card --}}
-        <div class="col-lg-4 mb-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body text-center p-4">
-                    <div class="mx-auto mb-3 d-flex align-items-center justify-content-center rounded-circle shadow-sm" 
-                         style="width: 88px; height: 88px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-size: 2.2rem; font-weight: 700;">
-                        {{ strtoupper(substr($user->name, 0, 1)) }}
-                    </div>
-                    
-                    <h5 class="font-weight-bold text-dark mb-1">{{ $user->name }}</h5>
-                    <p class="text-muted small mb-2">{{ $user->email }}</p>
-                    
-                    <div class="mb-3">
-                        <span class="badge badge-success px-3 py-1 font-weight-bold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em;">
-                            {{ $roleName }}
-                        </span>
-                        @if($user->is_active)
-                            <span class="badge badge-light border text-success ml-1">
-                                <i class="fas fa-circle mr-1" style="font-size: 0.55rem;"></i> Active
-                            </span>
-                        @endif
+        <div class="lg:col-span-4">
+            <div class="bg-white rounded-2xl shadow-xs border border-gray-100 p-6 flex flex-col items-center text-center">
+                <div class="w-24 h-24 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 text-white flex items-center justify-center font-bold text-3xl shadow-sm mb-4">
+                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                </div>
+
+                <h2 class="text-lg font-bold text-gray-900">{{ $user->name }}</h2>
+                <p class="text-xs text-gray-400 mt-0.5">{{ $user->email }}</p>
+
+                <div class="mt-3 flex items-center gap-2">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100 uppercase tracking-wider">
+                        {{ $roleName }}
+                    </span>
+                    @if($user->is_active)
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-gray-50 text-emerald-700 border border-emerald-100">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        Active
+                    </span>
+                    @endif
+                </div>
+
+                <div class="w-full border-t border-gray-100 mt-6 pt-5 space-y-3 text-left text-xs">
+                    <div class="flex items-center justify-between py-1 border-b border-gray-50">
+                        <span class="text-gray-400 font-medium">Contact Phone</span>
+                        <span class="font-semibold text-gray-800">{{ $user->phone ?: 'Not provided' }}</span>
                     </div>
 
-                    <div class="border-top pt-3 text-left">
-                        <div class="d-flex justify-content-between py-2 border-bottom">
-                            <span class="text-muted small"><i class="fas fa-phone mr-2 text-secondary"></i> Phone</span>
-                            <span class="font-weight-medium small text-dark">{{ $user->phone ?: 'Not provided' }}</span>
-                        </div>
-                        @if($user->lab)
-                        <div class="d-flex justify-content-between py-2 border-bottom">
-                            <span class="text-muted small"><i class="fas fa-flask mr-2 text-info"></i> Assigned Lab</span>
-                            <span class="font-weight-medium small text-dark">{{ $user->lab->name }}</span>
-                        </div>
-                        @endif
-                        @if($user->zone)
-                        <div class="d-flex justify-content-between py-2 border-bottom">
-                            <span class="text-muted small"><i class="fas fa-map-marker-alt mr-2 text-danger"></i> Zone</span>
-                            <span class="font-weight-medium small text-dark">{{ $user->zone->name }}</span>
-                        </div>
-                        @endif
-                        <div class="d-flex justify-content-between py-2">
-                            <span class="text-muted small"><i class="fas fa-calendar-alt mr-2 text-primary"></i> Joined</span>
-                            <span class="font-weight-medium small text-dark">{{ $user->created_at?->format('d M Y') ?? '—' }}</span>
-                        </div>
+                    @if($user->lab)
+                    <div class="flex items-center justify-between py-1 border-b border-gray-50">
+                        <span class="text-gray-400 font-medium">Assigned Lab</span>
+                        <span class="font-semibold text-gray-800">{{ $user->lab->name }}</span>
+                    </div>
+                    @endif
+
+                    @if($user->zone)
+                    <div class="flex items-center justify-between py-1 border-b border-gray-50">
+                        <span class="text-gray-400 font-medium">Jurisdiction</span>
+                        <span class="font-semibold text-gray-800">{{ $user->zone->name }}</span>
+                    </div>
+                    @endif
+
+                    <div class="flex items-center justify-between py-1">
+                        <span class="text-gray-400 font-medium">Joined System</span>
+                        <span class="font-semibold text-gray-800">{{ $user->created_at?->format('d M Y') ?? '—' }}</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        {{-- Right: Profile Edit Form --}}
-        <div class="col-lg-8">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white py-3 border-bottom">
-                    <h6 class="mb-0 font-weight-bold text-dark">
-                        <i class="fas fa-user-edit mr-2 text-primary"></i>Edit Profile Details
-                    </h6>
+        {{-- Right: Edit Profile Form Card --}}
+        <div class="lg:col-span-8">
+            <div class="bg-white rounded-2xl shadow-xs border border-gray-100 overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-gray-50/70 to-white">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                        </div>
+                        <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wider">Account Credentials &amp; Credentials</h2>
+                    </div>
                 </div>
-                <div class="card-body p-4">
-                    <form wire:submit="save">
-                        {{-- Personal Information --}}
-                        <div class="mb-4">
-                            <h6 class="text-uppercase text-muted font-weight-bold mb-3" style="font-size: 0.72rem; letter-spacing: 0.05em;">
-                                Personal Information
-                            </h6>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="small font-weight-bold text-dark">Full Name <span class="text-danger">*</span></label>
-                                    <input wire:model="name" type="text" class="form-control rounded-pill @error('name') is-invalid @enderror" placeholder="Enter your full name">
-                                    @error('name') <small class="text-danger font-weight-medium">{{ $message }}</small> @enderror
+
+                <form wire:submit="save" class="p-6 space-y-6">
+                    {{-- Personal Information Section --}}
+                    <div>
+                        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Personal Details</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">Full Name <span class="text-rose-500">*</span></label>
+                                <input wire:model="name" type="text" placeholder="Enter your full name" class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition @error('name') border-rose-300 ring-2 ring-rose-100 @enderror">
+                                @error('name') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">Email Address</label>
+                                <input wire:model="email" type="email" disabled class="w-full rounded-xl border border-gray-200 bg-gray-100 px-4 py-2.5 text-sm text-gray-500 cursor-not-allowed">
+                                <p class="text-[11px] text-gray-400 mt-1">Email is locked for audit identity reasons.</p>
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">Phone Number</label>
+                                <input wire:model="phone" type="text" placeholder="e.g. +91 9876543210" class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition @error('phone') border-rose-300 ring-2 ring-rose-100 @enderror">
+                                @error('phone') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Security & Password Section --}}
+                    <div class="border-t border-gray-100 pt-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Change Password</h3>
+                            <span class="text-[11px] text-gray-400">Leave blank if keeping existing password</span>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">Current Password</label>
+                                <input wire:model="currentPassword" type="password" placeholder="Verify current credentials" class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition @error('currentPassword') border-rose-300 ring-2 ring-rose-100 @enderror">
+                                @error('currentPassword') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">New Password</label>
+                                    <input wire:model="newPassword" type="password" placeholder="Min. 8 characters" class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition @error('newPassword') border-rose-300 ring-2 ring-rose-100 @enderror">
+                                    @error('newPassword') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="small font-weight-bold text-dark">Email Address</label>
-                                    <input wire:model="email" type="email" class="form-control rounded-pill bg-light" disabled>
-                                    <small class="text-muted" style="font-size: 0.72rem;">Email address cannot be modified directly.</small>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="small font-weight-bold text-dark">Phone Number</label>
-                                    <input wire:model="phone" type="text" class="form-control rounded-pill @error('phone') is-invalid @enderror" placeholder="e.g. +91 9876543210">
-                                    @error('phone') <small class="text-danger font-weight-medium">{{ $message }}</small> @enderror
+
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">Confirm New Password</label>
+                                    <input wire:model="newPasswordConfirmation" type="password" placeholder="Repeat new password" class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition">
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <hr class="border-light my-4">
-
-                        {{-- Security / Change Password --}}
-                        <div class="mb-4">
-                            <div class="d-flex align-items-center justify-content-between mb-3">
-                                <h6 class="text-uppercase text-muted font-weight-bold mb-0" style="font-size: 0.72rem; letter-spacing: 0.05em;">
-                                    Security & Password
-                                </h6>
-                                <span class="badge badge-light border text-muted">Leave blank to keep unchanged</span>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12 mb-3">
-                                    <label class="small font-weight-bold text-dark">Current Password</label>
-                                    <input wire:model="currentPassword" type="password" class="form-control rounded-pill @error('currentPassword') is-invalid @enderror" placeholder="Enter your current password">
-                                    @error('currentPassword') <small class="text-danger font-weight-medium">{{ $message }}</small> @enderror
-                                    <small class="text-muted d-block" style="font-size: 0.72rem;">Required only when changing your password.</small>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="small font-weight-bold text-dark">New Password</label>
-                                    <input wire:model="newPassword" type="password" class="form-control rounded-pill @error('newPassword') is-invalid @enderror" placeholder="Min. 8 characters">
-                                    @error('newPassword') <small class="text-danger font-weight-medium">{{ $message }}</small> @enderror
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="small font-weight-bold text-dark">Confirm New Password</label>
-                                    <input wire:model="newPasswordConfirmation" type="password" class="form-control rounded-pill" placeholder="Repeat new password">
-                                </div>
-                            </div>
-                        </div>
-
-                        {{-- Action Buttons --}}
-                        <div class="d-flex align-items-center justify-content-end pt-3 border-top">
-                            <button type="submit" wire:loading.attr="disabled" class="btn btn-primary rounded-pill px-4 shadow-sm">
-                                <i class="fas fa-save mr-1" wire:loading.remove wire:target="save"></i>
-                                <i class="fas fa-spinner fa-spin mr-1" wire:loading wire:target="save"></i>
-                                <span>Save Changes</span>
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                    <div class="border-t border-gray-100 pt-5 flex items-center justify-end">
+                        <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm rounded-xl shadow-xs shadow-emerald-600/20 transition active:scale-[0.98]" wire:loading.attr="disabled" wire:target="save">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" wire:loading.remove wire:target="save"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24" wire:loading wire:target="save"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+                            <span>Save Profile Changes</span>
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

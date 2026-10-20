@@ -1,569 +1,655 @@
-<div wire:poll.60s="refresh">
-    {{-- Dashboard Header --}}
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-2 border-bottom">
-        <div class="mb-3 mb-md-0">
-            <div class="d-flex align-items-center">
-                <span class="d-inline-flex align-items-center justify-content-center rounded-circle mr-3 shadow-sm" 
-                      style="width: 44px; height: 44px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #fff;">
-                    <i class="fas fa-tachometer-alt fa-lg"></i>
-                </span>
-                <div>
-                    <h3 class="mb-0 font-weight-bold" style="letter-spacing: -0.02em; color: #0f172a;">Admin Dashboard</h3>
-                    <p class="text-muted small mb-0">System performance, sample lifecycle analytics & district lab operations</p>
-                </div>
-            </div>
+<div wire:poll.60s="refresh" class="space-y-6">
+@php
+    $totalLabs = $totalLabs ?? 0;
+    $totalUsers = $totalUsers ?? 0;
+    $totalFarmers = $totalFarmers ?? 0;
+    $totalSamples = $totalSamples ?? 0;
+    $samplesCollected = $samplesCollected ?? 0;
+    $samplesReceived = $samplesReceived ?? 0;
+    $samplesTesting = $samplesTesting ?? 0;
+    $samplesReported = $samplesReported ?? 0;
+    $queueCount = $queueCount ?? 0;
+    $samplesThisMonth = $samplesThisMonth ?? 0;
+    $samplesLastMonth = $samplesLastMonth ?? 0;
+    $monthlyLabels = !empty($monthlyLabels) ? $monthlyLabels : ['M1', 'M2', 'M3', 'M4', 'M5', 'M6'];
+    $monthlyCounts = !empty($monthlyCounts) ? $monthlyCounts : [0, 0, 0, 0, 0, 0];
+    $adminCount = $adminCount ?? 0;
+    $labManagerCount = $labManagerCount ?? 0;
+    $fieldOfficialCount = $fieldOfficialCount ?? 0;
+    $labTechnicianCount = $labTechnicianCount ?? 0;
+    $farmerCount = $farmerCount ?? 0;
+    $totalTargetCount = $totalTargetCount ?? 0;
+    $totalAchievedCount = $totalAchievedCount ?? 0;
+    $labStats = $labStats ?? collect();
+    $zoneTargets = $zoneTargets ?? collect();
+    $recentSamples = $recentSamples ?? collect();
+@endphp
+
+    {{-- Welcome Header (PTA Style) --}}
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+            <h2 class="text-2xl font-bold text-gray-900 tracking-tight">
+                Welcome back, {{ auth()->user()->name }}!
+            </h2>
+            <p class="text-sm text-gray-500 mt-0.5">
+                Here's the real-time operational health and sample lifecycle analytics across your soil testing network.
+            </p>
         </div>
-        <div class="d-flex align-items-center">
-            <button wire:click="refresh" wire:loading.attr="disabled" class="btn btn-sm btn-white border rounded-pill px-3 shadow-sm font-weight-medium text-secondary">
-                <i class="fas fa-sync-alt mr-1" wire:loading.class="fa-spin" wire:target="refresh"></i> Refresh
+        <div class="flex items-center gap-2 self-start sm:self-auto">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100 shadow-2xs">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                Live Syncing
+            </span>
+            <button wire:click="refresh"
+                    wire:loading.attr="disabled"
+                    type="button"
+                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 shadow-2xs transition active:scale-95 cursor-pointer">
+                <svg wire:loading.class="animate-spin text-emerald-600" class="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                </svg>
+                <span>Refresh</span>
             </button>
         </div>
     </div>
 
-    {{-- System Overview KPIs --}}
-    <div class="row mb-4">
-        {{-- Labs --}}
-        <div class="col-xl-2 col-lg-4 col-sm-6 mb-3">
-            <div class="card card-hover border-0 shadow-sm h-100">
-                <div class="card-body p-3 d-flex align-items-center">
-                    <div class="d-flex align-items-center justify-content-center rounded-lg mr-3 shadow-sm" 
-                         style="width: 50px; height: 50px; min-width: 50px; border-radius: 12px; background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: #fff;">
-                        <i class="fas fa-flask fa-lg"></i>
-                    </div>
-                    <div class="overflow-hidden">
-                        <span class="d-block text-muted text-uppercase font-weight-bold" style="font-size: 0.7rem; letter-spacing: 0.06em;">Laboratories</span>
-                        <h4 class="mb-0 font-weight-bold text-dark" style="letter-spacing: -0.02em;">{{ number_format($totalLabs) }}</h4>
-                        <span class="text-muted small" style="font-size: 0.75rem;">Active Testing Centers</span>
-                    </div>
+    {{-- Row 1: KPI Cards Grid (6 Columns - PTA Style) --}}
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        {{-- Card 1: Total Samples --}}
+        <a href="{{ route('samples.index') }}"
+           class="group bg-white rounded-2xl shadow-xs hover:shadow-lg border border-gray-100 hover:border-blue-200 p-5 transition-all duration-200 hover:-translate-y-1 block">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold uppercase tracking-wider text-gray-400 group-hover:text-blue-600 transition-colors">Samples</span>
+                <div class="w-9 h-9 bg-blue-50/80 text-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 group-hover:bg-blue-100 transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+                    </svg>
                 </div>
             </div>
+            <p class="text-3xl font-bold text-gray-900 tracking-tight">{{ number_format($totalSamples) }}</p>
+            <div class="flex items-center gap-1.5 mt-1.5 text-xs text-gray-500">
+                <span class="inline-block w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                <span>{{ number_format($samplesThisMonth) }} this month</span>
+            </div>
+        </a>
+
+        {{-- Card 2: Completed Tests --}}
+        <a href="{{ route('samples.index') }}"
+           class="group bg-white rounded-2xl shadow-xs hover:shadow-lg border border-gray-100 hover:border-emerald-200 p-5 transition-all duration-200 hover:-translate-y-1 block">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold uppercase tracking-wider text-gray-400 group-hover:text-emerald-600 transition-colors">Completed</span>
+                <div class="w-9 h-9 bg-emerald-50/80 text-emerald-600 rounded-xl flex items-center justify-center group-hover:scale-110 group-hover:bg-emerald-100 transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+            </div>
+            <p class="text-3xl font-bold text-gray-900 tracking-tight">{{ number_format($samplesReported) }}</p>
+            <div class="flex items-center gap-1.5 mt-1.5 text-xs text-gray-500">
+                <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span>{{ $totalSamples > 0 ? round(($samplesReported / $totalSamples) * 100) : 0 }}% completed</span>
+            </div>
+        </a>
+
+        {{-- Card 3: Laboratories --}}
+        <a href="{{ route('admin.labs') }}"
+           class="group bg-white rounded-2xl shadow-xs hover:shadow-lg border border-gray-100 hover:border-cyan-200 p-5 transition-all duration-200 hover:-translate-y-1 block">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold uppercase tracking-wider text-gray-400 group-hover:text-cyan-600 transition-colors">Labs</span>
+                <div class="w-9 h-9 bg-cyan-50/80 text-cyan-600 rounded-xl flex items-center justify-center group-hover:scale-110 group-hover:bg-cyan-100 transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.942A4.5 4.5 0 0115.888 17H8.112a4.5 4.5 0 01-2.342-.758L4.2 15.3m15.6 0A2.25 2.25 0 0021 13.368V7.5a2.25 2.25 0 00-2.25-2.25h-1.5M4.2 15.3A2.25 2.25 0 013 13.368V7.5a2.25 2.25 0 012.25-2.25h1.5"/>
+                    </svg>
+                </div>
+            </div>
+            <p class="text-3xl font-bold text-gray-900 tracking-tight">{{ number_format($totalLabs) }}</p>
+            <div class="flex items-center gap-1.5 mt-1.5 text-xs text-gray-500">
+                <span class="inline-block w-1.5 h-1.5 rounded-full bg-cyan-500"></span>
+                <span>Testing centers</span>
+            </div>
+        </a>
+
+        {{-- Card 4: Farmers --}}
+        <a href="{{ route('admin.farmers') }}"
+           class="group bg-white rounded-2xl shadow-xs hover:shadow-lg border border-gray-100 hover:border-amber-200 p-5 transition-all duration-200 hover:-translate-y-1 block">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold uppercase tracking-wider text-gray-400 group-hover:text-amber-600 transition-colors">Farmers</span>
+                <div class="w-9 h-9 bg-amber-50/80 text-amber-600 rounded-xl flex items-center justify-center group-hover:scale-110 group-hover:bg-amber-100 transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
+                    </svg>
+                </div>
+            </div>
+            <p class="text-3xl font-bold text-gray-900 tracking-tight">{{ number_format($totalFarmers) }}</p>
+            <div class="flex items-center gap-1.5 mt-1.5 text-xs text-gray-500">
+                <span class="inline-block w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                <span>Enrolled growers</span>
+            </div>
+        </a>
+
+        {{-- Card 5: Field Staff --}}
+        <a href="{{ route('admin.users') }}"
+           class="group bg-white rounded-2xl shadow-xs hover:shadow-lg border border-gray-100 hover:border-indigo-200 p-5 transition-all duration-200 hover:-translate-y-1 block">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold uppercase tracking-wider text-gray-400 group-hover:text-indigo-600 transition-colors">Staff</span>
+                <div class="w-9 h-9 bg-indigo-50/80 text-indigo-600 rounded-xl flex items-center justify-center group-hover:scale-110 group-hover:bg-indigo-100 transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.999-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/>
+                    </svg>
+                </div>
+            </div>
+            <p class="text-3xl font-bold text-gray-900 tracking-tight">{{ number_format($totalUsers) }}</p>
+            <div class="flex items-center gap-1.5 mt-1.5 text-xs text-gray-500">
+                <span class="inline-block w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                <span>{{ $fieldOfficialCount }} in field</span>
+            </div>
+        </a>
+
+        {{-- Card 6: In Queue --}}
+        <a href="{{ route('lab.queue') }}"
+           class="group bg-white rounded-2xl shadow-xs hover:shadow-lg border border-gray-100 hover:border-rose-200 p-5 transition-all duration-200 hover:-translate-y-1 block">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold uppercase tracking-wider text-gray-400 group-hover:text-rose-600 transition-colors">Queue</span>
+                <div class="w-9 h-9 bg-rose-50/80 text-rose-600 rounded-xl flex items-center justify-center group-hover:scale-110 group-hover:bg-rose-100 transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+            </div>
+            <p class="text-3xl font-bold text-gray-900 tracking-tight">{{ number_format($queueCount) }}</p>
+            <div class="flex items-center gap-1.5 mt-1.5 text-xs text-gray-500">
+                <span class="inline-block w-1.5 h-1.5 rounded-full {{ $queueCount > 0 ? 'bg-rose-500' : 'bg-gray-300' }}"></span>
+                <span>{{ $samplesTesting }} in testing</span>
+            </div>
+        </a>
+    </div>
+
+    {{-- Row 2: Operational Pipeline Attention Alert Cards (PTA Style) --}}
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {{-- Alert 1: Pending Lab Intake --}}
+        <a href="{{ route('lab.queue') }}"
+           class="group bg-white rounded-2xl shadow-xs hover:shadow-md border border-gray-100 p-5 transition-all duration-200 hover:border-rose-300 hover:-translate-y-0.5 block">
+            <div class="flex items-center justify-between">
+                <span class="text-sm font-semibold text-gray-700">Samples Awaiting Lab Intake</span>
+                <span class="w-2.5 h-2.5 rounded-full {{ $samplesCollected > 0 ? 'bg-rose-500 animate-ping' : 'bg-gray-300' }}"></span>
+            </div>
+            <p class="text-3xl font-bold {{ $samplesCollected > 0 ? 'text-rose-600' : 'text-gray-900' }} mt-2">
+                {{ number_format($samplesCollected) }}
+            </p>
+            <p class="text-xs text-gray-400 mt-1 font-medium">Field collected &bull; awaiting lab receipt check-in</p>
+        </a>
+
+        {{-- Alert 2: Testing In Progress --}}
+        <a href="{{ route('lab.testing-list') }}"
+           class="group bg-white rounded-2xl shadow-xs hover:shadow-md border border-gray-100 p-5 transition-all duration-200 hover:border-amber-300 hover:-translate-y-0.5 block">
+            <div class="flex items-center justify-between">
+                <span class="text-sm font-semibold text-gray-700">Testing on Workbench</span>
+                <span class="w-2.5 h-2.5 rounded-full {{ $samplesTesting > 0 ? 'bg-amber-500' : 'bg-gray-300' }}"></span>
+            </div>
+            <p class="text-3xl font-bold {{ $samplesTesting > 0 ? 'text-amber-600' : 'text-gray-900' }} mt-2">
+                {{ number_format($samplesTesting) }}
+            </p>
+            <p class="text-xs text-gray-400 mt-1 font-medium">Chemical &amp; physical parameter analysis ongoing</p>
+        </a>
+
+        {{-- Alert 3: Seasonal Target Attainment --}}
+        <a href="{{ route('admin.zone-targets') }}"
+           class="group bg-white rounded-2xl shadow-xs hover:shadow-md border border-gray-100 p-5 transition-all duration-200 hover:border-emerald-300 hover:-translate-y-0.5 block">
+            <div class="flex items-center justify-between">
+                <span class="text-sm font-semibold text-gray-700">Seasonal Target Attainment</span>
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+            </div>
+            @php $targetRate = $totalTargetCount > 0 ? round(($totalAchievedCount / $totalTargetCount) * 100) : 0; @endphp
+            <p class="text-3xl font-bold text-emerald-600 mt-2">
+                {{ $targetRate }}%
+            </p>
+            <p class="text-xs text-gray-400 mt-1 font-medium">
+                {{ number_format($totalAchievedCount) }} achieved of {{ number_format($totalTargetCount) }} targeted tests
+            </p>
+        </a>
+    </div>
+
+    {{-- Row 3: Output Snapshot Gradient Cards (PTA Style) --}}
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {{-- Card 1: Monthly Intake --}}
+        <div class="bg-gradient-to-br from-emerald-50/70 via-white to-emerald-50/30 rounded-2xl shadow-xs border border-emerald-100/80 p-6 relative overflow-hidden group hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
+            <div class="flex items-center justify-between">
+                <p class="text-xs font-bold uppercase tracking-wider text-emerald-700">Samples This Month</p>
+                <span class="p-1.5 bg-emerald-100/70 text-emerald-700 rounded-lg text-xs font-semibold">Active Cycle</span>
+            </div>
+            <p class="text-3xl font-bold text-gray-900 mt-3 tracking-tight">{{ number_format($samplesThisMonth) }}</p>
+            <p class="text-xs text-emerald-600/90 mt-1.5 font-medium">Enrolled in {{ now()->format('F Y') }}</p>
         </div>
 
-        {{-- Users --}}
-        <div class="col-xl-2 col-lg-4 col-sm-6 mb-3">
-            <div class="card card-hover border-0 shadow-sm h-100">
-                <div class="card-body p-3 d-flex align-items-center">
-                    <div class="d-flex align-items-center justify-content-center rounded-lg mr-3 shadow-sm" 
-                         style="width: 50px; height: 50px; min-width: 50px; border-radius: 12px; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: #fff;">
-                        <i class="fas fa-users-cog fa-lg"></i>
-                    </div>
-                    <div class="overflow-hidden">
-                        <span class="d-block text-muted text-uppercase font-weight-bold" style="font-size: 0.7rem; letter-spacing: 0.06em;">Staff & Admins</span>
-                        <h4 class="mb-0 font-weight-bold text-dark" style="letter-spacing: -0.02em;">{{ number_format($totalUsers) }}</h4>
-                        <span class="text-muted small" style="font-size: 0.75rem;">Registered Accounts</span>
-                    </div>
-                </div>
+        {{-- Card 2: Total Completed Reports --}}
+        <a href="{{ route('samples.index') }}"
+           class="bg-gradient-to-br from-blue-50/70 via-white to-blue-50/30 rounded-2xl shadow-xs border border-blue-100/80 p-6 relative overflow-hidden group hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 block">
+            <div class="flex items-center justify-between">
+                <p class="text-xs font-bold uppercase tracking-wider text-blue-700">Reported &amp; Dispatched</p>
+                <span class="p-1.5 bg-blue-100/70 text-blue-700 rounded-lg text-xs font-semibold">Ready</span>
             </div>
-        </div>
+            <p class="text-3xl font-bold text-gray-900 mt-3 tracking-tight">{{ number_format($samplesReported) }}</p>
+            <p class="text-xs text-blue-600/90 mt-1.5 font-medium">Certified soil fertility health cards</p>
+        </a>
 
-        {{-- Farmers --}}
-        <div class="col-xl-2 col-lg-4 col-sm-6 mb-3">
-            <div class="card card-hover border-0 shadow-sm h-100">
-                <div class="card-body p-3 d-flex align-items-center">
-                    <div class="d-flex align-items-center justify-content-center rounded-lg mr-3 shadow-sm" 
-                         style="width: 50px; height: 50px; min-width: 50px; border-radius: 12px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #fff;">
-                        <i class="fas fa-user fa-lg"></i>
-                    </div>
-                    <div class="overflow-hidden">
-                        <span class="d-block text-muted text-uppercase font-weight-bold" style="font-size: 0.7rem; letter-spacing: 0.06em;">Farmers</span>
-                        <h4 class="mb-0 font-weight-bold text-dark" style="letter-spacing: -0.02em;">{{ number_format($totalFarmers) }}</h4>
-                        <span class="text-muted small" style="font-size: 0.75rem;">Enrolled Beneficiaries</span>
-                    </div>
-                </div>
+        {{-- Card 3: Inflow Turnaround Rate --}}
+        <div class="bg-gradient-to-br from-purple-50/70 via-white to-purple-50/30 rounded-2xl shadow-xs border border-purple-100/80 p-6 relative overflow-hidden group hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
+            <div class="flex items-center justify-between">
+                <p class="text-xs font-bold uppercase tracking-wider text-purple-700">Active Pipeline Volume</p>
+                <span class="p-1.5 bg-purple-100/70 text-purple-700 rounded-lg text-xs font-semibold">In Progress</span>
             </div>
-        </div>
-
-        {{-- Total Samples --}}
-        <div class="col-xl-2 col-lg-4 col-sm-6 mb-3">
-            <div class="card card-hover border-0 shadow-sm h-100">
-                <div class="card-body p-3 d-flex align-items-center">
-                    <div class="d-flex align-items-center justify-content-center rounded-lg mr-3 shadow-sm" 
-                         style="width: 50px; height: 50px; min-width: 50px; border-radius: 12px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: #fff;">
-                        <i class="fas fa-vial fa-lg"></i>
-                    </div>
-                    <div class="overflow-hidden">
-                        <span class="d-block text-muted text-uppercase font-weight-bold" style="font-size: 0.7rem; letter-spacing: 0.06em;">Total Samples</span>
-                        <h4 class="mb-0 font-weight-bold text-dark" style="letter-spacing: -0.02em;">{{ number_format($totalSamples) }}</h4>
-                        <span class="text-muted small" style="font-size: 0.75rem;">All Time Registered</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {{-- This Month --}}
-        <div class="col-xl-2 col-lg-4 col-sm-6 mb-3">
-            <div class="card card-hover border-0 shadow-sm h-100">
-                <div class="card-body p-3 d-flex align-items-center">
-                    <div class="d-flex align-items-center justify-content-center rounded-lg mr-3 shadow-sm" 
-                         style="width: 50px; height: 50px; min-width: 50px; border-radius: 12px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #fff;">
-                        <i class="fas fa-calendar-check fa-lg"></i>
-                    </div>
-                    <div class="overflow-hidden">
-                        <span class="d-block text-muted text-uppercase font-weight-bold" style="font-size: 0.7rem; letter-spacing: 0.06em;">This Month</span>
-                        <h4 class="mb-0 font-weight-bold text-dark" style="letter-spacing: -0.02em;">{{ number_format($samplesThisMonth) }}</h4>
-                        @if($samplesLastMonth > 0)
-                            @php $pctMonth = (($samplesThisMonth - $samplesLastMonth) / $samplesLastMonth) * 100; @endphp
-                            <span class="text-{{ $pctMonth >= 0 ? 'success' : 'danger' }} small font-weight-bold" style="font-size: 0.72rem;">
-                                <i class="fas fa-arrow-{{ $pctMonth >= 0 ? 'up' : 'down' }} mr-1"></i>{{ ($pctMonth > 0 ? '+' : '') . number_format($pctMonth, 0) }}% MoM
-                            </span>
-                        @else
-                            <span class="text-muted small" style="font-size: 0.75rem;">Current Cycle</span>
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {{-- Pending --}}
-        <div class="col-xl-2 col-lg-4 col-sm-6 mb-3">
-            <div class="card card-hover border-0 shadow-sm h-100">
-                <div class="card-body p-3 d-flex align-items-center">
-                    <div class="d-flex align-items-center justify-content-center rounded-lg mr-3 shadow-sm" 
-                         style="width: 50px; height: 50px; min-width: 50px; border-radius: 12px; background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); color: #fff;">
-                        <i class="fas fa-clock fa-lg"></i>
-                    </div>
-                    <div class="overflow-hidden">
-                        <span class="d-block text-muted text-uppercase font-weight-bold" style="font-size: 0.7rem; letter-spacing: 0.06em;">In Queue</span>
-                        <h4 class="mb-0 font-weight-bold text-dark" style="letter-spacing: -0.02em;">{{ number_format($queueCount) }}</h4>
-                        <span class="text-muted small" style="font-size: 0.75rem;">Awaiting Testing</span>
-                    </div>
-                </div>
-            </div>
+            <p class="text-3xl font-bold text-gray-900 mt-3 tracking-tight">{{ number_format($queueCount) }}</p>
+            <p class="text-xs text-purple-600/90 mt-1.5 font-medium">Across all regional testing laboratories</p>
         </div>
     </div>
 
-    {{-- User Role Breakdown --}}
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body p-3">
-                    <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
-                        <div class="d-flex align-items-center">
-                            <i class="fas fa-user-shield text-primary mr-2"></i>
-                            <span class="font-weight-bold text-dark" style="font-size: 0.92rem;">User Distribution by Role</span>
-                        </div>
-                        <small class="text-muted">Total platform accounts: {{ number_format($totalUsers + $farmerCount) }}</small>
+    {{-- Row 4: Lifecycle Distribution & Monthly Trend (PTA Visual Analytics) --}}
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {{-- Lifecycle Progress Card --}}
+        <div class="bg-white rounded-2xl shadow-xs border border-gray-100 p-6 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="text-base font-bold text-gray-900">Sample Lifecycle Distribution</h3>
+                        <p class="text-xs text-gray-400">Progression from field collection to report delivery</p>
                     </div>
-                    <div class="row">
-                        <div class="col-md col-sm-4 col-6 mb-2 mb-md-0">
-                            <div class="p-2 rounded-lg d-flex align-items-center" style="background: #fef2f2; border: 1px solid #fee2e2;">
-                                <div class="rounded-circle d-flex align-items-center justify-content-center mr-2 text-danger bg-white shadow-xs" style="width:34px;height:34px;min-width:34px;">
-                                    <i class="fas fa-user-lock"></i>
-                                </div>
-                                <div class="overflow-hidden">
-                                    <div class="text-muted font-weight-bold text-uppercase" style="font-size:0.65rem;letter-spacing:0.05em;">Admin</div>
-                                    <div class="h6 mb-0 font-weight-bold text-danger">{{ number_format($adminCount) }}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md col-sm-4 col-6 mb-2 mb-md-0">
-                            <div class="p-2 rounded-lg d-flex align-items-center" style="background: #fffbeb; border: 1px solid #fef3c7;">
-                                <div class="rounded-circle d-flex align-items-center justify-content-center mr-2 text-warning bg-white shadow-xs" style="width:34px;height:34px;min-width:34px;">
-                                    <i class="fas fa-user-tie"></i>
-                                </div>
-                                <div class="overflow-hidden">
-                                    <div class="text-muted font-weight-bold text-uppercase" style="font-size:0.65rem;letter-spacing:0.05em;">Lab Manager</div>
-                                    <div class="h6 mb-0 font-weight-bold text-warning">{{ number_format($labManagerCount) }}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md col-sm-4 col-6 mb-2 mb-md-0">
-                            <div class="p-2 rounded-lg d-flex align-items-center" style="background: #f0fdfa; border: 1px solid #ccfbf1;">
-                                <div class="rounded-circle d-flex align-items-center justify-content-center mr-2 text-info bg-white shadow-xs" style="width:34px;height:34px;min-width:34px;">
-                                    <i class="fas fa-hard-hat"></i>
-                                </div>
-                                <div class="overflow-hidden">
-                                    <div class="text-muted font-weight-bold text-uppercase" style="font-size:0.65rem;letter-spacing:0.05em;">Field Official</div>
-                                    <div class="h6 mb-0 font-weight-bold text-info">{{ number_format($fieldOfficialCount) }}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md col-sm-4 col-6 mb-2 mb-md-0">
-                            <div class="p-2 rounded-lg d-flex align-items-center" style="background: #eff6ff; border: 1px solid #dbeafe;">
-                                <div class="rounded-circle d-flex align-items-center justify-content-center mr-2 text-primary bg-white shadow-xs" style="width:34px;height:34px;min-width:34px;">
-                                    <i class="fas fa-microscope"></i>
-                                </div>
-                                <div class="overflow-hidden">
-                                    <div class="text-muted font-weight-bold text-uppercase" style="font-size:0.65rem;letter-spacing:0.05em;">Lab Tech</div>
-                                    <div class="h6 mb-0 font-weight-bold text-primary">{{ number_format($labTechnicianCount) }}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md col-sm-4 col-6 mb-2 mb-md-0">
-                            <div class="p-2 rounded-lg d-flex align-items-center" style="background: #f1f5f9; border: 1px solid #e2e8f0;">
-                                <div class="rounded-circle d-flex align-items-center justify-content-center mr-2 text-secondary bg-white shadow-xs" style="width:34px;height:34px;min-width:34px;">
-                                    <i class="fas fa-tractor"></i>
-                                </div>
-                                <div class="overflow-hidden">
-                                    <div class="text-muted font-weight-bold text-uppercase" style="font-size:0.65rem;letter-spacing:0.05em;">Farmers</div>
-                                    <div class="h6 mb-0 font-weight-bold text-secondary">{{ number_format($farmerCount) }}</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-gray-50 text-gray-600 border border-gray-200">
+                        {{ number_format($totalSamples) }} total
+                    </span>
                 </div>
-            </div>
-        </div>
-    </div>
 
-    {{-- Status Distribution + Monthly Trend --}}
-    <div class="row mb-4">
-        {{-- Status Distribution --}}
-        <div class="col-lg-6 mb-4 mb-lg-0">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header d-flex justify-content-between align-items-center py-3">
-                    <span class="font-weight-bold text-dark"><i class="fas fa-chart-pie text-success mr-2"></i>Sample Lifecycle Distribution</span>
-                    <span class="badge badge-light border text-muted">{{ number_format($totalSamples) }} total samples</span>
-                </div>
-                <div class="card-body p-4">
-                    @php
-                        $statuses = [
-                            ['label' => 'Collected in Field', 'count' => $samplesCollected, 'color' => '#06b6d4', 'bg' => 'rgba(6, 182, 212, 0.1)', 'icon' => 'fa-clipboard-list'],
-                            ['label' => 'Received at Lab', 'count' => $samplesReceived, 'color' => '#3b82f6', 'bg' => 'rgba(59, 130, 246, 0.1)', 'icon' => 'fa-inbox'],
-                            ['label' => 'Testing in Progress', 'count' => $samplesTesting, 'color' => '#f59e0b', 'bg' => 'rgba(245, 158, 11, 0.1)', 'icon' => 'fa-flask'],
-                            ['label' => 'Reported & Completed', 'count' => $samplesReported, 'color' => '#10b981', 'bg' => 'rgba(16, 185, 129, 0.1)', 'icon' => 'fa-check-circle'],
-                        ];
-                    @endphp
-                    @foreach($statuses as $s)
+                @php
+                    $steps = [
+                        ['label' => 'Collected in Field', 'count' => $samplesCollected, 'color' => 'bg-cyan-500', 'badge' => 'bg-cyan-50 text-cyan-700 border-cyan-200'],
+                        ['label' => 'Received at Lab', 'count' => $samplesReceived, 'color' => 'bg-blue-500', 'badge' => 'bg-blue-50 text-blue-700 border-blue-200'],
+                        ['label' => 'Testing in Progress', 'count' => $samplesTesting, 'color' => 'bg-amber-500', 'badge' => 'bg-amber-50 text-amber-700 border-amber-200'],
+                        ['label' => 'Reported & Completed', 'count' => $samplesReported, 'color' => 'bg-emerald-500', 'badge' => 'bg-emerald-50 text-emerald-700 border-emerald-200'],
+                    ];
+                @endphp
+
+                <div class="space-y-4 my-2">
+                    @foreach($steps as $s)
                         @php $pct = $totalSamples > 0 ? round(($s['count'] / $totalSamples) * 100) : 0; @endphp
-                        <div class="mb-3 pb-2 {{ !$loop->last ? 'border-bottom' : '' }}">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <div class="d-flex align-items-center">
-                                    <span class="d-inline-flex align-items-center justify-content-center rounded-circle mr-2" 
-                                          style="width: 28px; height: 28px; background: {{ $s['bg'] }}; color: {{ $s['color'] }};">
-                                        <i class="fas {{ $s['icon'] }}" style="font-size: 0.8rem;"></i>
-                                    </span>
-                                    <span class="font-weight-bold text-dark" style="font-size: 0.88rem;">{{ $s['label'] }}</span>
-                                </div>
-                                <div class="text-right">
-                                    <span class="font-weight-bold text-dark mr-1">{{ number_format($s['count']) }}</span>
-                                    <span class="badge badge-light border text-muted" style="font-size: 0.75rem;">{{ $pct }}%</span>
+                        <div>
+                            <div class="flex items-center justify-between text-xs font-medium mb-1.5">
+                                <span class="text-gray-700 font-semibold">{{ $s['label'] }}</span>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-gray-900 font-bold">{{ number_format($s['count']) }}</span>
+                                    <span class="px-1.5 py-0.5 rounded-md text-[10px] font-bold border {{ $s['badge'] }}">{{ $pct }}%</span>
                                 </div>
                             </div>
-                            <div class="progress" style="height: 10px; background-color: #f1f5f9;">
-                                <div class="progress-bar" role="progressbar" 
-                                     style="width: {{ $pct }}%; background-color: {{ $s['color'] }}; transition: width 0.6s ease;" 
-                                     aria-valuenow="{{ $pct }}" aria-valuemin="0" aria-valuemax="100">
-                                </div>
+                            <div class="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
+                                <div class="{{ $s['color'] }} h-2.5 rounded-full transition-all duration-500" style="width: {{ $pct }}%"></div>
                             </div>
                         </div>
                     @endforeach
                 </div>
             </div>
+
+            <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-400 mt-4">
+                <span>Updated in real-time</span>
+                <a href="{{ route('samples.index') }}" class="font-semibold text-brand-600 hover:text-brand-700">View sample tracking &rarr;</a>
+            </div>
         </div>
 
-        {{-- Monthly Trend --}}
-        <div class="col-lg-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header d-flex justify-content-between align-items-center py-3">
-                    <span class="font-weight-bold text-dark"><i class="fas fa-chart-bar text-primary mr-2"></i>Sample Inflow Trend (Last 6 Months)</span>
-                    <span class="badge badge-light border text-muted">Monthly Volume</span>
+        {{-- Monthly Trend Card --}}
+        <div class="bg-white rounded-2xl shadow-xs border border-gray-100 p-6 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="text-base font-bold text-gray-900">Sample Inflow Trend (Last 6 Months)</h3>
+                        <p class="text-xs text-gray-400">Monthly sample volume intake across all districts</p>
+                    </div>
+                    <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                        Monthly Volume
+                    </span>
                 </div>
-                <div class="card-body p-4 d-flex flex-column justify-content-between">
-                    @php $maxMonthly = max(max($monthlyCounts), 1); @endphp
-                    <div class="d-flex align-items-end justify-content-between" style="height: 180px; gap: 14px; padding-bottom: 8px;">
-                        @foreach($monthlyCounts as $i => $count)
-                            @php 
-                                $height = max(($count / $maxMonthly) * 140, 8); 
-                                $isLatest = $i === (count($monthlyCounts) - 1);
-                            @endphp
-                            <div class="d-flex flex-column align-items-center flex-fill position-relative">
-                                <span class="mb-1 font-weight-bold {{ $count > 0 ? ($isLatest ? 'text-success' : 'text-primary') : 'text-muted' }}" 
-                                      style="font-size: 0.8rem;">
-                                    {{ $count }}
-                                </span>
-                                <div class="w-100 rounded-pill shadow-xs" 
-                                     style="height: {{ $height }}px; min-height: 8px; background: {{ $isLatest ? 'linear-gradient(180deg, #10b981 0%, #059669 100%)' : 'linear-gradient(180deg, #60a5fa 0%, #2563eb 100%)' }}; transition: all 0.4s ease;"
-                                     title="{{ \Carbon\Carbon::parse($monthlyLabels[$i])->format('F Y') }}: {{ $count }} samples">
-                                </div>
-                                <span class="mt-2 text-muted font-weight-medium" style="font-size: 0.75rem;">
-                                    {{ \Carbon\Carbon::parse($monthlyLabels[$i])->format('M') }}
-                                </span>
+
+                @php $maxMonthly = max(max($monthlyCounts), 1); @endphp
+                <div class="flex items-end justify-between gap-3 h-44 pt-4 px-2">
+                    @foreach($monthlyCounts as $i => $count)
+                        @php 
+                            $height = max(($count / $maxMonthly) * 110, 8); 
+                            $isLatest = $i === (count($monthlyCounts) - 1);
+                        @endphp
+                        <div class="flex-1 flex flex-col items-center gap-2 h-full justify-end group">
+                            <span class="text-[11px] font-bold {{ $count > 0 ? ($isLatest ? 'text-emerald-600' : 'text-blue-600') : 'text-gray-400' }}">
+                                {{ $count }}
+                            </span>
+                            <div class="w-full max-w-[42px] rounded-t-xl transition-all duration-300 {{ $isLatest ? 'bg-gradient-to-t from-emerald-600 to-emerald-400 shadow-sm shadow-emerald-200' : 'bg-gradient-to-t from-blue-600 to-blue-400 group-hover:from-blue-500 group-hover:to-blue-300' }}"
+                                 style="height: {{ $height }}px">
                             </div>
-                        @endforeach
-                    </div>
-                    <div class="pt-3 border-top d-flex justify-content-between align-items-center text-muted small">
-                        <span><i class="fas fa-info-circle mr-1"></i> Bars depict total samples collected across all districts</span>
-                        <span class="badge badge-success px-2 py-1"><i class="fas fa-check mr-1"></i>Current Month</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- Lab-wise Performance --}}
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header d-flex justify-content-between align-items-center py-3">
-                    <div>
-                        <span class="font-weight-bold text-dark"><i class="fas fa-microscope text-info mr-2"></i>Laboratory Performance Metrics</span>
-                        <span class="text-muted small ml-2 d-none d-md-inline">&bull; Sample progress by testing facility</span>
-                    </div>
-                    <a href="{{ route('admin.labs') }}" class="btn btn-xs btn-outline-secondary rounded-pill px-3">
-                        Manage Labs <i class="fas fa-arrow-right ml-1"></i>
-                    </a>
-                </div>
-                <div class="card-body p-0 table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead>
-                            <tr>
-                                <th>Laboratory</th>
-                                <th class="text-right">Total Samples</th>
-                                <th class="text-right">Collected</th>
-                                <th class="text-right">Received</th>
-                                <th class="text-right">Testing</th>
-                                <th class="text-right">Reported</th>
-                                <th class="text-right">Farmers</th>
-                                <th class="text-right">Staff</th>
-                                <th style="min-width: 170px;">Completion Rate</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($labStats as $lab)
-                                @php 
-                                    $reportPct = $lab->soil_samples_count > 0 ? round(($lab->reported_count / $lab->soil_samples_count) * 100) : 0; 
-                                    $barColor = $reportPct >= 80 ? '#10b981' : ($reportPct >= 40 ? '#f59e0b' : '#3b82f6');
-                                @endphp
-                                <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <span class="d-inline-flex align-items-center justify-content-center rounded-circle mr-2" style="width:30px;height:30px;background:#e0f2fe;color:#0284c7;">
-                                                <i class="fas fa-flask" style="font-size:0.75rem;"></i>
-                                            </span>
-                                            <div>
-                                                <span class="font-weight-bold text-dark d-block">{{ $lab->name }}</span>
-                                                <span class="text-muted small">Code: {{ $lab->code }}</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="text-right font-weight-bold">{{ number_format($lab->soil_samples_count) }}</td>
-                                    <td class="text-right text-muted">{{ number_format($lab->collected_count) }}</td>
-                                    <td class="text-right text-primary">{{ number_format($lab->received_count) }}</td>
-                                    <td class="text-right text-warning">{{ number_format($lab->testing_count) }}</td>
-                                    <td class="text-right text-success font-weight-bold">{{ number_format($lab->reported_count) }}</td>
-                                    <td class="text-right">{{ number_format($lab->farmers_count) }}</td>
-                                    <td class="text-right">{{ number_format($lab->users_count) }}</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="progress flex-fill mr-2" style="height: 10px; background-color: #f1f5f9;">
-                                                <div class="progress-bar" role="progressbar" 
-                                                     style="width: {{ $reportPct }}%; background-color: {{ $barColor }};">
-                                                </div>
-                                            </div>
-                                            <span class="font-weight-bold small text-muted" style="min-width: 36px;">{{ $reportPct }}%</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="9" class="text-center py-4 text-muted">
-                                        <i class="fas fa-flask fa-2x mb-2 text-muted d-block opacity-50"></i>
-                                        No active laboratories found.
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- Zone-wise Distribution & Zone Target Overview --}}
-    <div class="row mb-4">
-        {{-- Zone Distribution --}}
-        <div class="col-lg-6 mb-4 mb-lg-0">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header d-flex justify-content-between align-items-center py-3">
-                    <span class="font-weight-bold text-dark"><i class="fas fa-map-marked-alt text-warning mr-2"></i>Zone-wise Sample Distribution</span>
-                    <span class="text-muted small">By Geographic Zone</span>
-                </div>
-                <div class="card-body p-0 table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead>
-                            <tr>
-                                <th>Zone</th>
-                                <th class="text-right">Total</th>
-                                <th class="text-right">Reported</th>
-                                <th class="text-right">Officials</th>
-                                <th style="min-width: 140px;">Completion</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($zoneStats as $zone)
-                                @php 
-                                    $compPct = $zone->samples_count > 0 ? round(($zone->reported_count / $zone->samples_count) * 100) : 0; 
-                                    $barColor = $compPct >= 80 ? '#10b981' : ($compPct >= 40 ? '#f59e0b' : '#3b82f6');
-                                @endphp
-                                <tr>
-                                    <td class="font-weight-bold text-dark">
-                                        <i class="fas fa-map-pin text-muted mr-1"></i> {{ $zone->name }}
-                                    </td>
-                                    <td class="text-right font-weight-bold">{{ number_format($zone->samples_count) }}</td>
-                                    <td class="text-right text-success font-weight-bold">{{ number_format($zone->reported_count) }}</td>
-                                    <td class="text-right">{{ number_format($zone->field_officials_count) }}</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="progress flex-fill mr-2" style="height: 8px; background-color: #f1f5f9;">
-                                                <div class="progress-bar" style="width: {{ $compPct }}%; background-color: {{ $barColor }};"></div>
-                                            </div>
-                                            <span class="small font-weight-bold text-muted">{{ $compPct }}%</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr><td colspan="5" class="text-center py-4 text-muted">No zones registered.</td></tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        {{-- Zone Target Overview --}}
-        <div class="col-lg-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header d-flex justify-content-between align-items-center py-3">
-                    <div>
-                        <span class="font-weight-bold text-dark"><i class="fas fa-bullseye text-danger mr-2"></i>Zone Target Progress</span>
-                    </div>
-                    @if(isset($totalTargetCount) && $totalTargetCount > 0)
-                        <span class="badge badge-success px-3 py-1 font-weight-bold">
-                            {{ round(($totalAchievedCount / $totalTargetCount) * 100) }}% Achieved
-                        </span>
-                    @endif
-                </div>
-                <div class="card-body p-0 table-responsive">
-                    @if($zoneTargets->count())
-                        <table class="table table-hover mb-0">
-                            <thead>
-                                <tr>
-                                    <th>Zone</th>
-                                    <th class="text-right">Target</th>
-                                    <th class="text-right">Reported</th>
-                                    <th class="text-right">Pending</th>
-                                    <th style="min-width: 140px;">Target Pace</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($zoneTargets as $zt)
-                                    @php
-                                        $ach = $zt->achievedCount();
-                                        $rem = $zt->remainingCount();
-                                        $col = $zt->collectedCount();
-                                        $pct = $zt->progressPercent();
-                                        $barColor = $pct >= 80 ? '#10b981' : ($pct >= 50 ? '#f59e0b' : '#ef4444');
-                                    @endphp
-                                    <tr>
-                                        <td class="font-weight-bold text-dark">{{ $zt->zone->name ?? 'Zone' }}</td>
-                                        <td class="text-right font-weight-bold">{{ number_format($zt->target_count) }}</td>
-                                        <td class="text-right text-success font-weight-bold">{{ number_format($ach) }}</td>
-                                        <td class="text-right {{ $rem > 0 ? 'text-primary font-weight-bold' : 'text-muted' }}">{{ number_format($rem) }}</td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="progress flex-fill mr-2" style="height: 8px; background-color: #f1f5f9;">
-                                                    <div class="progress-bar" style="width: {{ min($pct, 100) }}%; background-color: {{ $barColor }};"></div>
-                                                </div>
-                                                <span class="small font-weight-bold text-muted">{{ $pct }}%</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    @else
-                        <div class="text-center py-5 text-muted">
-                            <i class="fas fa-bullseye fa-2x mb-2 text-muted opacity-50"></i>
-                            <p class="mb-0 small">No active zone targets set for the current period.</p>
-                            <a href="{{ route('admin.zone-targets') }}" class="btn btn-sm btn-outline-primary rounded-pill mt-2">
-                                <i class="fas fa-plus mr-1"></i> Set Zone Targets
-                            </a>
+                            <span class="text-[11px] font-semibold {{ $isLatest ? 'text-gray-900 font-bold' : 'text-gray-400' }}">
+                                {{ explode(' ', $monthlyLabels[$i] ?? '')[0] ?? ($monthlyLabels[$i] ?? '') }}
+                            </span>
                         </div>
-                    @endif
+                    @endforeach
                 </div>
+            </div>
+
+            <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-400 mt-4">
+                <span>{{ now()->format('Y') }} Testing Season</span>
+                <span class="font-medium text-emerald-700 flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    Current month in green
+                </span>
             </div>
         </div>
     </div>
 
-    {{-- Recent Samples --}}
-    <div class="row">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header d-flex justify-content-between align-items-center py-3">
-                    <span class="font-weight-bold text-dark"><i class="fas fa-history text-secondary mr-2"></i>Recently Registered Soil Samples</span>
-                    <a href="{{ route('samples.index') }}" class="btn btn-sm btn-outline-primary rounded-pill px-3 shadow-none">
-                        View All Samples <i class="fas fa-arrow-right ml-1"></i>
-                    </a>
+    {{-- Row 5: High-Value Performance Cards (Labs and Zones) --}}
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {{-- Laboratory Performance Card --}}
+        <div class="bg-white rounded-2xl shadow-xs border border-gray-100 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h3 class="text-base font-bold text-gray-900">Laboratory Turnaround &amp; Workload</h3>
+                    <p class="text-xs text-gray-400">Testing facility capacity and completion metrics</p>
                 </div>
-                <div class="card-body p-0 table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead>
-                            <tr>
-                                <th>Sample Code</th>
-                                <th>Farmer Name</th>
-                                <th>Assigned Lab</th>
-                                <th>Zone / District</th>
-                                <th>Status</th>
-                                <th class="text-right">Collection Date</th>
+                <a href="{{ route('admin.labs') }}" class="text-xs font-semibold text-brand-600 hover:text-brand-700 bg-brand-50 hover:bg-brand-100 px-3 py-1 rounded-xl transition">
+                    Manage Labs
+                </a>
+            </div>
+
+            <div class="overflow-x-auto -mx-6 px-6">
+                <table class="w-full text-left text-xs">
+                    <thead>
+                        <tr class="border-b border-gray-100 text-gray-400 uppercase tracking-wider text-[10px]">
+                            <th class="pb-2.5 font-semibold">Laboratory</th>
+                            <th class="pb-2.5 font-semibold text-right">Samples</th>
+                            <th class="pb-2.5 font-semibold text-right">Testing</th>
+                            <th class="pb-2.5 font-semibold text-right">Reported</th>
+                            <th class="pb-2.5 font-semibold text-right min-w-[100px]">Completion</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-50">
+                        @forelse($labStats as $lab)
+                            @php 
+                                $reportPct = $lab->soil_samples_count > 0 ? round(($lab->reported_count / $lab->soil_samples_count) * 100) : 0; 
+                            @endphp
+                            <tr class="hover:bg-gray-50/70 transition">
+                                <td class="py-3">
+                                    <div class="flex items-center gap-2.5">
+                                        <div class="w-7 h-7 rounded-lg bg-cyan-50 text-cyan-600 flex items-center justify-center font-bold text-xs flex-shrink-0">
+                                            <i class="fas fa-flask text-[11px]"></i>
+                                        </div>
+                                        <div class="min-w-0">
+                                            <p class="font-semibold text-gray-800 truncate">{{ $lab->name }}</p>
+                                            <p class="text-[10px] text-gray-400">Code: {{ $lab->code }}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-3 text-right font-bold text-gray-800">{{ number_format($lab->soil_samples_count) }}</td>
+                                <td class="py-3 text-right font-semibold text-amber-600">{{ number_format($lab->testing_count) }}</td>
+                                <td class="py-3 text-right font-bold text-emerald-600">{{ number_format($lab->reported_count) }}</td>
+                                <td class="py-3 text-right">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <div class="w-16 bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                                            <div class="bg-emerald-500 h-1.5 rounded-full" style="width: {{ $reportPct }}%"></div>
+                                        </div>
+                                        <span class="font-bold text-gray-700 text-[11px] w-8">{{ $reportPct }}%</span>
+                                    </div>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($recentSamples as $sample)
-                                <tr>
-                                    <td>
-                                        <span class="font-weight-bold text-dark font-monospace" style="letter-spacing: 0.03em;">
+                        @empty
+                            <tr>
+                                <td colspan="5" class="py-6 text-center text-gray-400">No active laboratories configured.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {{-- Geographic Zone Targets Card --}}
+        <div class="bg-white rounded-2xl shadow-xs border border-gray-100 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h3 class="text-base font-bold text-gray-900">Zone Target Progress</h3>
+                    <p class="text-xs text-gray-400">Geographic quotas and achievement pace</p>
+                </div>
+                <a href="{{ route('admin.zone-targets') }}" class="text-xs font-semibold text-brand-600 hover:text-brand-700 bg-brand-50 hover:bg-brand-100 px-3 py-1 rounded-xl transition">
+                    View Targets
+                </a>
+            </div>
+
+            <div class="overflow-x-auto -mx-6 px-6">
+                <table class="w-full text-left text-xs">
+                    <thead>
+                        <tr class="border-b border-gray-100 text-gray-400 uppercase tracking-wider text-[10px]">
+                            <th class="pb-2.5 font-semibold">Zone</th>
+                            <th class="pb-2.5 font-semibold text-right">Target</th>
+                            <th class="pb-2.5 font-semibold text-right">Achieved</th>
+                            <th class="pb-2.5 font-semibold text-right">Pending</th>
+                            <th class="pb-2.5 font-semibold text-right min-w-[100px]">Pace</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-50">
+                        @forelse($zoneTargets as $zt)
+                            @php
+                                $ach = $zt->achievedCount();
+                                $rem = $zt->remainingCount();
+                                $pct = min($zt->progressPercent(), 100);
+                            @endphp
+                            <tr class="hover:bg-gray-50/70 transition">
+                                <td class="py-3 font-semibold text-gray-800">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                        <span>{{ $zt->zone->name ?? 'Zone' }}</span>
+                                    </div>
+                                </td>
+                                <td class="py-3 text-right font-bold text-gray-800">{{ number_format($zt->target_count) }}</td>
+                                <td class="py-3 text-right font-bold text-emerald-600">{{ number_format($ach) }}</td>
+                                <td class="py-3 text-right font-semibold {{ $rem > 0 ? 'text-amber-600' : 'text-gray-400' }}">{{ number_format($rem) }}</td>
+                                <td class="py-3 text-right">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <div class="w-16 bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                                            <div class="bg-emerald-500 h-1.5 rounded-full" style="width: {{ $pct }}%"></div>
+                                        </div>
+                                        <span class="font-bold text-gray-700 text-[11px] w-8">{{ $pct }}%</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="py-6 text-center text-gray-400">No active seasonal targets defined.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {{-- Row 6: Recent Samples Activity Feed & User Capacity (PTA Activity Layout) --}}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {{-- Recent Samples Feed (2 Columns on large) --}}
+        <div class="bg-white rounded-2xl shadow-xs border border-gray-100 p-6 lg:col-span-2">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h3 class="text-base font-bold text-gray-900">Recently Registered Soil Samples</h3>
+                    <p class="text-xs text-gray-400">Latest samples collected from agricultural landholdings</p>
+                </div>
+                <a href="{{ route('samples.index') }}" class="text-xs font-semibold text-brand-600 hover:text-brand-700 bg-brand-50 hover:bg-brand-100 px-3 py-1 rounded-xl transition">
+                    View all
+                </a>
+            </div>
+
+            @if($recentSamples->isNotEmpty())
+                <div class="divide-y divide-gray-50">
+                    @foreach($recentSamples as $sample)
+                        <div class="flex items-center justify-between py-3 hover:bg-gray-50/80 -mx-2 px-2 rounded-xl transition group">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center text-xs font-bold shadow-xs flex-shrink-0 group-hover:scale-105 transition-transform">
+                                    <i class="fas fa-vial"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sm font-semibold text-gray-800 font-mono group-hover:text-brand-700 transition-colors">
                                             {{ $sample->sample_code }}
                                         </span>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="rounded-circle mr-2 d-flex align-items-center justify-content-center text-muted" style="width: 26px; height: 26px; background: #f1f5f9; font-size: 0.7rem;">
-                                                <i class="fas fa-user"></i>
-                                            </div>
-                                            <span class="text-dark font-weight-medium">{{ $sample->farmer->name ?? '—' }}</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="text-muted small">
-                                            <i class="fas fa-flask mr-1 text-info"></i> {{ $sample->lab->name ?? '—' }}
+                                        <span class="text-xs text-gray-400">&bull;</span>
+                                        <span class="text-xs font-medium text-gray-600 truncate">
+                                            {{ $sample->farmer->name ?? 'Unknown Farmer' }}
                                         </span>
-                                    </td>
-                                    <td>
-                                        <span class="text-muted small">
-                                            <i class="fas fa-map-marker-alt mr-1 text-danger"></i> {{ $sample->farmer->zone->name ?? '—' }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        @php
-                                            $val = $sample->status->value ?? 'collected';
-                                            $badgeClass = match($val) {
-                                                'reported' => 'badge-success',
-                                                'testing' => 'badge-warning',
-                                                'received' => 'badge-primary',
-                                                default => 'badge-info',
-                                            };
-                                        @endphp
-                                        <span class="badge {{ $badgeClass }} px-3 py-1">
-                                            {{ $sample->status->label() }}
-                                        </span>
-                                    </td>
-                                    <td class="text-right text-muted small">
-                                        {{ $sample->created_at->format('d M Y') }}
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="6" class="text-center py-4 text-muted">
-                                        <i class="fas fa-vial fa-2x mb-2 text-muted opacity-50 d-block"></i>
-                                        No recent samples registered yet.
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                                    </div>
+                                    <p class="text-xs text-gray-400 flex items-center gap-2 mt-0.5">
+                                        <span><i class="fas fa-flask text-gray-300 mr-1"></i>{{ $sample->lab->name ?? 'Unassigned' }}</span>
+                                        <span>&bull;</span>
+                                        <span><i class="fas fa-map-marker-alt text-gray-300 mr-1"></i>{{ $sample->farmer->zone->name ?? 'General' }}</span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3 flex-shrink-0">
+                                @php
+                                    $val = $sample->status->value ?? 'collected';
+                                    $badgeStyle = match($val) {
+                                        'reported' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                        'testing' => 'bg-amber-50 text-amber-700 border-amber-200',
+                                        'received' => 'bg-blue-50 text-blue-700 border-blue-200',
+                                        default => 'bg-cyan-50 text-cyan-700 border-cyan-200',
+                                    };
+                                @endphp
+                                <span class="px-2.5 py-1 text-[11px] font-semibold rounded-full border {{ $badgeStyle }}">
+                                    {{ $sample->status->label() }}
+                                </span>
+                                <span class="text-xs text-gray-400 hidden sm:inline">
+                                    {{ $sample->created_at->diffForHumans(null, true) }}
+                                </span>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="py-8 text-center text-xs text-gray-400">
+                    No samples registered yet.
+                </div>
+            @endif
+        </div>
+
+        {{-- Role Capacity & Distribution --}}
+        <div class="bg-white rounded-2xl shadow-xs border border-gray-100 p-6 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="text-base font-bold text-gray-900">User Distribution</h3>
+                        <p class="text-xs text-gray-400">Staff &amp; portal accounts by role</p>
+                    </div>
+                    <span class="text-xs font-semibold text-gray-400">{{ number_format($totalUsers + $farmerCount) }} accounts</span>
+                </div>
+
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between p-2.5 rounded-xl bg-rose-50/60 border border-rose-100">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-7 h-7 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center text-xs font-bold">
+                                <i class="fas fa-user-lock"></i>
+                            </div>
+                            <span class="text-xs font-semibold text-gray-800">System Administrators</span>
+                        </div>
+                        <span class="text-sm font-bold text-rose-700">{{ number_format($adminCount) }}</span>
+                    </div>
+
+                    <div class="flex items-center justify-between p-2.5 rounded-xl bg-amber-50/60 border border-amber-100">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-7 h-7 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center text-xs font-bold">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                            <span class="text-xs font-semibold text-gray-800">Lab Managers</span>
+                        </div>
+                        <span class="text-sm font-bold text-amber-700">{{ number_format($labManagerCount) }}</span>
+                    </div>
+
+                    <div class="flex items-center justify-between p-2.5 rounded-xl bg-indigo-50/60 border border-indigo-100">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold">
+                                <i class="fas fa-microscope"></i>
+                            </div>
+                            <span class="text-xs font-semibold text-gray-800">Lab Technicians</span>
+                        </div>
+                        <span class="text-sm font-bold text-indigo-700">{{ number_format($labTechnicianCount) }}</span>
+                    </div>
+
+                    <div class="flex items-center justify-between p-2.5 rounded-xl bg-cyan-50/60 border border-cyan-100">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-7 h-7 rounded-lg bg-cyan-100 text-cyan-600 flex items-center justify-center text-xs font-bold">
+                                <i class="fas fa-hard-hat"></i>
+                            </div>
+                            <span class="text-xs font-semibold text-gray-800">Field Officials</span>
+                        </div>
+                        <span class="text-sm font-bold text-cyan-700">{{ number_format($fieldOfficialCount) }}</span>
+                    </div>
+
+                    <div class="flex items-center justify-between p-2.5 rounded-xl bg-emerald-50/60 border border-emerald-100">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold">
+                                <i class="fas fa-tractor"></i>
+                            </div>
+                            <span class="text-xs font-semibold text-gray-800">Farmer Beneficiaries</span>
+                        </div>
+                        <span class="text-sm font-bold text-emerald-700">{{ number_format($farmerCount) }}</span>
+                    </div>
                 </div>
             </div>
+
+            <a href="{{ route('admin.users') }}" class="mt-4 inline-flex items-center justify-between text-xs font-semibold text-brand-600 hover:text-brand-700 pt-3 border-t border-gray-100">
+                <span>Manage staff accounts &amp; roles</span>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </a>
+        </div>
+    </div>
+
+    {{-- Row 7: Quick Actions Grid (PTA Style) --}}
+    <div class="bg-white rounded-2xl shadow-xs border border-gray-100 p-6">
+        <h3 class="text-base font-bold text-gray-900 mb-0.5">Quick Actions &amp; Operational Shortcuts</h3>
+        <p class="text-xs text-gray-400 mb-4">Direct shortcuts to high-frequency laboratory and field operations.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <a href="{{ route('field.collect-sample') }}"
+               class="group flex items-center justify-between px-4 py-3 bg-gray-50/70 border border-gray-100 hover:border-brand-200 rounded-xl text-sm font-medium text-gray-700 hover:text-brand-700 hover:bg-brand-50/60 transition-all duration-200">
+                <span class="flex items-center gap-2.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    Collect Field Sample
+                </span>
+                <svg class="w-4 h-4 text-gray-400 group-hover:text-brand-600 group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </a>
+            <a href="{{ route('admin.farmers') }}"
+               class="group flex items-center justify-between px-4 py-3 bg-gray-50/70 border border-gray-100 hover:border-brand-200 rounded-xl text-sm font-medium text-gray-700 hover:text-brand-700 hover:bg-brand-50/60 transition-all duration-200">
+                <span class="flex items-center gap-2.5">
+                    <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                    Farmers Directory
+                </span>
+                <svg class="w-4 h-4 text-gray-400 group-hover:text-brand-600 group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </a>
+            <a href="{{ route('admin.parameters') }}"
+               class="group flex items-center justify-between px-4 py-3 bg-gray-50/70 border border-gray-100 hover:border-brand-200 rounded-xl text-sm font-medium text-gray-700 hover:text-brand-700 hover:bg-brand-50/60 transition-all duration-200">
+                <span class="flex items-center gap-2.5">
+                    <span class="w-2 h-2 rounded-full bg-cyan-500"></span>
+                    Soil Test Parameters
+                </span>
+                <svg class="w-4 h-4 text-gray-400 group-hover:text-brand-600 group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </a>
+            <a href="{{ route('admin.qr-codes') }}"
+               class="group flex items-center justify-between px-4 py-3 bg-gray-50/70 border border-gray-100 hover:border-brand-200 rounded-xl text-sm font-medium text-gray-700 hover:text-brand-700 hover:bg-brand-50/60 transition-all duration-200">
+                <span class="flex items-center gap-2.5">
+                    <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+                    QR Code Batch Print
+                </span>
+                <svg class="w-4 h-4 text-gray-400 group-hover:text-brand-600 group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </a>
+            <a href="{{ route('admin.zone-targets') }}"
+               class="group flex items-center justify-between px-4 py-3 bg-gray-50/70 border border-gray-100 hover:border-brand-200 rounded-xl text-sm font-medium text-gray-700 hover:text-brand-700 hover:bg-brand-50/60 transition-all duration-200">
+                <span class="flex items-center gap-2.5">
+                    <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                    Manage Zone Targets
+                </span>
+                <svg class="w-4 h-4 text-gray-400 group-hover:text-brand-600 group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </a>
+            <a href="{{ route('admin.reports') }}"
+               class="group flex items-center justify-between px-4 py-3 bg-gray-50/70 border border-gray-100 hover:border-brand-200 rounded-xl text-sm font-medium text-gray-700 hover:text-brand-700 hover:bg-brand-50/60 transition-all duration-200">
+                <span class="flex items-center gap-2.5">
+                    <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                    Analytics &amp; MIS Reports
+                </span>
+                <svg class="w-4 h-4 text-gray-400 group-hover:text-brand-600 group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </a>
         </div>
     </div>
 </div>

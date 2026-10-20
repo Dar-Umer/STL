@@ -142,6 +142,12 @@ class FarmerManagement extends Component
             $this->lab_id = $user->lab_id;
         }
 
+        $this->zone_id = $this->zone_id ?: null;
+        $this->panchayat_id = $this->panchayat_id ?: null;
+        $this->village_id = $this->village_id ?: null;
+        $this->aadhar_no = $this->aadhar_no ? trim($this->aadhar_no) : null;
+        $this->parentage = $this->parentage ? trim($this->parentage) : null;
+
         $this->validate();
 
         if ($this->farmerId) {
@@ -152,9 +158,9 @@ class FarmerManagement extends Component
         }
 
         Farmer::updateOrCreate(['id' => $this->farmerId], [
-            'name' => $this->name,
+            'name' => trim($this->name),
             'parentage' => $this->parentage,
-            'phone' => $this->phone,
+            'phone' => trim($this->phone),
             'aadhar_no' => $this->aadhar_no,
             'lab_id' => $this->lab_id,
             'state_id' => $this->state_id,
@@ -164,12 +170,12 @@ class FarmerManagement extends Component
             'village_id' => $this->village_id,
             'created_by' => auth()->id(),
         ]);
-        session()->flash('success', $this->farmerId ? 'Farmer updated.' : 'Farmer created.');
-        $this->reset();
+        session()->flash('success', $this->farmerId ? 'Farmer updated.' : 'Farmer registered successfully.');
+        $this->reset(['farmerId', 'name', 'parentage', 'phone', 'aadhar_no', 'lab_id', 'state_id', 'district_id', 'zone_id', 'panchayat_id', 'village_id', 'showForm']);
     }
 
     public function cancel()
     {
-        $this->reset();
+        $this->reset(['farmerId', 'name', 'parentage', 'phone', 'aadhar_no', 'lab_id', 'state_id', 'district_id', 'zone_id', 'panchayat_id', 'village_id', 'showForm']);
     }
 }

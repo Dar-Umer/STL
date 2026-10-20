@@ -2,59 +2,86 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Self-Sample Report</title>
+    <title>Farmer Self-Sample Submission Report</title>
     <style>
-        @page { margin: 6mm 6mm; }
-        body { font-family: 'DejaVu Sans', sans-serif; font-size: 7.5pt; color: #2d2d2d; }
-        .header { border-bottom: 2px solid #17a2b8; padding-bottom: 4px; margin-bottom: 6px; }
-        .header h1 { margin: 0; font-size: 13pt; color: #17a2b8; }
-        .header .sub { font-size: 7pt; color: #777; }
-        .section-title { font-size: 8pt; font-weight: bold; color: #fff; background: #17a2b8; padding: 3px 6px; margin-bottom: 4px; text-transform: uppercase; }
-        table { width: 100%; border-collapse: collapse; font-size: 7pt; }
-        th { background: #17a2b8; color: #fff; padding: 3px 4px; text-align: left; font-size: 6.5pt; }
-        td { padding: 2px 4px; border-bottom: 0.5px solid #e8e8e8; }
-        tr:nth-child(even) td { background: #fafafa; }
-        .text-right { text-align: right; }
-        .text-center { text-align: center; }
-        .footer { font-size: 6pt; color: #999; text-align: center; border-top: 0.5px solid #ddd; padding-top: 3px; margin-top: 6px; }
+        @page { margin: 8mm 8mm; size: a4 landscape; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'DejaVu Sans', Arial, Helvetica, sans-serif; }
+        body { font-family: 'DejaVu Sans', Arial, Helvetica, sans-serif; font-size: 7.5pt; color: #1e293b; line-height: 1.3; background: #ffffff; }
+        
+        .report-header {
+            border-bottom: 2px solid #059669;
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+        }
+        .header-table { width: 100%; border-collapse: collapse; }
+        .dept-title { font-size: 7.5pt; font-weight: bold; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+        .report-title { font-size: 13pt; font-weight: bold; color: #065f46; letter-spacing: 0.5px; margin-top: 1px; }
+        .report-sub { font-size: 6.8pt; color: #64748b; margin-top: 2px; }
+        .meta-pill { display: inline-block; background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 7pt; }
+
+        table.data-table { width: 100%; border-collapse: collapse; font-size: 7pt; margin-top: 6px; }
+        table.data-table th { background: #059669; color: #ffffff; padding: 4px 6px; text-align: left; font-size: 6.5pt; text-transform: uppercase; letter-spacing: 0.3px; border: 1px solid #047857; }
+        table.data-table th.r, table.data-table td.r { text-align: right; }
+        table.data-table th.c, table.data-table td.c { text-align: center; }
+        table.data-table td { padding: 3px 6px; border: 1px solid #e2e8f0; vertical-align: middle; }
+        table.data-table tr:nth-child(even) td { background: #f8fafc; }
+        
+        .rate-badge { display: inline-block; padding: 1px 5px; font-size: 6pt; font-weight: bold; border-radius: 3px; background: #d1fae5; color: #065f46; }
+        .footer { font-size: 6pt; color: #94a3b8; text-align: center; border-top: 0.5px solid #e2e8f0; padding-top: 4px; margin-top: 8px; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>SELF-SAMPLE REPORT</h1>
-        <div class="sub">Generated on {{ now()->format('d F Y h:i A') }} @if(isset($dateFrom)) | Period: {{ $dateFrom }} - {{ $dateTo }} @endif</div>
+    <div class="report-header">
+        <table class="header-table">
+            <tr>
+                <td>
+                    <div class="dept-title">Government of Jammu &amp; Kashmir &bull; Department of Horticulture &amp; Agriculture</div>
+                    <div class="report-title">DIRECT FARMER SELF-SAMPLE SUBMISSION REPORT</div>
+                    <div class="report-sub">Direct Lab Intake Registry @if(isset($dateFrom)) &bull; Period: <strong>{{ $dateFrom }}</strong> to <strong>{{ $dateTo }}</strong> @endif</div>
+                </td>
+                <td style="text-align: right; vertical-align: middle;">
+                    <span class="meta-pill">Generated: {{ now()->format('d M Y, h:i A') }}</span>
+                </td>
+            </tr>
+        </table>
     </div>
-    <table>
+
+    <table class="data-table">
         <thead>
             <tr>
-                <th>#</th>
-                <th>Lab</th>
-                <th>Code</th>
-                <th class="text-right">Total</th>
-                <th class="text-right">Received</th>
-                <th class="text-right">Testing</th>
-                <th class="text-right">Reported</th>
-                <th class="text-right">Rate %</th>
+                <th class="c" style="width: 24px;">#</th>
+                <th>Receiving Laboratory</th>
+                <th style="width: 80px;">Lab Code</th>
+                <th class="r">Total Submissions</th>
+                <th class="r">Received / Logged</th>
+                <th class="r">In Chemical Testing</th>
+                <th class="r">Certified &amp; Reported</th>
+                <th class="r" style="width: 65px;">Completion %</th>
             </tr>
         </thead>
         <tbody>
             @forelse($data as $i => $lab)
                 @php $r = $lab->self_samples_count > 0 ? round(($lab->self_reported_count / $lab->self_samples_count) * 100, 1) : 0; @endphp
                 <tr>
-                    <td class="text-center">{{ $i + 1 }}</td>
-                    <td>{{ $lab->name }}</td>
-                    <td>{{ $lab->code }}</td>
-                    <td class="text-right">{{ number_format($lab->self_samples_count) }}</td>
-                    <td class="text-right">{{ number_format($lab->self_received_count) }}</td>
-                    <td class="text-right">{{ number_format($lab->self_testing_count) }}</td>
-                    <td class="text-right">{{ number_format($lab->self_reported_count) }}</td>
-                    <td class="text-right">{{ $r }}%</td>
+                    <td class="c" style="font-weight: bold; color: #64748b;">{{ $i + 1 }}</td>
+                    <td style="font-weight: bold; color: #0f172a;">{{ $lab->name }}</td>
+                    <td><code>{{ $lab->code }}</code></td>
+                    <td class="r" style="font-weight: bold;">{{ number_format($lab->self_samples_count) }}</td>
+                    <td class="r">{{ number_format($lab->self_received_count) }}</td>
+                    <td class="r" style="color: #d97706; font-weight: bold;">{{ number_format($lab->self_testing_count) }}</td>
+                    <td class="r" style="color: #059669; font-weight: bold;">{{ number_format($lab->self_reported_count) }}</td>
+                    <td class="r"><span class="rate-badge">{{ $r }}%</span></td>
                 </tr>
             @empty
-                <tr><td colspan="8" class="text-center" style="color:#999;padding:10px;">No data available.</td></tr>
+                <tr>
+                    <td colspan="8" class="c" style="color:#94a3b8; padding: 14px;">No farmer self-sample submissions found for the selected criteria.</td>
+                </tr>
             @endforelse
         </tbody>
     </table>
-    <div class="footer">This report is computer-generated from the Soil Testing Laboratory Management System.</div>
+
+    <div class="footer">
+        Soil Health &amp; Laboratory Operations Management Portal &bull; Official Government Audit Document &bull; Generated: {{ now()->format('d M Y H:i:s') }}
+    </div>
 </body>
 </html>

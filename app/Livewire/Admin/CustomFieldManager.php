@@ -54,17 +54,19 @@ class CustomFieldManager extends Component
     public function save()
     {
         $this->validate();
-        $optionsArr = $this->type === 'select' ? array_filter(explode("\n", str_replace("\r", "", $this->options ?? ''))) : null;
+        $optionsArr = $this->type === 'select'
+            ? array_values(array_filter(array_map('trim', explode("\n", str_replace("\r", "", $this->options ?? '')))))
+            : null;
         CustomField::updateOrCreate(['id' => $this->fieldId], [
-            'name' => $this->name,
+            'name' => trim($this->name),
             'type' => $this->type,
             'options' => $optionsArr,
-            'required' => $this->required,
-            'order_column' => $this->order_column ?? 0,
-            'is_active' => $this->is_active,
+            'required' => (bool)$this->required,
+            'order_column' => ($this->order_column !== '' && $this->order_column !== null) ? (int)$this->order_column : 0,
+            'is_active' => (bool)$this->is_active,
         ]);
-        session()->flash('success', 'Custom field saved.');
-        $this->reset();
+        session()->flash('success', 'Custom field saved successfully.');
+        $this->reset(['fieldId', 'name', 'type', 'options', 'required', 'order_column', 'is_active', 'showForm']);
     }
 
     public function cancel()

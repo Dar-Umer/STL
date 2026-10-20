@@ -15,11 +15,14 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        body, input, button, select, textarea, .form-control {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
         }
         body {
             min-height: 100vh;
             background: linear-gradient(135deg, #064e3b 0%, #047857 50%, #064e3b 100%);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -308,13 +311,13 @@
                 @csrf
 
                 <div class="form-group">
-                    <label for="email">Email Address</label>
+                    <label for="login">Email Address or Mobile Number</label>
                     <div class="input-group-custom">
-                        <input type="email" name="email" id="email"
-                               class="form-control @error('email') is-invalid @enderror"
-                               placeholder="admin@soillab.com"
-                               value="{{ old('email') }}" required autofocus>
-                        <span class="input-icon"><i class="fas fa-envelope"></i></span>
+                        <input type="text" name="login" id="login"
+                               class="form-control @if($errors->has('login') || $errors->has('email')) is-invalid @endif"
+                               placeholder="admin@soillab.com or 10-digit mobile"
+                               value="{{ old('login', old('email')) }}" required autofocus>
+                        <span class="input-icon"><i class="fas fa-user"></i></span>
                     </div>
                 </div>
 

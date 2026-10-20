@@ -42,6 +42,11 @@ class SampleRequestManager extends Component
         ]);
     }
 
+    public function assign($requestId, $officerId)
+    {
+        $this->assignOfficer($requestId, $officerId);
+    }
+
     public function cancelRequest($requestId)
     {
         $request = SampleRequest::findOrFail($requestId);

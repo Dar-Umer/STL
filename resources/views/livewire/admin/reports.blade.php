@@ -1,92 +1,82 @@
-<div>
-    <style>
-        .report-stat-card { transition: transform .15s, box-shadow .15s; }
-        .report-stat-card:hover { transform: translateY(-2px); box-shadow: 0 .4rem 1rem rgba(0,0,0,.1) !important; }
-        .report-tab-link { border: none; border-radius: 2rem !important; padding: .45rem 1.1rem; font-size: .82rem; font-weight: 500; color: #6c757d; background: #f1f3f5; transition: all .2s; margin-right: .3rem; }
-        .report-tab-link:hover { background: #dee2e6; color: #495057; }
-        .report-tab-link.active { background: #007bff; color: #fff; box-shadow: 0 2px 6px rgba(0,123,255,.3); }
-        .report-filter-section { border-left: 3px solid #007bff; }
-        .monthly-bar { border-radius: 4px 4px 0 0; transition: height .4s ease, opacity .2s; position: relative; }
-        .monthly-bar:hover { opacity: .85; }
-        .monthly-bar::after { content: attr(data-count); position: absolute; top: -22px; left: 50%; transform: translateX(-50%); font-size: .7rem; font-weight: 700; color: #495057; opacity: 0; transition: opacity .2s; }
-        .monthly-bar:hover::after { opacity: 1; }
-        .status-row { padding: .65rem 0; border-bottom: 1px solid #f1f3f5; }
-        .status-row:last-child { border-bottom: none; }
-        .section-label { font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; color: #868e96; font-weight: 600; }
-        .report-table th { font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; color: #868e96; font-weight: 600; border-top: none; }
-        .report-table td { vertical-align: middle; }
-        .export-btn { transition: transform .12s; }
-        .export-btn:hover { transform: scale(1.05); }
-    </style>
-
+<div class="space-y-6">
     {{-- Header --}}
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h4 class="mb-1 font-weight-bold"><i class="fas fa-chart-bar text-primary mr-2"></i>Reports</h4>
-            <small class="text-muted">Analytics and export across all modules</small>
+            <h1 class="text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-2.5">
+                <span class="w-2.5 h-6 rounded-full bg-emerald-500"></span>
+                Operational Analytics &amp; Reports
+            </h1>
+            <p class="text-xs text-gray-500 mt-1 font-medium">Audit-ready turnaround tracking, sample pipeline intelligence, lab throughput, and field productivity</p>
         </div>
-        <div class="d-flex align-items-center">
-            <small class="text-muted mr-3">{{ now()->format('d/m/Y h:i A') }}</small>
-            <button wire:click="loadAllData" class="btn btn-sm btn-outline-secondary rounded-pill px-3 shadow-sm">
-                <i class="fas fa-sync-alt mr-1"></i> Refresh
+        <div class="flex items-center gap-3">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-600 border border-gray-200">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                {{ now()->format('d M Y, h:i A') }}
+            </span>
+            <button wire:click="loadAllData" class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium text-xs rounded-xl shadow-xs transition">
+                <svg class="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                Refresh Data
             </button>
         </div>
     </div>
 
-    {{-- Filters --}}
-    <div class="card border-0 shadow-sm rounded-lg mb-4 report-filter-section">
-        <div class="card-body py-3">
-            <div class="row align-items-end">
-                <div class="col-md-3">
-                    <label class="section-label mb-1">From</label>
-                    <input type="date" wire:model.live="dateFrom" class="form-control form-control-sm rounded-pill" max="{{ $dateTo ?: '' }}">
-                </div>
-                <div class="col-md-3">
-                    <label class="section-label mb-1">To</label>
-                    <input type="date" wire:model.live="dateTo" class="form-control form-control-sm rounded-pill" min="{{ $dateFrom ?: '' }}">
-                </div>
-                @if($isAdmin)
-                <div class="col-md-3">
-                    <label class="section-label mb-1">Lab</label>
-                    <select wire:model.live="labFilter" class="form-control form-control-sm rounded-pill">
-                        <option value="">All Labs</option>
-                        @foreach($labs as $id => $name)
-                            <option value="{{ $id }}">{{ $name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                @endif
-                <div class="col-md-{{ $isAdmin ? 3 : 6 }}">
-                    <button wire:click="loadAllData" class="btn btn-sm btn-primary rounded-pill px-4 shadow-sm w-100">
-                        <i class="fas fa-filter mr-1"></i> Apply Filters
-                    </button>
-                </div>
+    {{-- Filter Bar --}}
+    <div class="bg-white rounded-2xl shadow-xs border border-gray-100 p-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-3 items-end">
+            <div class="md:col-span-3">
+                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">From Date</label>
+                <input type="date" wire:model.live="dateFrom" max="{{ $dateTo ?: '' }}" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-100">
+            </div>
+            <div class="md:col-span-3">
+                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">To Date</label>
+                <input type="date" wire:model.live="dateTo" min="{{ $dateFrom ?: '' }}" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-100">
+            </div>
+            @if($isAdmin)
+            <div class="md:col-span-3">
+                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Laboratory</label>
+                <select wire:model.live="labFilter" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-100">
+                    <option value="">All Laboratories</option>
+                    @foreach($labs as $id => $name)
+                    <option value="{{ $id }}">{{ $name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            @endif
+            <div class="md:col-span-{{ $isAdmin ? 3 : 6 }}">
+                <button wire:click="loadAllData" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs rounded-xl shadow-xs transition active:scale-[0.98]">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
+                    Apply Filter Range
+                </button>
             </div>
         </div>
     </div>
 
-    {{-- Tabs --}}
-    <div class="mb-4">
-        <div class="d-flex flex-wrap">
-            <button class="report-tab-link {{ $activeTab == 'summary' ? 'active' : '' }}" wire:click="$set('activeTab', 'summary')">
-                <i class="fas fa-th-large mr-1"></i> Summary
-            </button>
-            <button class="report-tab-link {{ $activeTab == 'lab' ? 'active' : '' }}" wire:click="$set('activeTab', 'lab')">
-                <i class="fas fa-microscope mr-1"></i> By Lab
-            </button>
-            <button class="report-tab-link {{ $activeTab == 'zone' ? 'active' : '' }}" wire:click="$set('activeTab', 'zone')">
-                <i class="fas fa-map-marked-alt mr-1"></i> By Zone
-            </button>
-            <button class="report-tab-link {{ $activeTab == 'field-official' ? 'active' : '' }}" wire:click="$set('activeTab', 'field-official')">
-                <i class="fas fa-hard-hat mr-1"></i> Field Officials
-            </button>
-            <button class="report-tab-link {{ $activeTab == 'technician' ? 'active' : '' }}" wire:click="$set('activeTab', 'technician')">
-                <i class="fas fa-flask mr-1"></i> Technicians
-            </button>
-            <button class="report-tab-link {{ $activeTab == 'self-sample' ? 'active' : '' }}" wire:click="$set('activeTab', 'self-sample')">
-                <i class="fas fa-user-plus mr-1"></i> Self Samples
-            </button>
-        </div>
+    {{-- Segmented Tabs --}}
+    <div class="flex items-center gap-1.5 p-1 bg-gray-100/80 rounded-2xl overflow-x-auto w-full sm:w-max">
+        <button wire:click="$set('activeTab', 'summary')" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition whitespace-nowrap {{ $activeTab === 'summary' ? 'bg-white text-gray-900 shadow-xs' : 'text-gray-500 hover:text-gray-900' }}">
+            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+            Summary Dashboard
+        </button>
+        <button wire:click="$set('activeTab', 'lab')" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition whitespace-nowrap {{ $activeTab === 'lab' ? 'bg-white text-gray-900 shadow-xs' : 'text-gray-500 hover:text-gray-900' }}">
+            <svg class="w-4 h-4 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+            By Laboratory
+        </button>
+        <button wire:click="$set('activeTab', 'zone')" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition whitespace-nowrap {{ $activeTab === 'zone' ? 'bg-white text-gray-900 shadow-xs' : 'text-gray-500 hover:text-gray-900' }}">
+            <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+            By Zone
+        </button>
+        <button wire:click="$set('activeTab', 'field-official')" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition whitespace-nowrap {{ $activeTab === 'field-official' ? 'bg-white text-gray-900 shadow-xs' : 'text-gray-500 hover:text-gray-900' }}">
+            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+            Field Officials
+        </button>
+        <button wire:click="$set('activeTab', 'technician')" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition whitespace-nowrap {{ $activeTab === 'technician' ? 'bg-white text-gray-900 shadow-xs' : 'text-gray-500 hover:text-gray-900' }}">
+            <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            Technicians
+        </button>
+        <button wire:click="$set('activeTab', 'self-sample')" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition whitespace-nowrap {{ $activeTab === 'self-sample' ? 'bg-white text-gray-900 shadow-xs' : 'text-gray-500 hover:text-gray-900' }}">
+            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+            Self Samples
+        </button>
     </div>
 
     {{-- ═══════════════════════════ SUMMARY TAB ═══════════════════════════ --}}
@@ -103,231 +93,233 @@
         $reportRate = $total > 0 ? round(($reported / $total) * 100) : 0;
     @endphp
 
-    {{-- Key Metrics --}}
-    <div class="row mb-4">
-        <div class="col-xl-2 col-lg-3 col-sm-4 col-6 mb-3">
-            <div class="card border-0 shadow-sm h-100 rounded-lg report-stat-card">
-                <div class="card-body py-3 d-flex align-items-center">
-                    <div class="d-flex align-items-center justify-content-center rounded-circle mr-3" style="width:44px;height:44px;background:rgba(0,123,255,.1);">
-                        <i class="fas fa-vial text-primary"></i>
-                    </div>
-                    <div>
-                        <p class="section-label mb-0">Total</p>
-                        <h4 class="mb-0 font-weight-bold">{{ number_format($total) }}</h4>
-                    </div>
-                </div>
+    {{-- Metrics Cards --}}
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-xs flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gray-100 text-gray-700 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+            </div>
+            <div>
+                <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Total Samples</p>
+                <p class="text-xl font-bold text-gray-900 leading-none mt-0.5">{{ number_format($total) }}</p>
             </div>
         </div>
-        <div class="col-xl-2 col-lg-3 col-sm-4 col-6 mb-3">
-            <div class="card border-0 shadow-sm h-100 rounded-lg report-stat-card">
-                <div class="card-body py-3 d-flex align-items-center">
-                    <div class="d-flex align-items-center justify-content-center rounded-circle mr-3" style="width:44px;height:44px;background:rgba(23,162,184,.1);">
-                        <i class="fas fa-clipboard-list text-info"></i>
-                    </div>
-                    <div>
-                        <p class="section-label mb-0">Collected</p>
-                        <h4 class="mb-0 font-weight-bold">{{ number_format($collected) }}</h4>
-                    </div>
-                </div>
+
+        <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-xs flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            </div>
+            <div>
+                <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Collected</p>
+                <p class="text-xl font-bold text-gray-900 leading-none mt-0.5">{{ number_format($collected) }}</p>
             </div>
         </div>
-        <div class="col-xl-2 col-lg-3 col-sm-4 col-6 mb-3">
-            <div class="card border-0 shadow-sm h-100 rounded-lg report-stat-card">
-                <div class="card-body py-3 d-flex align-items-center">
-                    <div class="d-flex align-items-center justify-content-center rounded-circle mr-3" style="width:44px;height:44px;background:rgba(0,123,255,.1);">
-                        <i class="fas fa-download text-primary"></i>
-                    </div>
-                    <div>
-                        <p class="section-label mb-0">Received</p>
-                        <h4 class="mb-0 font-weight-bold">{{ number_format($received) }}</h4>
-                    </div>
-                </div>
+
+        <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-xs flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            </div>
+            <div>
+                <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Received Lab</p>
+                <p class="text-xl font-bold text-gray-900 leading-none mt-0.5">{{ number_format($received) }}</p>
             </div>
         </div>
-        <div class="col-xl-2 col-lg-3 col-sm-4 col-6 mb-3">
-            <div class="card border-0 shadow-sm h-100 rounded-lg report-stat-card">
-                <div class="card-body py-3 d-flex align-items-center">
-                    <div class="d-flex align-items-center justify-content-center rounded-circle mr-3" style="width:44px;height:44px;background:rgba(255,193,7,.1);">
-                        <i class="fas fa-flask text-warning"></i>
-                    </div>
-                    <div>
-                        <p class="section-label mb-0">Testing</p>
-                        <h4 class="mb-0 font-weight-bold">{{ number_format($testing) }}</h4>
-                    </div>
-                </div>
+
+        <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-xs flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+            </div>
+            <div>
+                <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">In Testing</p>
+                <p class="text-xl font-bold text-gray-900 leading-none mt-0.5">{{ number_format($testing) }}</p>
             </div>
         </div>
-        <div class="col-xl-2 col-lg-3 col-sm-4 col-6 mb-3">
-            <div class="card border-0 shadow-sm h-100 rounded-lg report-stat-card">
-                <div class="card-body py-3 d-flex align-items-center">
-                    <div class="d-flex align-items-center justify-content-center rounded-circle mr-3" style="width:44px;height:44px;background:rgba(40,167,69,.1);">
-                        <i class="fas fa-check-circle text-success"></i>
-                    </div>
-                    <div>
-                        <p class="section-label mb-0">Reported</p>
-                        <h4 class="mb-0 font-weight-bold">{{ number_format($reported) }}</h4>
-                    </div>
-                </div>
+
+        <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-xs flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div>
+                <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Reported</p>
+                <p class="text-xl font-bold text-gray-900 leading-none mt-0.5">{{ number_format($reported) }}</p>
             </div>
         </div>
-        <div class="col-xl-2 col-lg-3 col-sm-4 col-6 mb-3">
-            <div class="card border-0 shadow-sm h-100 rounded-lg report-stat-card">
-                <div class="card-body py-3 d-flex align-items-center">
-                    <div class="d-flex align-items-center justify-content-center rounded-circle mr-3" style="width:44px;height:44px;background:rgba(220,53,69,.1);">
-                        <i class="fas fa-clock text-danger"></i>
-                    </div>
-                    <div>
-                        <p class="section-label mb-0">In Queue</p>
-                        <h4 class="mb-0 font-weight-bold">{{ number_format($queue) }}</h4>
-                    </div>
-                </div>
+
+        <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-xs flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div>
+                <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">In Queue</p>
+                <p class="text-xl font-bold text-gray-900 leading-none mt-0.5">{{ number_format($queue) }}</p>
             </div>
         </div>
     </div>
 
-    {{-- Pipeline + Report Rate --}}
-    <div class="row mb-4">
-        <div class="col-lg-4 mb-3">
-            <div class="card border-0 shadow-sm rounded-lg h-100">
-                <div class="card-body py-3 border-bottom">
-                    <h6 class="mb-0 font-weight-bold"><i class="fas fa-stream text-primary mr-2"></i>Pipeline Overview</h6>
+    {{-- Pipeline + Completion Rate + Monthly Chart --}}
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {{-- Pipeline Breakdown --}}
+        <div class="lg:col-span-5 bg-white rounded-2xl shadow-xs border border-gray-100 p-6 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between pb-3 border-b border-gray-100 mb-4">
+                    <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider">Workflow Pipeline</h3>
+                    <span class="text-xs text-gray-400 font-medium">Conversion</span>
                 </div>
-                <div class="card-body py-2">
-                    @php $pipelineMax = max($total, 1); @endphp
-                    @php $pipelineItems = [
-                        ['label' => 'Collected', 'count' => $collected, 'color' => '#17a2b8', 'bg' => 'rgba(23,162,184,.15)'],
-                        ['label' => 'Received', 'count' => $received, 'color' => '#007bff', 'bg' => 'rgba(0,123,255,.15)'],
-                        ['label' => 'Testing', 'count' => $testing, 'color' => '#ffc107', 'bg' => 'rgba(255,193,7,.15)'],
-                        ['label' => 'Reported', 'count' => $reported, 'color' => '#28a745', 'bg' => 'rgba(40,167,69,.15)'],
-                    ]; @endphp
+
+                @php $pipelineMax = max($total, 1); @endphp
+                @php $pipelineItems = [
+                    ['label' => 'Collected', 'count' => $collected, 'bg' => 'bg-cyan-500'],
+                    ['label' => 'Received', 'count' => $received, 'bg' => 'bg-blue-500'],
+                    ['label' => 'Testing', 'count' => $testing, 'bg' => 'bg-amber-500'],
+                    ['label' => 'Reported', 'count' => $reported, 'bg' => 'bg-emerald-500'],
+                ]; @endphp
+
+                <div class="space-y-3.5">
                     @foreach($pipelineItems as $pi)
-                    <div class="d-flex align-items-center mb-2">
-                        <div style="width:80px" class="small font-weight-bold text-muted">{{ $pi['label'] }}</div>
-                        <div class="flex-fill mx-2">
-                            <div class="progress" style="height:20px;background:{{ $pi['bg'] }}">
-                                <div class="progress-bar" style="width:{{ $pipelineMax > 0 ? round(($pi['count'] / $pipelineMax) * 100) : 0 }}%;background:{{ $pi['color'] }};border-radius:10px"></div>
-                            </div>
+                    @php $pct = round(($pi['count'] / $pipelineMax) * 100); @endphp
+                    <div>
+                        <div class="flex items-center justify-between text-xs mb-1">
+                            <span class="font-semibold text-gray-700">{{ $pi['label'] }}</span>
+                            <span class="font-bold text-gray-900">{{ number_format($pi['count']) }} <span class="text-gray-400 font-normal">({{ $pct }}%)</span></span>
                         </div>
-                        <div style="width:50px" class="text-right font-weight-bold">{{ number_format($pi['count']) }}</div>
+                        <div class="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                            <div class="h-full {{ $pi['bg'] }} rounded-full transition-all duration-500" style="width: {{ $pct }}%"></div>
+                        </div>
                     </div>
                     @endforeach
-                    <hr class="my-2">
-                    <div class="d-flex justify-content-between small">
-                        <span class="text-muted"><i class="fas fa-leaf mr-1 text-secondary"></i>Field: <strong>{{ number_format($field) }}</strong></span>
-                        <span class="text-muted"><i class="fas fa-user-plus mr-1 text-info"></i>Self: <strong>{{ number_format($self) }}</strong></span>
-                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-lg-4 mb-3">
-            <div class="card border-0 shadow-sm rounded-lg h-100">
-                <div class="card-body py-3 border-bottom">
-                    <h6 class="mb-0 font-weight-bold"><i class="fas fa-bullseye text-success mr-2"></i>Report Completion</h6>
-                </div>
-                <div class="card-body d-flex flex-column align-items-center justify-content-center py-4">
-                    <div class="position-relative mb-3" style="width:120px;height:120px;">
-                        <svg viewBox="0 0 36 36" style="transform:rotate(-90deg)">
-                            <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#e9ecef" stroke-width="3"/>
-                            <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="{{ $reportRate >= 80 ? '#28a745' : ($reportRate >= 50 ? '#ffc107' : '#dc3545') }}" stroke-width="3" stroke-dasharray="{{ $reportRate }}, 100" stroke-linecap="round" style="transition: stroke-dasharray .8s ease"/>
-                        </svg>
-                        <div class="position-absolute" style="top:50%;left:50%;transform:translate(-50%,-50%);text-align:center">
-                            <h3 class="mb-0 font-weight-bold">{{ $reportRate }}%</h3>
-                            <small class="text-muted">of {{ number_format($total) }}</small>
-                        </div>
-                    </div>
-                    <p class="text-muted small mb-0 text-center">{{ number_format($reported) }} samples reported out of {{ number_format($total) }} total</p>
-                </div>
+
+            <div class="pt-4 border-t border-gray-100 mt-4 flex items-center justify-between text-xs text-gray-600">
+                <span class="inline-flex items-center gap-1 font-medium"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Field: <strong>{{ number_format($field) }}</strong></span>
+                <span class="inline-flex items-center gap-1 font-medium"><span class="w-2 h-2 rounded-full bg-blue-500"></span> Self: <strong>{{ number_format($self) }}</strong></span>
             </div>
         </div>
-        <div class="col-lg-4 mb-3">
-            <div class="card border-0 shadow-sm rounded-lg h-100">
-                <div class="card-body py-3 border-bottom">
-                    <h6 class="mb-0 font-weight-bold"><i class="fas fa-chart-bar text-warning mr-2"></i>Monthly Trend</h6>
+
+        {{-- Completion Radial KPI --}}
+        <div class="lg:col-span-3 bg-white rounded-2xl shadow-xs border border-gray-100 p-6 flex flex-col items-center justify-center text-center">
+            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Report Completion Rate</h3>
+            
+            <div class="relative w-32 h-32 flex items-center justify-center mb-3">
+                <svg class="w-full h-full -rotate-90" viewBox="0 0 36 36">
+                    <path class="text-gray-100" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                    <path class="{{ $reportRate >= 80 ? 'text-emerald-500' : ($reportRate >= 50 ? 'text-amber-500' : 'text-rose-500') }} transition-all duration-1000" stroke-dasharray="{{ $reportRate }}, 100" stroke-width="3" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                </svg>
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <span class="text-3xl font-extrabold text-gray-900 tracking-tight">{{ $reportRate }}%</span>
+                    <span class="text-[10px] uppercase font-bold text-gray-400">Completed</span>
                 </div>
-                <div class="card-body">
-                    @php $maxMonthly = max(array_merge($monthlyCounts, [1])); @endphp
-                    <div class="d-flex align-items-end justify-content-between" style="height:140px;gap:6px;">
-                        @foreach($monthlyCounts as $i => $count)
-                            @php $height = max(($count / $maxMonthly) * 110, 3); @endphp
-                            <div class="d-flex flex-column align-items-center flex-fill">
-                                <div class="monthly-bar w-100" data-count="{{ $count }}" style="height:{{ $height }}px;background:linear-gradient(180deg, #007bff, #6610f2)"></div>
-                                <small class="mt-1 text-muted" style="font-size:9px">{{ \Carbon\Carbon::parse($monthlyLabels[$i])->format('M') }}</small>
-                            </div>
-                        @endforeach
-                    </div>
+            </div>
+
+            <p class="text-xs text-gray-500 mt-2">
+                <strong class="text-gray-900">{{ number_format($reported) }}</strong> of {{ number_format($total) }} finalized
+            </p>
+        </div>
+
+        {{-- Monthly Trend Histogram --}}
+        <div class="lg:col-span-4 bg-white rounded-2xl shadow-xs border border-gray-100 p-6 flex flex-col justify-between">
+            <div class="flex items-center justify-between pb-3 border-b border-gray-100 mb-4">
+                <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider">Monthly Intake</h3>
+                <span class="text-xs text-gray-400 font-medium">Last 6 Months</span>
+            </div>
+
+            @php $maxMonthly = max(array_merge($monthlyCounts, [1])); @endphp
+            <div class="h-32 flex items-end justify-between gap-2 pt-2">
+                @foreach($monthlyCounts as $i => $count)
+                @php $barPct = max(round(($count / $maxMonthly) * 100), 4); @endphp
+                <div class="flex-1 flex flex-col items-center h-full justify-end group">
+                    <span class="text-[10px] font-bold text-gray-700 opacity-0 group-hover:opacity-100 transition-opacity mb-1">{{ $count }}</span>
+                    <div class="w-full bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-lg transition-all duration-500 hover:brightness-110" style="height: {{ $barPct }}%"></div>
+                    <span class="text-[10px] font-semibold text-gray-400 uppercase mt-2">{{ \Carbon\Carbon::parse($monthlyLabels[$i])->format('M') }}</span>
                 </div>
+                @endforeach
             </div>
         </div>
     </div>
 
-    {{-- Lab Summary + Zone Summary --}}
-    <div class="row">
-        <div class="col-md-6 mb-3">
-            <div class="card border-0 shadow-sm rounded-lg h-100">
-                <div class="card-body py-3 border-bottom d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0 font-weight-bold"><i class="fas fa-microscope text-info mr-2"></i>Lab Summary</h6>
-                    <button class="report-tab-link {{ $activeTab == 'lab' ? 'active' : '' }}" wire:click="$set('activeTab', 'lab')" style="font-size:.72rem;padding:.3rem .8rem">
-                        View All <i class="fas fa-arrow-right ml-1"></i>
-                    </button>
-                </div>
-                <div class="card-body p-0">
-                    <table class="table table-hover mb-0 report-table">
-                        <thead class="thead-light"><tr><th>Lab</th><th class="text-right">Samples</th><th class="text-right">Reported</th><th style="min-width:100px">Rate</th></tr></thead>
-                        <tbody>
-                            @forelse($labReportData as $lab)
-                                @php $r = $lab->soil_samples_count > 0 ? round(($lab->reported_count / $lab->soil_samples_count) * 100) : 0; @endphp
-                                <tr>
-                                    <td class="font-weight-bold">{{ $lab->name }}</td>
-                                    <td class="text-right">{{ number_format($lab->soil_samples_count) }}</td>
-                                    <td class="text-right">{{ number_format($lab->reported_count) }}</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="progress flex-fill" style="height:16px;border-radius:8px">
-                                                <div class="progress-bar bg-{{ $r >= 80 ? 'success' : ($r >= 50 ? 'warning' : 'danger') }}" style="width:{{ $r }}%;border-radius:8px">{{ $r }}%</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr><td colspan="4" class="text-center py-4 text-muted"><i class="fas fa-inbox d-block mb-1" style="font-size:1.5rem;opacity:.3"></i>No data</td></tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+    {{-- Comparison Tables: Lab & Zone Summaries --}}
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {{-- Lab Summary Card --}}
+        <div class="bg-white rounded-2xl shadow-xs border border-gray-100 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-gray-50/70 to-white">
+                <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider">Lab Summary</h3>
+                <button wire:click="$set('activeTab', 'lab')" class="text-xs font-semibold text-emerald-600 hover:text-emerald-700 inline-flex items-center gap-1">
+                    View Full Table &rarr;
+                </button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-xs text-left">
+                    <thead class="bg-gray-50/80 border-b border-gray-100">
+                        <tr>
+                            <th class="px-5 py-3 font-semibold uppercase text-gray-500">Laboratory</th>
+                            <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Samples</th>
+                            <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Reported</th>
+                            <th class="px-5 py-3 font-semibold uppercase text-gray-500 w-32">Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-50">
+                        @forelse($labReportData as $lab)
+                        @php $r = $lab->soil_samples_count > 0 ? round(($lab->reported_count / $lab->soil_samples_count) * 100) : 0; @endphp
+                        <tr class="hover:bg-gray-50/70 transition">
+                            <td class="px-5 py-3 font-bold text-gray-900">{{ $lab->name }}</td>
+                            <td class="px-4 py-3 text-right text-gray-600">{{ number_format($lab->soil_samples_count) }}</td>
+                            <td class="px-4 py-3 text-right font-semibold text-emerald-600">{{ number_format($lab->reported_count) }}</td>
+                            <td class="px-5 py-3">
+                                <div class="flex items-center gap-2">
+                                    <div class="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                        <div class="h-full {{ $r >= 80 ? 'bg-emerald-500' : ($r >= 50 ? 'bg-amber-500' : 'bg-rose-500') }} rounded-full" style="width: {{ $r }}%"></div>
+                                    </div>
+                                    <span class="font-bold text-gray-700 w-8 text-right">{{ $r }}%</span>
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr><td colspan="4" class="px-5 py-6 text-center text-gray-400">No laboratory data</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         </div>
-        <div class="col-md-6 mb-3">
-            <div class="card border-0 shadow-sm rounded-lg h-100">
-                <div class="card-body py-3 border-bottom d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0 font-weight-bold"><i class="fas fa-map-marked-alt text-danger mr-2"></i>Zone Summary</h6>
-                    <button class="report-tab-link {{ $activeTab == 'zone' ? 'active' : '' }}" wire:click="$set('activeTab', 'zone')" style="font-size:.72rem;padding:.3rem .8rem">
-                        View All <i class="fas fa-arrow-right ml-1"></i>
-                    </button>
-                </div>
-                <div class="card-body p-0">
-                    <table class="table table-hover mb-0 report-table">
-                        <thead class="thead-light"><tr><th>Zone</th><th class="text-right">Samples</th><th class="text-right">Reported</th><th style="min-width:100px">Rate</th></tr></thead>
-                        <tbody>
-                            @forelse($zoneReportData as $zone)
-                                @php $r = $zone->samples_count > 0 ? round(($zone->reported_count / $zone->samples_count) * 100) : 0; @endphp
-                                <tr>
-                                    <td class="font-weight-bold">{{ $zone->name }}</td>
-                                    <td class="text-right">{{ number_format($zone->samples_count) }}</td>
-                                    <td class="text-right">{{ number_format($zone->reported_count) }}</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="progress flex-fill" style="height:16px;border-radius:8px">
-                                                <div class="progress-bar bg-{{ $r >= 80 ? 'success' : ($r >= 50 ? 'warning' : 'danger') }}" style="width:{{ $r }}%;border-radius:8px">{{ $r }}%</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr><td colspan="4" class="text-center py-4 text-muted"><i class="fas fa-inbox d-block mb-1" style="font-size:1.5rem;opacity:.3"></i>No data</td></tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+
+        {{-- Zone Summary Card --}}
+        <div class="bg-white rounded-2xl shadow-xs border border-gray-100 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-gray-50/70 to-white">
+                <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider">Zone Summary</h3>
+                <button wire:click="$set('activeTab', 'zone')" class="text-xs font-semibold text-emerald-600 hover:text-emerald-700 inline-flex items-center gap-1">
+                    View Full Table &rarr;
+                </button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-xs text-left">
+                    <thead class="bg-gray-50/80 border-b border-gray-100">
+                        <tr>
+                            <th class="px-5 py-3 font-semibold uppercase text-gray-500">Zone</th>
+                            <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Samples</th>
+                            <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Reported</th>
+                            <th class="px-5 py-3 font-semibold uppercase text-gray-500 w-32">Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-50">
+                        @forelse($zoneReportData as $zone)
+                        @php $r = $zone->samples_count > 0 ? round(($zone->reported_count / $zone->samples_count) * 100) : 0; @endphp
+                        <tr class="hover:bg-gray-50/70 transition">
+                            <td class="px-5 py-3 font-bold text-gray-900">{{ $zone->name }}</td>
+                            <td class="px-4 py-3 text-right text-gray-600">{{ number_format($zone->samples_count) }}</td>
+                            <td class="px-4 py-3 text-right font-semibold text-emerald-600">{{ number_format($zone->reported_count) }}</td>
+                            <td class="px-5 py-3">
+                                <div class="flex items-center gap-2">
+                                    <div class="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                        <div class="h-full {{ $r >= 80 ? 'bg-emerald-500' : ($r >= 50 ? 'bg-amber-500' : 'bg-rose-500') }} rounded-full" style="width: {{ $r }}%"></div>
+                                    </div>
+                                    <span class="font-bold text-gray-700 w-8 text-right">{{ $r }}%</span>
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr><td colspan="4" class="px-5 py-6 text-center text-gray-400">No zone data</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -335,224 +327,250 @@
 
     {{-- ═══════════════════════════ BY LAB TAB ═══════════════════════════ --}}
     @if($activeTab == 'lab')
-    <div class="card border-0 shadow-sm rounded-lg">
-        <div class="card-body py-3 border-bottom d-flex justify-content-between align-items-center">
-            <h6 class="mb-0 font-weight-bold"><i class="fas fa-microscope text-info mr-2"></i>Lab-wise Report</h6>
-            <div>
-                <button wire:click="exportLabExcel" class="btn btn-sm btn-success rounded-pill px-3 shadow-sm export-btn mr-1"><i class="fas fa-file-excel mr-1"></i> Excel</button>
-                <button wire:click="exportLabPdf" class="btn btn-sm btn-danger rounded-pill px-3 shadow-sm export-btn"><i class="fas fa-file-pdf mr-1"></i> PDF</button>
+    <div class="bg-white rounded-2xl shadow-xs border border-gray-100 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gradient-to-r from-gray-50/70 to-white">
+            <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wider">Laboratory Throughput &amp; Processing Report</h2>
+            <div class="flex items-center gap-2">
+                <button wire:click="exportLabExcel" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 text-xs font-semibold text-emerald-700 bg-white hover:bg-emerald-50 shadow-2xs transition">
+                    <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    Export Excel
+                </button>
+                <button wire:click="exportLabPdf" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 text-xs font-semibold text-rose-700 bg-white hover:bg-rose-50 shadow-2xs transition">
+                    <svg class="w-3.5 h-3.5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                    Export PDF
+                </button>
             </div>
         </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover mb-0 report-table">
-                    <thead class="thead-light">
-                        <tr>
-                            <th>#</th>
-                            <th>Lab</th>
-                            <th>Code</th>
-                            <th class="text-right">Total</th>
-                            <th class="text-right">Field</th>
-                            <th class="text-right">Self</th>
-                            <th class="text-right">Collected</th>
-                            <th class="text-right">Received</th>
-                            <th class="text-right">Testing</th>
-                            <th class="text-right">Reported</th>
-                            <th class="text-right">Farmers</th>
-                            <th class="text-right">Users</th>
-                            <th style="min-width:120px">Report Rate</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($labReportData as $i => $lab)
-                            @php $r = $lab->soil_samples_count > 0 ? round(($lab->reported_count / $lab->soil_samples_count) * 100) : 0; @endphp
-                            <tr>
-                                <td class="text-muted">{{ $i + 1 }}</td>
-                                <td class="font-weight-bold">{{ $lab->name }}</td>
-                                <td><span class="badge badge-light rounded-pill">{{ $lab->code }}</span></td>
-                                <td class="text-right font-weight-bold">{{ number_format($lab->soil_samples_count) }}</td>
-                                <td class="text-right">{{ number_format($lab->soil_samples_count - ($lab->self_samples_count ?? 0)) }}</td>
-                                <td class="text-right">{{ number_format($lab->self_samples_count ?? 0) }}</td>
-                                <td class="text-right">{{ number_format($lab->collected_count) }}</td>
-                                <td class="text-right">{{ number_format($lab->received_count) }}</td>
-                                <td class="text-right">{{ number_format($lab->testing_count) }}</td>
-                                <td class="text-right font-weight-bold text-success">{{ number_format($lab->reported_count) }}</td>
-                                <td class="text-right">{{ number_format($lab->farmers_count) }}</td>
-                                <td class="text-right">{{ number_format($lab->users_count) }}</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="progress flex-fill" style="height:18px;border-radius:9px">
-                                            <div class="progress-bar bg-{{ $r >= 80 ? 'success' : ($r >= 50 ? 'warning' : 'danger') }}" style="width:{{ $r }}%;border-radius:9px">{{ $r }}%</div>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr><td colspan="13" class="text-center py-5 text-muted"><i class="fas fa-inbox d-block mb-2" style="font-size:2rem;opacity:.3"></i><br>No labs found.</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left">
+                <thead class="bg-gray-50/80 border-b border-gray-100">
+                    <tr>
+                        <th class="px-5 py-3 font-semibold uppercase text-gray-500 w-10">#</th>
+                        <th class="px-5 py-3 font-semibold uppercase text-gray-500">Laboratory</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500">Code</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Total</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Field</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Self</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Collected</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Received</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Testing</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Reported</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Farmers</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Staff</th>
+                        <th class="px-5 py-3 font-semibold uppercase text-gray-500 w-36">Completion</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50">
+                    @forelse($labReportData as $i => $lab)
+                    @php $r = $lab->soil_samples_count > 0 ? round(($lab->reported_count / $lab->soil_samples_count) * 100) : 0; @endphp
+                    <tr class="hover:bg-gray-50/70 transition">
+                        <td class="px-5 py-3 text-gray-400">{{ $i + 1 }}</td>
+                        <td class="px-5 py-3 font-bold text-gray-900">{{ $lab->name }}</td>
+                        <td class="px-4 py-3"><span class="font-mono text-[10px] bg-gray-100 px-2 py-0.5 rounded text-gray-700">{{ $lab->code }}</span></td>
+                        <td class="px-4 py-3 text-right font-bold text-gray-900">{{ number_format($lab->soil_samples_count) }}</td>
+                        <td class="px-4 py-3 text-right text-gray-600">{{ number_format($lab->soil_samples_count - ($lab->self_samples_count ?? 0)) }}</td>
+                        <td class="px-4 py-3 text-right text-gray-600">{{ number_format($lab->self_samples_count ?? 0) }}</td>
+                        <td class="px-4 py-3 text-right text-gray-600">{{ number_format($lab->collected_count) }}</td>
+                        <td class="px-4 py-3 text-right text-gray-600">{{ number_format($lab->received_count) }}</td>
+                        <td class="px-4 py-3 text-right text-gray-600">{{ number_format($lab->testing_count) }}</td>
+                        <td class="px-4 py-3 text-right font-bold text-emerald-600">{{ number_format($lab->reported_count) }}</td>
+                        <td class="px-4 py-3 text-right text-gray-600">{{ number_format($lab->farmers_count) }}</td>
+                        <td class="px-4 py-3 text-right text-gray-600">{{ number_format($lab->users_count) }}</td>
+                        <td class="px-5 py-3">
+                            <div class="flex items-center gap-2">
+                                <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                                    <div class="h-full {{ $r >= 80 ? 'bg-emerald-500' : ($r >= 50 ? 'bg-amber-500' : 'bg-rose-500') }} rounded-full" style="width: {{ $r }}%"></div>
+                                </div>
+                                <span class="font-bold text-gray-700 w-8 text-right">{{ $r }}%</span>
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr><td colspan="13" class="px-5 py-12 text-center text-gray-400">No laboratory records found.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
     @endif
 
     {{-- ═══════════════════════════ BY ZONE TAB ═══════════════════════════ --}}
     @if($activeTab == 'zone')
-    <div class="card border-0 shadow-sm rounded-lg">
-        <div class="card-body py-3 border-bottom d-flex justify-content-between align-items-center">
-            <h6 class="mb-0 font-weight-bold"><i class="fas fa-map-marked-alt text-danger mr-2"></i>Zone-wise Report</h6>
-            <div>
-                <button wire:click="exportZoneExcel" class="btn btn-sm btn-success rounded-pill px-3 shadow-sm export-btn mr-1"><i class="fas fa-file-excel mr-1"></i> Excel</button>
-                <button wire:click="exportZonePdf" class="btn btn-sm btn-danger rounded-pill px-3 shadow-sm export-btn"><i class="fas fa-file-pdf mr-1"></i> PDF</button>
+    <div class="bg-white rounded-2xl shadow-xs border border-gray-100 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gradient-to-r from-gray-50/70 to-white">
+            <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wider">Zonal Agricultural Sampling Report</h2>
+            <div class="flex items-center gap-2">
+                <button wire:click="exportZoneExcel" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 text-xs font-semibold text-emerald-700 bg-white hover:bg-emerald-50 shadow-2xs transition">
+                    <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    Export Excel
+                </button>
+                <button wire:click="exportZonePdf" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 text-xs font-semibold text-rose-700 bg-white hover:bg-rose-50 shadow-2xs transition">
+                    <svg class="w-3.5 h-3.5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                    Export PDF
+                </button>
             </div>
         </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover mb-0 report-table">
-                    <thead class="thead-light">
-                        <tr>
-                            <th>#</th>
-                            <th>Zone</th>
-                            <th class="text-right">Total</th>
-                            <th class="text-right">Field</th>
-                            <th class="text-right">Self</th>
-                            <th class="text-right">Collected</th>
-                            <th class="text-right">Received</th>
-                            <th class="text-right">Testing</th>
-                            <th class="text-right">Reported</th>
-                            <th class="text-right">Officials</th>
-                            <th style="min-width:120px">Completion</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($zoneReportData as $i => $zone)
-                            @php $r = $zone->samples_count > 0 ? round(($zone->reported_count / $zone->samples_count) * 100) : 0; @endphp
-                            <tr>
-                                <td class="text-muted">{{ $i + 1 }}</td>
-                                <td class="font-weight-bold">{{ $zone->name }}</td>
-                                <td class="text-right font-weight-bold">{{ number_format($zone->samples_count) }}</td>
-                                <td class="text-right">{{ number_format($zone->samples_count - ($zone->self_samples_count ?? 0)) }}</td>
-                                <td class="text-right">{{ number_format($zone->self_samples_count ?? 0) }}</td>
-                                <td class="text-right">{{ number_format($zone->collected_count) }}</td>
-                                <td class="text-right">{{ number_format($zone->received_count) }}</td>
-                                <td class="text-right">{{ number_format($zone->testing_count) }}</td>
-                                <td class="text-right font-weight-bold text-success">{{ number_format($zone->reported_count) }}</td>
-                                <td class="text-right">{{ number_format($zone->field_officials_count) }}</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="progress flex-fill" style="height:18px;border-radius:9px">
-                                            <div class="progress-bar bg-{{ $r >= 80 ? 'success' : ($r >= 50 ? 'warning' : 'danger') }}" style="width:{{ $r }}%;border-radius:9px">{{ $r }}%</div>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr><td colspan="11" class="text-center py-5 text-muted"><i class="fas fa-inbox d-block mb-2" style="font-size:2rem;opacity:.3"></i><br>No zone data found.</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left">
+                <thead class="bg-gray-50/80 border-b border-gray-100">
+                    <tr>
+                        <th class="px-5 py-3 font-semibold uppercase text-gray-500 w-10">#</th>
+                        <th class="px-5 py-3 font-semibold uppercase text-gray-500">Zone Name</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Total</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Field</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Self</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Collected</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Received</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Testing</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Reported</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Officials</th>
+                        <th class="px-5 py-3 font-semibold uppercase text-gray-500 w-36">Completion</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50">
+                    @forelse($zoneReportData as $i => $zone)
+                    @php $r = $zone->samples_count > 0 ? round(($zone->reported_count / $zone->samples_count) * 100) : 0; @endphp
+                    <tr class="hover:bg-gray-50/70 transition">
+                        <td class="px-5 py-3 text-gray-400">{{ $i + 1 }}</td>
+                        <td class="px-5 py-3 font-bold text-gray-900">{{ $zone->name }}</td>
+                        <td class="px-4 py-3 text-right font-bold text-gray-900">{{ number_format($zone->samples_count) }}</td>
+                        <td class="px-4 py-3 text-right text-gray-600">{{ number_format($zone->samples_count - ($zone->self_samples_count ?? 0)) }}</td>
+                        <td class="px-4 py-3 text-right text-gray-600">{{ number_format($zone->self_samples_count ?? 0) }}</td>
+                        <td class="px-4 py-3 text-right text-gray-600">{{ number_format($zone->collected_count) }}</td>
+                        <td class="px-4 py-3 text-right text-gray-600">{{ number_format($zone->received_count) }}</td>
+                        <td class="px-4 py-3 text-right text-gray-600">{{ number_format($zone->testing_count) }}</td>
+                        <td class="px-4 py-3 text-right font-bold text-emerald-600">{{ number_format($zone->reported_count) }}</td>
+                        <td class="px-4 py-3 text-right text-gray-600">{{ number_format($zone->field_officials_count) }}</td>
+                        <td class="px-5 py-3">
+                            <div class="flex items-center gap-2">
+                                <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                                    <div class="h-full {{ $r >= 80 ? 'bg-emerald-500' : ($r >= 50 ? 'bg-amber-500' : 'bg-rose-500') }} rounded-full" style="width: {{ $r }}%"></div>
+                                </div>
+                                <span class="font-bold text-gray-700 w-8 text-right">{{ $r }}%</span>
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr><td colspan="11" class="px-5 py-12 text-center text-gray-400">No zone sampling records found.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
     @endif
 
     {{-- ═══════════════════════════ BY FIELD OFFICIAL TAB ═══════════════════════════ --}}
     @if($activeTab == 'field-official')
-    <div class="card border-0 shadow-sm rounded-lg">
-        <div class="card-body py-3 border-bottom d-flex justify-content-between align-items-center">
-            <h6 class="mb-0 font-weight-bold"><i class="fas fa-hard-hat text-primary mr-2"></i>Field Official Report</h6>
-            <div>
-                <button wire:click="exportFieldOfficialExcel" class="btn btn-sm btn-success rounded-pill px-3 shadow-sm export-btn mr-1"><i class="fas fa-file-excel mr-1"></i> Excel</button>
-                <button wire:click="exportFieldOfficialPdf" class="btn btn-sm btn-danger rounded-pill px-3 shadow-sm export-btn"><i class="fas fa-file-pdf mr-1"></i> PDF</button>
+    <div class="bg-white rounded-2xl shadow-xs border border-gray-100 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gradient-to-r from-gray-50/70 to-white">
+            <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wider">Field Staff Productivity &amp; Intake Log</h2>
+            <div class="flex items-center gap-2">
+                <button wire:click="exportFieldOfficialExcel" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 text-xs font-semibold text-emerald-700 bg-white hover:bg-emerald-50 shadow-2xs transition">
+                    <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    Export Excel
+                </button>
+                <button wire:click="exportFieldOfficialPdf" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 text-xs font-semibold text-rose-700 bg-white hover:bg-rose-50 shadow-2xs transition">
+                    <svg class="w-3.5 h-3.5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                    Export PDF
+                </button>
             </div>
         </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover mb-0 report-table">
-                    <thead class="thead-light">
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Zone</th>
-                            <th class="text-right">Total Collected</th>
-                            <th class="text-right">Collected</th>
-                            <th class="text-right">Received</th>
-                            <th class="text-right">Testing</th>
-                            <th class="text-right">Reported</th>
-                            <th>Last Collection</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($fieldOfficialReportData as $i => $official)
-                            <tr>
-                                <td class="text-muted">{{ $i + 1 }}</td>
-                                <td class="font-weight-bold">{{ $official->name }}</td>
-                                <td class="text-muted small">{{ $official->email }}</td>
-                                <td><span class="badge badge-light rounded-pill">{{ $official->zone->name ?? '—' }}</span></td>
-                                <td class="text-right font-weight-bold">{{ number_format($official->total_collected) }}</td>
-                                <td class="text-right">{{ number_format($official->collected_count) }}</td>
-                                <td class="text-right">{{ number_format($official->received_count) }}</td>
-                                <td class="text-right">{{ number_format($official->testing_count) }}</td>
-                                <td class="text-right font-weight-bold text-success">{{ number_format($official->reported_count) }}</td>
-                                <td class="text-muted small">{{ $official->last_collection ? \Carbon\Carbon::parse($official->last_collection)->format('d/m/Y') : '—' }}</td>
-                            </tr>
-                        @empty
-                            <tr><td colspan="10" class="text-center py-5 text-muted"><i class="fas fa-inbox d-block mb-2" style="font-size:2rem;opacity:.3"></i><br>No field official data found.</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left">
+                <thead class="bg-gray-50/80 border-b border-gray-100">
+                    <tr>
+                        <th class="px-5 py-3 font-semibold uppercase text-gray-500 w-10">#</th>
+                        <th class="px-5 py-3 font-semibold uppercase text-gray-500">Official Name</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500">Email</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500">Jurisdiction</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Total Intake</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Collected</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Received</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Testing</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Reported</th>
+                        <th class="px-5 py-3 font-semibold uppercase text-gray-500">Last Active Date</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50">
+                    @forelse($fieldOfficialReportData as $i => $official)
+                    <tr class="hover:bg-gray-50/70 transition">
+                        <td class="px-5 py-3 text-gray-400">{{ $i + 1 }}</td>
+                        <td class="px-5 py-3 font-bold text-gray-900">{{ $official->name }}</td>
+                        <td class="px-4 py-3 text-gray-500">{{ $official->email }}</td>
+                        <td class="px-4 py-3">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] bg-purple-50 text-purple-700 font-medium">
+                                {{ $official->zone->name ?? '—' }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-3 text-right font-bold text-gray-900">{{ number_format($official->total_collected) }}</td>
+                        <td class="px-4 py-3 text-right text-gray-600">{{ number_format($official->collected_count) }}</td>
+                        <td class="px-4 py-3 text-right text-gray-600">{{ number_format($official->received_count) }}</td>
+                        <td class="px-4 py-3 text-right text-gray-600">{{ number_format($official->testing_count) }}</td>
+                        <td class="px-4 py-3 text-right font-bold text-emerald-600">{{ number_format($official->reported_count) }}</td>
+                        <td class="px-5 py-3 text-gray-500">{{ $official->last_collection ? \Carbon\Carbon::parse($official->last_collection)->format('d M Y') : '—' }}</td>
+                    </tr>
+                    @empty
+                    <tr><td colspan="10" class="px-5 py-12 text-center text-gray-400">No field staff intake logs found.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
     @endif
 
     {{-- ═══════════════════════════ BY TECHNICIAN TAB ═══════════════════════════ --}}
     @if($activeTab == 'technician')
-    <div class="card border-0 shadow-sm rounded-lg">
-        <div class="card-body py-3 border-bottom d-flex justify-content-between align-items-center">
-            <h6 class="mb-0 font-weight-bold"><i class="fas fa-flask text-warning mr-2"></i>Technician Report</h6>
-            <div>
-                <button wire:click="exportTechnicianExcel" class="btn btn-sm btn-success rounded-pill px-3 shadow-sm export-btn mr-1"><i class="fas fa-file-excel mr-1"></i> Excel</button>
-                <button wire:click="exportTechnicianPdf" class="btn btn-sm btn-danger rounded-pill px-3 shadow-sm export-btn"><i class="fas fa-file-pdf mr-1"></i> PDF</button>
+    <div class="bg-white rounded-2xl shadow-xs border border-gray-100 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gradient-to-r from-gray-50/70 to-white">
+            <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wider">Lab Technician Testing Performance</h2>
+            <div class="flex items-center gap-2">
+                <button wire:click="exportTechnicianExcel" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 text-xs font-semibold text-emerald-700 bg-white hover:bg-emerald-50 shadow-2xs transition">
+                    <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    Export Excel
+                </button>
+                <button wire:click="exportTechnicianPdf" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 text-xs font-semibold text-rose-700 bg-white hover:bg-rose-50 shadow-2xs transition">
+                    <svg class="w-3.5 h-3.5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                    Export PDF
+                </button>
             </div>
         </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover mb-0 report-table">
-                    <thead class="thead-light">
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Lab</th>
-                            <th class="text-right">Total Analyzed</th>
-                            <th class="text-right">Received</th>
-                            <th class="text-right">Testing</th>
-                            <th class="text-right">Reported</th>
-                            <th>Last Analysis</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($technicianReportData as $i => $tech)
-                            <tr>
-                                <td class="text-muted">{{ $i + 1 }}</td>
-                                <td class="font-weight-bold">{{ $tech->name }}</td>
-                                <td class="text-muted small">{{ $tech->email }}</td>
-                                <td><span class="badge badge-light rounded-pill">{{ $tech->lab->name ?? '—' }}</span></td>
-                                <td class="text-right font-weight-bold">{{ number_format($tech->total_analyzed) }}</td>
-                                <td class="text-right">{{ number_format($tech->received_count) }}</td>
-                                <td class="text-right">{{ number_format($tech->testing_count) }}</td>
-                                <td class="text-right font-weight-bold text-success">{{ number_format($tech->reported_count) }}</td>
-                                <td class="text-muted small">{{ $tech->last_analysis ? \Carbon\Carbon::parse($tech->last_analysis)->format('d/m/Y') : '—' }}</td>
-                            </tr>
-                        @empty
-                            <tr><td colspan="9" class="text-center py-5 text-muted"><i class="fas fa-inbox d-block mb-2" style="font-size:2rem;opacity:.3"></i><br>No technician data found.</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left">
+                <thead class="bg-gray-50/80 border-b border-gray-100">
+                    <tr>
+                        <th class="px-5 py-3 font-semibold uppercase text-gray-500 w-10">#</th>
+                        <th class="px-5 py-3 font-semibold uppercase text-gray-500">Technician</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500">Email</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500">Assigned Lab</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Total Tests</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Received</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">In Testing</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Reported</th>
+                        <th class="px-5 py-3 font-semibold uppercase text-gray-500">Last Test Date</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50">
+                    @forelse($technicianReportData as $i => $tech)
+                    <tr class="hover:bg-gray-50/70 transition">
+                        <td class="px-5 py-3 text-gray-400">{{ $i + 1 }}</td>
+                        <td class="px-5 py-3 font-bold text-gray-900">{{ $tech->name }}</td>
+                        <td class="px-4 py-3 text-gray-500">{{ $tech->email }}</td>
+                        <td class="px-4 py-3"><span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] bg-cyan-50 text-cyan-700 font-medium">{{ $tech->lab->name ?? '—' }}</span></td>
+                        <td class="px-4 py-3 text-right font-bold text-gray-900">{{ number_format($tech->total_analyzed) }}</td>
+                        <td class="px-4 py-3 text-right text-gray-600">{{ number_format($tech->received_count) }}</td>
+                        <td class="px-4 py-3 text-right text-gray-600">{{ number_format($tech->testing_count) }}</td>
+                        <td class="px-4 py-3 text-right font-bold text-emerald-600">{{ number_format($tech->reported_count) }}</td>
+                        <td class="px-5 py-3 text-gray-500">{{ $tech->last_analysis ? \Carbon\Carbon::parse($tech->last_analysis)->format('d M Y') : '—' }}</td>
+                    </tr>
+                    @empty
+                    <tr><td colspan="9" class="px-5 py-12 text-center text-gray-400">No technician analysis records found.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
     @endif
@@ -568,147 +586,102 @@
     @endphp
 
     {{-- Self Sample KPIs --}}
-    <div class="row mb-4">
-        <div class="col-lg-3 col-sm-6 mb-3">
-            <div class="card border-0 shadow-sm h-100 rounded-lg report-stat-card">
-                <div class="card-body py-3 d-flex align-items-center">
-                    <div class="d-flex align-items-center justify-content-center rounded-circle mr-3" style="width:44px;height:44px;background:rgba(23,162,184,.1);">
-                        <i class="fas fa-user-plus text-info"></i>
-                    </div>
-                    <div>
-                        <p class="section-label mb-0">Total Self-Samples</p>
-                        <h4 class="mb-0 font-weight-bold">{{ number_format($selfTotal) }}</h4>
-                    </div>
-                </div>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-xs flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
             </div>
-        </div>
-        <div class="col-lg-3 col-sm-6 mb-3">
-            <div class="card border-0 shadow-sm h-100 rounded-lg report-stat-card">
-                <div class="card-body py-3 d-flex align-items-center">
-                    <div class="d-flex align-items-center justify-content-center rounded-circle mr-3" style="width:44px;height:44px;background:rgba(0,123,255,.1);">
-                        <i class="fas fa-download text-primary"></i>
-                    </div>
-                    <div>
-                        <p class="section-label mb-0">Received</p>
-                        <h4 class="mb-0 font-weight-bold">{{ number_format($selfReceived) }}</h4>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3 col-sm-6 mb-3">
-            <div class="card border-0 shadow-sm h-100 rounded-lg report-stat-card">
-                <div class="card-body py-3 d-flex align-items-center">
-                    <div class="d-flex align-items-center justify-content-center rounded-circle mr-3" style="width:44px;height:44px;background:rgba(255,193,7,.1);">
-                        <i class="fas fa-flask text-warning"></i>
-                    </div>
-                    <div>
-                        <p class="section-label mb-0">Testing</p>
-                        <h4 class="mb-0 font-weight-bold">{{ number_format($selfTesting) }}</h4>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3 col-sm-6 mb-3">
-            <div class="card border-0 shadow-sm h-100 rounded-lg report-stat-card">
-                <div class="card-body py-3 d-flex align-items-center">
-                    <div class="d-flex align-items-center justify-content-center rounded-circle mr-3" style="width:44px;height:44px;background:rgba(40,167,69,.1);">
-                        <i class="fas fa-check-circle text-success"></i>
-                    </div>
-                    <div>
-                        <p class="section-label mb-0">Reported</p>
-                        <h4 class="mb-0 font-weight-bold">{{ number_format($selfReported) }}</h4>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- Self Sample by Lab --}}
-    <div class="card border-0 shadow-sm rounded-lg mb-4">
-        <div class="card-body py-3 border-bottom d-flex justify-content-between align-items-center">
-            <h6 class="mb-0 font-weight-bold"><i class="fas fa-microscope text-info mr-2"></i>Self-Samples by Lab</h6>
             <div>
-                <button wire:click="exportSelfSampleExcel" class="btn btn-sm btn-success rounded-pill px-3 shadow-sm export-btn mr-1"><i class="fas fa-file-excel mr-1"></i> Excel</button>
-                <button wire:click="exportSelfSamplePdf" class="btn btn-sm btn-danger rounded-pill px-3 shadow-sm export-btn"><i class="fas fa-file-pdf mr-1"></i> PDF</button>
+                <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Self-Samples</p>
+                <p class="text-xl font-bold text-gray-900 leading-none mt-0.5">{{ number_format($selfTotal) }}</p>
             </div>
         </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover mb-0 report-table">
-                    <thead class="thead-light">
-                        <tr>
-                            <th>#</th>
-                            <th>Lab</th>
-                            <th class="text-right">Total</th>
-                            <th class="text-right">Received</th>
-                            <th class="text-right">Testing</th>
-                            <th class="text-right">Reported</th>
-                            <th style="min-width:120px">Report Rate</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($selfSampleLabData as $i => $lab)
-                            @php $r = $lab->self_samples_count > 0 ? round(($lab->self_reported_count / $lab->self_samples_count) * 100) : 0; @endphp
-                            <tr>
-                                <td class="text-muted">{{ $i + 1 }}</td>
-                                <td class="font-weight-bold">{{ $lab->name }}</td>
-                                <td class="text-right font-weight-bold">{{ number_format($lab->self_samples_count) }}</td>
-                                <td class="text-right">{{ number_format($lab->self_received_count) }}</td>
-                                <td class="text-right">{{ number_format($lab->self_testing_count) }}</td>
-                                <td class="text-right font-weight-bold text-success">{{ number_format($lab->self_reported_count) }}</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="progress flex-fill" style="height:18px;border-radius:9px">
-                                            <div class="progress-bar bg-{{ $r >= 80 ? 'success' : ($r >= 50 ? 'warning' : 'danger') }}" style="width:{{ $r }}%;border-radius:9px">{{ $r }}%</div>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr><td colspan="7" class="text-center py-5 text-muted"><i class="fas fa-inbox d-block mb-2" style="font-size:2rem;opacity:.3"></i><br>No self-sample data found.</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
+
+        <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-xs flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            </div>
+            <div>
+                <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Received Lab</p>
+                <p class="text-xl font-bold text-gray-900 leading-none mt-0.5">{{ number_format($selfReceived) }}</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-xs flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+            </div>
+            <div>
+                <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Testing</p>
+                <p class="text-xl font-bold text-gray-900 leading-none mt-0.5">{{ number_format($selfTesting) }}</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-xs flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div>
+                <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Reported</p>
+                <p class="text-xl font-bold text-gray-900 leading-none mt-0.5">{{ number_format($selfReported) }}</p>
             </div>
         </div>
     </div>
 
-    {{-- Self Sample Collectors --}}
-    <div class="card border-0 shadow-sm rounded-lg">
-        <div class="card-body py-3 border-bottom">
-            <h6 class="mb-0 font-weight-bold"><i class="fas fa-user-check text-secondary mr-2"></i>Collected By (Lab Staff)</h6>
-        </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover mb-0 report-table">
-                    <thead class="thead-light">
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Lab</th>
-                            <th class="text-right">Self-Samples</th>
-                            <th>Last Collection</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($selfSampleCollectors as $i => $collector)
-                            <tr>
-                                <td class="text-muted">{{ $i + 1 }}</td>
-                                <td class="font-weight-bold">{{ $collector->name }}</td>
-                                <td class="text-muted small">{{ $collector->email }}</td>
-                                <td><span class="badge badge-light rounded-pill">{{ $collector->lab->name ?? '—' }}</span></td>
-                                <td class="text-right font-weight-bold">{{ number_format($collector->self_samples_count) }}</td>
-                                <td class="text-muted small">{{ $collector->last_collection ? \Carbon\Carbon::parse($collector->last_collection)->format('d/m/Y') : '—' }}</td>
-                            </tr>
-                        @empty
-                            <tr><td colspan="6" class="text-center py-5 text-muted"><i class="fas fa-inbox d-block mb-2" style="font-size:2rem;opacity:.3"></i><br>No collectors found.</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
+    {{-- Self Sample by Lab Card --}}
+    <div class="bg-white rounded-2xl shadow-xs border border-gray-100 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gradient-to-r from-gray-50/70 to-white">
+            <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wider">Self-Registered Samples by Lab</h2>
+            <div class="flex items-center gap-2">
+                <button wire:click="exportSelfSampleExcel" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 text-xs font-semibold text-emerald-700 bg-white hover:bg-emerald-50 shadow-2xs transition">
+                    <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    Export Excel
+                </button>
+                <button wire:click="exportSelfSamplePdf" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 text-xs font-semibold text-rose-700 bg-white hover:bg-rose-50 shadow-2xs transition">
+                    <svg class="w-3.5 h-3.5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                    Export PDF
+                </button>
             </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left">
+                <thead class="bg-gray-50/80 border-b border-gray-100">
+                    <tr>
+                        <th class="px-5 py-3 font-semibold uppercase text-gray-500 w-10">#</th>
+                        <th class="px-5 py-3 font-semibold uppercase text-gray-500">Laboratory</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Total</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Received</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Testing</th>
+                        <th class="px-4 py-3 font-semibold uppercase text-gray-500 text-right">Reported</th>
+                        <th class="px-5 py-3 font-semibold uppercase text-gray-500 w-36">Report Rate</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50">
+                    @forelse($selfSampleLabData as $i => $lab)
+                    @php $r = $lab->self_samples_count > 0 ? round(($lab->self_reported_count / $lab->self_samples_count) * 100) : 0; @endphp
+                    <tr class="hover:bg-gray-50/70 transition">
+                        <td class="px-5 py-3 text-gray-400">{{ $i + 1 }}</td>
+                        <td class="px-5 py-3 font-bold text-gray-900">{{ $lab->name }}</td>
+                        <td class="px-4 py-3 text-right font-bold text-gray-900">{{ number_format($lab->self_samples_count) }}</td>
+                        <td class="px-4 py-3 text-right text-gray-600">{{ number_format($lab->self_received_count) }}</td>
+                        <td class="px-4 py-3 text-right text-gray-600">{{ number_format($lab->self_testing_count) }}</td>
+                        <td class="px-4 py-3 text-right font-bold text-emerald-600">{{ number_format($lab->self_reported_count) }}</td>
+                        <td class="px-5 py-3">
+                            <div class="flex items-center gap-2">
+                                <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                                    <div class="h-full {{ $r >= 80 ? 'bg-emerald-500' : ($r >= 50 ? 'bg-amber-500' : 'bg-rose-500') }} rounded-full" style="width: {{ $r }}%"></div>
+                                </div>
+                                <span class="font-bold text-gray-700 w-8 text-right">{{ $r }}%</span>
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr><td colspan="7" class="px-5 py-12 text-center text-gray-400">No self-samples registered.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
     @endif
-
 </div>

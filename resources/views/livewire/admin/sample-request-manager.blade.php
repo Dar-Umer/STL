@@ -1,151 +1,173 @@
-<div class="container-fluid py-2">
+<div class="space-y-6">
     {{-- Header --}}
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h4 class="mb-1 font-weight-bold" style="color: #0f172a;">
-                <i class="fas fa-hand-holding-heart text-primary mr-2"></i>Sample Collection Requests
-            </h4>
-            <p class="text-muted small mb-0">Public farmer requests for soil sampling, assignment to field officials, and status tracking.</p>
+            <h2 class="text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-2.5">
+                <span class="w-2.5 h-6 rounded-full bg-emerald-500"></span>
+                <span>Sample Collection Requests</span>
+            </h2>
+            <p class="text-sm text-gray-500 mt-1">Public farmer collection requests, field official assignments, and real-time intake tracking.</p>
         </div>
-        <div class="mt-3 mt-md-0">
-            <span class="badge badge-warning px-3 py-2 font-weight-bold">
-                <i class="fas fa-clock mr-1"></i> {{ \App\Models\SampleRequest::where('status', 'pending')->count() }} Pending Requests
+        <div>
+            <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 shadow-2xs">
+                <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                {{ \App\Models\SampleRequest::where('status', 'pending')->count() }} Pending Requests
             </span>
         </div>
     </div>
 
     @if(session('success'))
-    <div class="alert alert-success border-0 shadow-sm rounded-lg d-flex align-items-center mb-4">
-        <i class="fas fa-check-circle fa-lg mr-3 text-success"></i>
-        <div class="flex-grow-1">
-            <span class="font-weight-medium">{{ session('success') }}</span>
+    <div class="rounded-2xl bg-emerald-50 border border-emerald-200/80 p-4 flex items-center justify-between text-emerald-800 shadow-xs">
+        <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 flex-shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            </span>
+            <span class="text-sm font-semibold">{{ session('success') }}</span>
         </div>
-        <button type="button" class="close text-success" data-dismiss="alert">&times;</button>
+        <button type="button" @click="$el.closest('div').remove()" class="text-emerald-500 hover:text-emerald-700 p-1 rounded-lg">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
     </div>
     @endif
 
-    {{-- Requests Table Card --}}
-    <div class="card border-0 shadow-sm">
-        {{-- Filters Bar --}}
-        <div class="card-header bg-white py-3 border-bottom">
-            <div class="row align-items-center">
-                <div class="col-md-5 mb-2 mb-md-0">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text bg-light border-right-0 rounded-left" style="border-radius: 9999px 0 0 9999px;">
-                                <i class="fas fa-search text-muted small"></i>
-                            </span>
-                        </div>
-                        <input wire:model.live.debounce.300ms="search" type="text" 
-                               class="form-control bg-light border-left-0" 
-                               style="border-radius: 0 9999px 9999px 0;"
-                               placeholder="Search by request ID, farmer name, phone...">
-                    </div>
-                </div>
-                <div class="col-md-3 mb-2 mb-md-0">
-                    <select wire:model.live="statusFilter" class="form-control rounded-pill bg-light border-0">
-                        <option value="">All Statuses</option>
-                        <option value="pending">Pending</option>
-                        <option value="assigned">Assigned</option>
-                        <option value="collected">Collected</option>
-                        <option value="cancelled">Cancelled</option>
-                    </select>
-                </div>
+    {{-- Filters & Search Bar --}}
+    <div class="bg-white rounded-2xl shadow-xs border border-gray-100 p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="w-full sm:max-w-md relative">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
             </div>
+            <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search by request ID, farmer name, phone..."
+                   class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-10 pr-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition">
         </div>
+        <div class="flex items-center gap-3 w-full sm:w-auto">
+            <select wire:model.live="statusFilter" class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-xs font-medium text-gray-700 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition">
+                <option value="">All Statuses</option>
+                <option value="pending">Pending</option>
+                <option value="assigned">Assigned</option>
+                <option value="collected">Collected</option>
+                <option value="cancelled">Cancelled</option>
+            </select>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200 whitespace-nowrap">
+                {{ $requests->total() }} requests
+            </span>
+        </div>
+    </div>
 
-        <div class="card-body p-0 table-responsive">
-            <table class="table table-hover mb-0">
-                <thead>
+    {{-- Requests Table Card --}}
+    <div class="bg-white rounded-2xl shadow-xs border border-gray-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left">
+                <thead class="bg-gray-50/80 border-b border-gray-100">
                     <tr>
-                        <th>Request ID</th>
-                        <th>Farmer Details</th>
-                        <th>Contact Number</th>
-                        <th>Zone / District</th>
-                        <th>Request Status</th>
-                        <th>Assigned Official</th>
-                        <th>Date Submitted</th>
-                        <th class="text-right">Actions</th>
+                        <th class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-500">Request ID</th>
+                        <th class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-500">Farmer Details</th>
+                        <th class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-500">Contact</th>
+                        <th class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-500">Zone / District</th>
+                        <th class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-500">Status</th>
+                        <th class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-500">Assigned Official</th>
+                        <th class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-500">Submitted</th>
+                        <th class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-500 text-right">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-gray-100">
                     @forelse($requests as $req)
                         @php
-                            $statusBadgeClass = match($req->status) {
-                                'collected' => 'badge-success',
-                                'assigned' => 'badge-primary',
-                                'cancelled' => 'badge-secondary',
-                                default => 'badge-warning',
+                            $statusStyle = match($req->status) {
+                                'collected' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                'assigned' => 'bg-indigo-50 text-indigo-700 border-indigo-200',
+                                'cancelled' => 'bg-gray-100 text-gray-600 border-gray-200',
+                                default => 'bg-amber-50 text-amber-700 border-amber-200',
+                            };
+                            $dotColor = match($req->status) {
+                                'collected' => 'bg-emerald-500',
+                                'assigned' => 'bg-indigo-500',
+                                'cancelled' => 'bg-gray-400',
+                                default => 'bg-amber-500',
                             };
                         @endphp
-                        <tr>
-                            <td>
-                                <span class="font-weight-bold text-dark font-monospace" style="letter-spacing: 0.05em;">
+                        <tr class="hover:bg-gray-50/70 transition group">
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-gray-100 text-gray-800 border border-gray-200">
                                     {{ $req->request_id }}
                                 </span>
                             </td>
-                            <td>
-                                <span class="font-weight-bold text-dark d-block">{{ $req->farmer_name }}</span>
+                            <td class="px-6 py-4">
+                                <span class="font-semibold text-gray-900 block group-hover:text-emerald-700 transition">{{ $req->farmer_name }}</span>
                             </td>
-                            <td>
-                                <span class="small text-dark font-weight-medium">
-                                    <i class="fas fa-phone-alt text-muted mr-1" style="font-size: 0.7rem;"></i>{{ $req->farmer_phone }}
-                                </span>
+                            <td class="px-6 py-4">
+                                <span class="text-xs font-mono font-medium text-gray-700">{{ $req->farmer_phone }}</span>
                             </td>
-                            <td>
-                                <span class="small text-dark">
-                                    <i class="fas fa-map-marker-alt text-danger mr-1"></i>{{ $req->zone->name ?? '—' }}
-                                </span>
+                            <td class="px-6 py-4 text-xs text-gray-600">
+                                <div class="font-medium text-gray-900">{{ $req->zone->name ?? '—' }}</div>
                             </td>
-                            <td>
-                                <span class="badge {{ $statusBadgeClass }} px-3 py-1">
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold border {{ $statusStyle }}">
+                                    <span class="w-1.5 h-1.5 rounded-full {{ $dotColor }}"></span>
                                     {{ ucfirst($req->status) }}
                                 </span>
                                 @if($req->soilSample)
-                                    <a href="{{ route('lab.testing', $req->soilSample->id) }}" class="badge badge-light border text-info ml-1" title="View Associated Sample">
+                                    <a href="{{ route('lab.testing', $req->soilSample->id) }}" class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono text-indigo-700 bg-indigo-50 border border-indigo-100 ml-1" title="View Associated Sample">
                                         #{{ $req->soilSample->sample_code }}
                                     </a>
                                 @endif
                             </td>
-                            <td class="small">
+                            <td class="px-6 py-4 text-xs">
                                 @if($req->fieldOfficial)
-                                    <i class="fas fa-user-check text-success mr-1"></i>{{ $req->fieldOfficial->name }}
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold flex items-center justify-center">
+                                            {{ strtoupper(substr($req->fieldOfficial->name, 0, 1)) }}
+                                        </span>
+                                        <span class="font-medium text-gray-900">{{ $req->fieldOfficial->name }}</span>
+                                    </div>
                                 @else
-                                    <span class="text-muted">Unassigned</span>
+                                    <span class="text-xs text-gray-400 italic">Unassigned</span>
                                 @endif
                             </td>
-                            <td class="small text-muted">
+                            <td class="px-6 py-4 text-xs font-mono text-gray-400">
                                 {{ $req->created_at->format('d M Y') }}
                             </td>
-                            <td class="text-right">
+                            <td class="px-6 py-4 text-right">
                                 @if(in_array($req->status, ['pending', 'assigned']))
-                                <div class="dropdown d-inline-block">
-                                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3 dropdown-toggle shadow-none" type="button" data-toggle="dropdown">
-                                        <i class="fas fa-user-plus mr-1"></i> Assign
-                                    </button>
-                                    <div class="dropdown-menu dropdown-menu-right shadow-sm p-2" style="min-width: 200px;">
-                                        <h6 class="dropdown-header px-2 py-1 small text-muted font-weight-bold">Assign Field Official</h6>
-                                        @foreach($fieldOfficials as $fo)
-                                            <a class="dropdown-item rounded py-1 px-2 small" href="#" wire:click.prevent="assign({{ $req->id }}, {{ $fo->id }})">
-                                                <i class="fas fa-hard-hat text-info mr-2"></i>{{ $fo->name }}
-                                            </a>
-                                        @endforeach
+                                <div class="flex items-center justify-end gap-1.5" x-data="{ open: false }">
+                                    <div class="relative">
+                                        <button @click="open = !open" @click.outside="open = false" type="button"
+                                                class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 rounded-lg shadow-xs transition active:scale-[0.98]">
+                                            <i class="fas fa-user-plus text-[10px] text-gray-400"></i>
+                                            <span>Assign</span>
+                                            <svg class="w-3 h-3 text-gray-400 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                        </button>
+                                        <div x-show="open" x-cloak style="display: none;"
+                                             class="absolute right-0 mt-1 w-52 bg-white rounded-xl shadow-lg border border-gray-100 py-1.5 z-50 text-left">
+                                            <div class="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-gray-400">Select Field Official</div>
+                                            @foreach($fieldOfficials as $fo)
+                                                <button type="button" @click="open = false" wire:click="assignOfficer({{ $req->id }}, {{ $fo->id }})"
+                                                        class="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-50 hover:text-emerald-700 transition">
+                                                    <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold flex items-center justify-center">
+                                                        {{ strtoupper(substr($fo->name, 0, 1)) }}
+                                                    </span>
+                                                    <span class="truncate">{{ $fo->name }}</span>
+                                                </button>
+                                            @endforeach
+                                        </div>
                                     </div>
+                                    <button wire:click="cancelRequest({{ $req->id }})" wire:confirm="Cancel this collection request?"
+                                            class="inline-flex items-center p-1.5 text-xs font-medium text-rose-600 bg-white border border-rose-200 hover:bg-rose-50 rounded-lg transition" title="Cancel Request">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                    </button>
                                 </div>
-                                <button wire:click="cancelRequest({{ $req->id }})" class="btn btn-sm btn-outline-danger rounded-pill px-2 shadow-none ml-1" title="Cancel Request">
-                                    <i class="fas fa-times"></i>
-                                </button>
                                 @else
-                                    <span class="text-muted small">—</span>
+                                    <span class="text-xs text-gray-400">—</span>
                                 @endif
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="text-center py-5 text-muted">
-                                <i class="fas fa-hand-holding-heart fa-3x mb-3 text-muted opacity-50 d-block"></i>
-                                <h6 class="font-weight-bold text-dark">No sample requests found</h6>
-                                <p class="small text-muted mb-0">Public sample collection requests will appear here as farmers submit them.</p>
+                            <td colspan="8" class="px-6 py-12 text-center">
+                                <div class="w-12 h-12 rounded-full bg-gray-100 text-gray-400 mx-auto flex items-center justify-center text-xl mb-3">
+                                    <i class="fas fa-hand-holding-heart"></i>
+                                </div>
+                                <h4 class="text-sm font-semibold text-gray-900">No sample requests found</h4>
+                                <p class="text-xs text-gray-500 mt-1 max-w-sm mx-auto">Public collection requests submitted by farmers will appear in this list.</p>
                             </td>
                         </tr>
                     @endforelse
@@ -154,7 +176,7 @@
         </div>
 
         @if($requests->hasPages())
-        <div class="card-footer bg-white border-top py-3 d-flex justify-content-center">
+        <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50">
             {{ $requests->links() }}
         </div>
         @endif

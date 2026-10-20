@@ -4,13 +4,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Too Many Requests &mdash; {{ setting('app_name', config('app.name')) }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
             min-height:100vh; display:flex; align-items:center; justify-content:center;
             background:linear-gradient(135deg,#0a5a2a,#018840,#0a5a2a);
-            font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; padding:20px;
+            font-family:'Inter',system-ui,-apple-system,sans-serif; padding:20px;
         }
         .card {
             background:rgba(255,255,255,.93); backdrop-filter:blur(20px); border-radius:20px;

@@ -108,8 +108,8 @@ class AppSettings extends Component
 
         if (!empty($changed)) {
             AuditLogger::logSettingsChange(
-                collect($changed)->pluck('old', fn($v, $k) => $k)->toArray(),
-                collect($changed)->pluck('new', fn($v, $k) => $k)->toArray()
+                array_map(fn($v) => $v['old'], $changed),
+                array_map(fn($v) => $v['new'], $changed)
             );
         }
 

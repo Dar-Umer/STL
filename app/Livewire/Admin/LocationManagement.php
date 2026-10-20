@@ -113,12 +113,13 @@ class LocationManagement extends Component
 
     public function save()
     {
+        $this->parent_id = ($this->type !== 'state' && $this->parent_id) ? $this->parent_id : null;
         $this->validate();
         Location::updateOrCreate(['id' => $this->locationId], [
-            'name' => $this->name,
+            'name' => trim($this->name),
             'type' => $this->type,
-            'parent_id' => $this->type !== 'state' ? $this->parent_id : null,
-            'code' => $this->code,
+            'parent_id' => $this->type !== 'state' ? ($this->parent_id ?: null) : null,
+            'code' => $this->code ? trim($this->code) : null,
         ]);
         session()->flash('success', $this->locationId ? 'Location updated.' : 'Location created.');
         $this->reset(['locationId', 'name', 'type', 'parent_id', 'code']);

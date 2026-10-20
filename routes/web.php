@@ -30,6 +30,7 @@ use App\Livewire\Lab\LabDashboard;
 use App\Livewire\Lab\SampleQueue;
 use App\Livewire\Lab\SelfSampleCollection;
 use App\Livewire\Lab\SampleTestingForm;
+use App\Livewire\Lab\EvaluationManager;
 use App\Livewire\Field\SampleCollection;
 use App\Livewire\Field\SampleDetail;
 use App\Livewire\SampleList;
@@ -113,12 +114,18 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/notification-settings', NotificationSettings::class)->name('notification-settings')->middleware('permission:manage-notifications');
         Route::get('/send-notification', SendNotification::class)->name('send-notification')->middleware('permission:manage-notifications');
+        Route::get('/evaluations', EvaluationManager::class)->name('evaluations');
+        Route::get('/evaluations/batch/{batchId}/pdf', [SampleDocumentController::class, 'evaluationBatchPdf'])->name('evaluations.batch.pdf');
+        Route::get('/evaluations/print-selected', [SampleDocumentController::class, 'evaluationSelectedPdf'])->name('evaluations.selected.pdf');
     });
 
-    // Lab Routes (Lab Manager & Lab Technician)
-    Route::middleware(['role:Lab Manager|Lab Technician'])->prefix('lab')->name('lab.')->group(function () {
+    // Lab Routes (Admin, Lab Manager & Lab Technician)
+    Route::middleware(['role:Admin|Lab Manager|Lab Technician'])->prefix('lab')->name('lab.')->group(function () {
         Route::get('/dashboard', LabDashboard::class)->name('dashboard');
         Route::get('/queue', SampleQueue::class)->name('queue');
+        Route::get('/evaluations', EvaluationManager::class)->name('evaluations');
+        Route::get('/evaluations/batch/{batchId}/pdf', [SampleDocumentController::class, 'evaluationBatchPdf'])->name('evaluations.batch.pdf');
+        Route::get('/evaluations/print-selected', [SampleDocumentController::class, 'evaluationSelectedPdf'])->name('evaluations.selected.pdf');
         Route::get('/self-sample', SelfSampleCollection::class)->name('self-sample');
         Route::get('/testing', \App\Livewire\Lab\SampleTesting::class)->name('testing-list');
         Route::get('/testing/{sampleId}', SampleTestingForm::class)->name('testing');

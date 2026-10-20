@@ -14,7 +14,7 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        Paginator::useBootstrapFour();
+        Paginator::useTailwind();
 
         // Fix "Malformed UTF-8 characters" error in Livewire AJAX responses.
         // Clean rendered component HTML before it reaches json_encode in JsonResponse.

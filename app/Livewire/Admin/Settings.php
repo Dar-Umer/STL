@@ -22,6 +22,11 @@ class Settings extends Component
     public string $recaptchaSecretKey = '';
     public int $overdueDays = 2;
 
+    public string $labNumberPrefix = '';
+    public int $labNumberNext = 1001;
+    public int $labNumberPadding = 0;
+    public bool $labNumberIncludeYear = false;
+
     public function mount()
     {
         $this->appName = setting('app_name', config('app.name'));
@@ -33,6 +38,19 @@ class Settings extends Component
         $this->recaptchaSiteKey = setting('recaptcha_site_key', '');
         $this->recaptchaSecretKey = setting('recaptcha_secret_key', '');
         $this->overdueDays = (int) setting('overdue_days', 2);
+        $this->labNumberPrefix = setting('lab_number_prefix', '');
+        $this->labNumberNext = (int) setting('lab_number_next', 1001);
+        $this->labNumberPadding = (int) setting('lab_number_padding', 0);
+        $this->labNumberIncludeYear = (bool) setting('lab_number_include_year', false);
+    }
+
+    public function getLabNumberPreviewProperty(): string
+    {
+        $prefix = trim($this->labNumberPrefix);
+        $padding = max(0, (int) $this->labNumberPadding);
+        $numStr = $padding > 0 ? str_pad((string) max(1, $this->labNumberNext), $padding, '0', STR_PAD_LEFT) : (string) max(1, $this->labNumberNext);
+        $yearPart = $this->labNumberIncludeYear ? date('Y') . '-' : '';
+        return "{$prefix}{$yearPart}{$numStr}";
     }
 
     public function updatedLogo()
@@ -53,7 +71,12 @@ class Settings extends Component
 
     public function save()
     {
-        $this->validate(['overdueDays' => 'integer|min:1|max:365']);
+        $this->validate([
+            'overdueDays' => 'integer|min:1|max:365',
+            'labNumberPrefix' => 'nullable|string|max:20',
+            'labNumberNext' => 'required|integer|min:1',
+            'labNumberPadding' => 'nullable|integer|min:0|max:10',
+        ]);
         if ($this->logo) {
             $this->validate(['logo' => 'image|mimes:png,jpg,jpeg,svg|max:1024']);
             $path = $this->logo->store('logos', 'public');
@@ -72,6 +95,10 @@ class Settings extends Component
         set_setting('recaptcha_site_key', $this->recaptchaSiteKey);
         set_setting('recaptcha_secret_key', $this->recaptchaSecretKey);
         set_setting('overdue_days', $this->overdueDays);
+        set_setting('lab_number_prefix', trim($this->labNumberPrefix));
+        set_setting('lab_number_next', $this->labNumberNext);
+        set_setting('lab_number_padding', (int) $this->labNumberPadding);
+        set_setting('lab_number_include_year', $this->labNumberIncludeYear ? '1' : '0');
 
         session()->flash('success', 'Settings saved successfully.');
         return redirect()->route('admin.settings');
