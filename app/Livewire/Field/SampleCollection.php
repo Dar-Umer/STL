@@ -57,6 +57,7 @@ class SampleCollection extends Component
                 } else {
                     $this->newFarmerName = $sampleRequest->farmer_name;
                     $this->newFarmerPhone = $sampleRequest->farmer_phone;
+                    $this->newFarmerAadhar = $sampleRequest->aadhar_no ?? '';
 
                     if ($sampleRequest->zone_id) {
                         $zone = Location::with('parent.parent')->find($sampleRequest->zone_id);
@@ -230,14 +231,25 @@ class SampleCollection extends Component
 
         $this->validate([
             'newFarmerName' => 'required|min:2',
-            'newFarmerPhone' => 'required|min:10',
+            'newFarmerPhone' => 'required|digits:10',
             'newFarmerParentage' => 'nullable',
-            'newFarmerAadhar' => 'nullable',
+            'newFarmerAadhar' => [
+                'required',
+                'digits:12',
+                'regex:/^[0-9]{12}$/',
+                'unique:farmers,aadhar_no,' . ($this->editingFarmerId ?? 'NULL') . ',id',
+            ],
             'newFarmerStateId' => 'required|exists:locations,id',
             'newFarmerDistrictId' => 'required|exists:locations,id',
             'newFarmerZoneId' => 'nullable|exists:locations,id',
             'newFarmerPanchayatId' => 'nullable|exists:locations,id',
             'newFarmerVillageId' => 'nullable|exists:locations,id',
+        ], [
+            'newFarmerAadhar.required' => 'Aadhaar number is required.',
+            'newFarmerAadhar.digits' => 'Aadhaar number must be exactly 12 digits.',
+            'newFarmerAadhar.regex' => 'Aadhaar number must contain only numbers.',
+            'newFarmerAadhar.unique' => 'This Aadhaar number is already registered to another farmer.',
+            'newFarmerPhone.digits' => 'Phone number must be exactly 10 digits.',
         ]);
 
         $data = [

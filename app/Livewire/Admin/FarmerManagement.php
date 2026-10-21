@@ -22,18 +22,34 @@ class FarmerManagement extends Component
     protected function rules()
     {
         return [
-            'name' => 'required',
-            'parentage' => 'nullable',
-            'phone' => 'required',
-            'aadhar_no' => 'nullable|unique:farmers,aadhar_no,' . $this->farmerId,
-            'lab_id' => 'required|exists:labs,id',
-            'state_id' => 'required|exists:locations,id',
-            'district_id' => 'required|exists:locations,id',
-            'zone_id' => 'nullable|exists:locations,id',
-            'panchayat_id' => 'nullable|exists:locations,id',
-            'village_id' => 'nullable|exists:locations,id',
+            'name' => ['required', 'string', 'min:2', 'max:255'],
+            'parentage' => ['nullable', 'string', 'max:255'],
+            'phone' => ['required', 'string', 'digits:10', 'regex:/^[6-9]\d{9}$/'],
+            'aadhar_no' => [
+                'required',
+                'string',
+                'digits:12',
+                'regex:/^[0-9]{12}$/',
+                'unique:farmers,aadhar_no,' . ($this->farmerId ?? 'NULL') . ',id',
+            ],
+            'lab_id' => ['required', 'exists:labs,id'],
+            'state_id' => ['required', 'exists:locations,id'],
+            'district_id' => ['required', 'exists:locations,id'],
+            'zone_id' => ['nullable', 'exists:locations,id'],
+            'panchayat_id' => ['nullable', 'exists:locations,id'],
+            'village_id' => ['nullable', 'exists:locations,id'],
         ];
     }
+
+    protected $messages = [
+        'aadhar_no.required' => 'Aadhaar number is required.',
+        'aadhar_no.digits' => 'Aadhaar number must be exactly 12 digits.',
+        'aadhar_no.regex' => 'Aadhaar number must contain only numbers.',
+        'aadhar_no.unique' => 'This Aadhaar number is already registered to another farmer.',
+        'phone.required' => 'Phone number is required.',
+        'phone.digits' => 'Phone number must be exactly 10 digits.',
+        'phone.regex' => 'Phone number must be a valid 10-digit Indian mobile number.',
+    ];
 
     public function render()
     {

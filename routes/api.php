@@ -15,6 +15,9 @@ use Illuminate\Support\Facades\Route;
 
 // ---- Public Auth ----
 Route::post('/auth/login', [AuthController::class, 'login']);
+Route::post('/auth/forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('/auth/verify-otp', [AuthController::class, 'verifyOtp']);
+Route::post('/auth/reset-password', [AuthController::class, 'resetPassword']);
 
 // ---- Front Page (public - needed for maintenance mode check before login) ----
 Route::get('/front-page', [FrontPageController::class, 'index']);
@@ -46,6 +49,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // ---- Farmers ----
     Route::middleware('permission:register-farmers')->group(function () {
+        Route::get('/farmers', [FarmerController::class, 'index']);
         Route::get('/farmers/search', [FarmerController::class, 'search']);
         Route::get('/farmers/{id}', [FarmerController::class, 'show']);
         Route::get('/farmers/{id}/plots', [FarmerController::class, 'plots']);
@@ -75,4 +79,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // ---- Targets ----
     Route::get('/targets', [TargetController::class, 'index']);
+
+    // ---- Covering Letter ----
+    Route::get('/covering-letter/data', [\App\Http\Controllers\Api\CoveringLetterController::class, 'getData']);
+    Route::post('/covering-letter/pdf', [\App\Http\Controllers\Api\CoveringLetterController::class, 'generatePdf']);
 });

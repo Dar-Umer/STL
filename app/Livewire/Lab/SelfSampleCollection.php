@@ -136,17 +136,32 @@ class SelfSampleCollection extends Component
 
     public function save()
     {
+        $existingFarmerId = $this->foundFarmer?->id ?? Farmer::where('phone', $this->phone)->value('id');
+
         $this->validate([
-            'phone' => 'required|string|max:20',
-            'name' => 'required|string|max:255',
-            'stateId' => 'required|exists:locations,id',
-            'districtId' => 'required|exists:locations,id',
-            'plotName' => 'required|string|max:255',
-            'khasraNo' => 'required|string|max:255',
-            'areaKanals' => 'required|numeric|min:0',
-            'soilTypeId' => 'required|exists:soil_types,id',
-            'cropId' => 'required|exists:crops,id',
-            'ageOfPlants' => 'required|numeric|min:0',
+            'phone' => ['required', 'string', 'digits:10'],
+            'name' => ['required', 'string', 'max:255'],
+            'aadhar' => [
+                'required',
+                'string',
+                'digits:12',
+                'regex:/^[0-9]{12}$/',
+                'unique:farmers,aadhar_no,' . ($existingFarmerId ?? 'NULL') . ',id',
+            ],
+            'stateId' => ['required', 'exists:locations,id'],
+            'districtId' => ['required', 'exists:locations,id'],
+            'plotName' => ['required', 'string', 'max:255'],
+            'khasraNo' => ['required', 'string', 'max:255'],
+            'areaKanals' => ['required', 'numeric', 'min:0'],
+            'soilTypeId' => ['required', 'exists:soil_types,id'],
+            'cropId' => ['required', 'exists:crops,id'],
+            'ageOfPlants' => ['required', 'numeric', 'min:0'],
+        ], [
+            'aadhar.required' => 'Aadhaar number is required.',
+            'aadhar.digits' => 'Aadhaar number must be exactly 12 digits.',
+            'aadhar.regex' => 'Aadhaar number must contain only numbers.',
+            'aadhar.unique' => 'This Aadhaar number is already registered to another farmer.',
+            'phone.digits' => 'Phone number must be exactly 10 digits.',
         ]);
 
         $labId = auth()->user()->lab_id;

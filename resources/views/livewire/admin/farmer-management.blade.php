@@ -84,9 +84,9 @@
 
                         <div class="lg:col-span-2">
                             <label class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">
-                                Aadhaar Card Number
+                                Aadhaar Card Number <span class="text-rose-500">*</span>
                             </label>
-                            <input wire:model="aadhar_no" type="text" placeholder="12-digit Aadhaar number"
+                            <input wire:model="aadhar_no" type="text" maxlength="12" placeholder="12-digit Aadhaar number"
                                    class="w-full rounded-xl border {{ $errors->has('aadhar_no') ? 'border-rose-300 bg-rose-50/30' : 'border-gray-200 bg-gray-50' }} px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition">
                             @error('aadhar_no') <p class="text-xs text-rose-600 font-medium mt-1">{{ $message }}</p> @enderror
                         </div>

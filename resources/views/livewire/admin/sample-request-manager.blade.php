@@ -93,6 +93,9 @@
                             </td>
                             <td class="px-6 py-4">
                                 <span class="font-semibold text-gray-900 block group-hover:text-emerald-700 transition">{{ $req->farmer_name }}</span>
+                                @if($req->aadhar_no)
+                                    <span class="text-[11px] text-gray-500 font-mono block mt-0.5">UID: {{ $req->aadhar_no }}</span>
+                                @endif
                             </td>
                             <td class="px-6 py-4">
                                 <span class="text-xs font-mono font-medium text-gray-700">{{ $req->farmer_phone }}</span>

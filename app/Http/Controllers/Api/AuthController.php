@@ -230,4 +230,211 @@ class AuthController extends Controller
             ],
         ]);
     }
+
+    public function forgotPassword(Request $request)
+    {
+        $loginInput = $request->input('login') 
+            ?? $request->input('phone') 
+            ?? $request->input('email');
+
+        if (!$loginInput) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Please provide your registered mobile number or email address.',
+            ], 422);
+        }
+
+        $fieldType = filter_var($loginInput, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+        $user = null;
+
+        if ($fieldType === 'phone') {
+            $rawPhone = trim((string)$loginInput);
+            $digits = preg_replace('/[^0-9]/', '', $rawPhone);
+            $last10 = strlen($digits) >= 10 ? substr($digits, -10) : $digits;
+
+            $user = \App\Models\User::where('phone', $rawPhone)
+                ->orWhere('phone', $digits)
+                ->orWhere('phone', '+91' . $last10)
+                ->orWhere('phone', '91' . $last10)
+                ->orWhere('phone', '0' . $last10)
+                ->orWhere('phone', $last10)
+                ->orWhere('phone', 'like', "%{$last10}")
+                ->first();
+
+            if (!$user && strlen($last10) === 10) {
+                $user = \App\Models\User::whereNotNull('phone')
+                    ->get()
+                    ->first(function ($u) use ($last10) {
+                        $p = preg_replace('/[^0-9]/', '', (string)$u->phone);
+                        return strlen($p) >= 10 && substr($p, -10) === $last10;
+                    });
+            }
+        } else {
+            $user = \App\Models\User::where('email', strtolower(trim($loginInput)))->first();
+        }
+
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'No registered account found with that mobile number or email address.',
+            ], 404);
+        }
+
+        if (empty($user->email)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Your account does not have a registered email address. Please contact your lab administrator to update your email.',
+            ], 422);
+        }
+
+        // Generate a 6-digit cryptographic OTP
+        $otp = sprintf('%06d', random_int(100000, 999999));
+
+        // Store OTP in Cache for 15 minutes
+        $cacheKey = "password_otp:{$user->id}";
+        \Illuminate\Support\Facades\Cache::put($cacheKey, [
+            'otp' => $otp,
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'created_at' => now()->timestamp,
+        ], now()->addMinutes(15));
+
+        // Mask the email address: e.g. f***d@soillab.com
+        $parts = explode('@', $user->email);
+        $namePart = $parts[0];
+        $domainPart = $parts[1] ?? '';
+        if (strlen($namePart) <= 2) {
+            $maskedName = substr($namePart, 0, 1) . '***';
+        } else {
+            $maskedName = substr($namePart, 0, 1) . str_repeat('*', max(3, strlen($namePart) - 2)) . substr($namePart, -1);
+        }
+        $maskedEmail = "{$maskedName}@{$domainPart}";
+
+        // Configure dynamic SMTP from settings
+        configure_dynamic_smtp();
+
+        try {
+            \Illuminate\Support\Facades\Mail::to($user->email)->send(
+                new \App\Mail\PasswordResetOtpMail($user->name, $otp)
+            );
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning("Failed to dispatch OTP via SMTP: {$e->getMessage()}. Logging fallback.");
+            \Illuminate\Support\Facades\Log::info("PASSWORD RESET OTP for User #{$user->id} ({$user->email}): {$otp}");
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => "A 6-digit verification code (OTP) has been sent to {$maskedEmail}.",
+            'email_masked' => $maskedEmail,
+            'email' => $user->email,
+            'user_id' => $user->id,
+            'debug_otp' => app()->environment('local', 'testing') ? $otp : null,
+        ]);
+    }
+
+    public function verifyOtp(Request $request)
+    {
+        $request->validate([
+            'otp' => 'required|string|size:6',
+        ]);
+
+        $loginInput = $request->input('login') 
+            ?? $request->input('email') 
+            ?? $request->input('phone');
+
+        $otpInput = trim($request->input('otp'));
+
+        $user = null;
+        if (filter_var($loginInput, FILTER_VALIDATE_EMAIL)) {
+            $user = \App\Models\User::where('email', strtolower(trim($loginInput)))->first();
+        } else {
+            $digits = preg_replace('/[^0-9]/', '', (string)$loginInput);
+            $last10 = strlen($digits) >= 10 ? substr($digits, -10) : $digits;
+            $user = \App\Models\User::where('phone', 'like', "%{$last10}")->first();
+        }
+
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Account not found.',
+            ], 404);
+        }
+
+        $cached = \Illuminate\Support\Facades\Cache::get("password_otp:{$user->id}");
+
+        if (!$cached || !isset($cached['otp']) || (string)$cached['otp'] !== $otpInput) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Invalid or expired OTP. Please check the code or request a new one.',
+            ], 422);
+        }
+
+        // Generate temporary reset token valid for 15 minutes
+        $resetToken = \Illuminate\Support\Str::random(40);
+        \Illuminate\Support\Facades\Cache::put("password_reset_token:{$resetToken}", $user->id, now()->addMinutes(15));
+
+        return response()->json([
+            'status' => true,
+            'message' => 'OTP verified successfully.',
+            'reset_token' => $resetToken,
+        ]);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        $user = null;
+        $resetToken = $request->input('reset_token');
+        $otp = $request->input('otp');
+        $loginInput = $request->input('login') ?? $request->input('email') ?? $request->input('phone');
+
+        if ($resetToken) {
+            $userId = \Illuminate\Support\Facades\Cache::get("password_reset_token:{$resetToken}");
+            if ($userId) {
+                $user = \App\Models\User::find($userId);
+            }
+        }
+
+        if (!$user && $otp && $loginInput) {
+            if (filter_var($loginInput, FILTER_VALIDATE_EMAIL)) {
+                $user = \App\Models\User::where('email', strtolower(trim($loginInput)))->first();
+            } else {
+                $digits = preg_replace('/[^0-9]/', '', (string)$loginInput);
+                $last10 = strlen($digits) >= 10 ? substr($digits, -10) : $digits;
+                $user = \App\Models\User::where('phone', 'like', "%{$last10}")->first();
+            }
+
+            if ($user) {
+                $cached = \Illuminate\Support\Facades\Cache::get("password_otp:{$user->id}");
+                if (!$cached || (string)($cached['otp'] ?? '') !== trim($otp)) {
+                    $user = null;
+                }
+            }
+        }
+
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Invalid or expired session. Please request a new OTP.',
+            ], 422);
+        }
+
+        // Update password
+        $user->password = \Illuminate\Support\Facades\Hash::make($request->input('password'));
+        $user->save();
+
+        // Invalidate tokens and OTP
+        if ($resetToken) {
+            \Illuminate\Support\Facades\Cache::forget("password_reset_token:{$resetToken}");
+        }
+        \Illuminate\Support\Facades\Cache::forget("password_otp:{$user->id}");
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Password reset successfully! You can now log in with your new password.',
+        ]);
+    }
 }

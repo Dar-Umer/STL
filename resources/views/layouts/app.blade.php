@@ -50,12 +50,20 @@
     <style>
         [x-cloak] { display: none !important; }
 
-        /* Universal Single Font Enforcement: Inter everywhere across the admin panel */
-        *, *::before, *::after {
+        /* Universal Single Font Enforcement: Inter everywhere across the admin panel, strictly excluding FontAwesome icons */
+        *:not([class*="fa-"]):not([class^="fa-"]):not(.fa):not(.fas):not(.far):not(.fal):not(.fad):not(.fab):not(.fa-solid):not(.fa-regular):not(.fa-brands),
+        *:not([class*="fa-"]):not([class^="fa-"]):not(.fa):not(.fas):not(.far):not(.fal):not(.fad):not(.fab):not(.fa-solid):not(.fa-regular):not(.fa-brands)::before,
+        *:not([class*="fa-"]):not([class^="fa-"]):not(.fa):not(.fas):not(.far):not(.fal):not(.fad):not(.fab):not(.fa-solid):not(.fa-regular):not(.fa-brands)::after {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
-        html, body, input, button, select, textarea, optgroup, table, th, td, h1, h2, h3, h4, h5, h6, p, span, a, label, kbd, code, pre {
+        html, body, input, button, select, textarea, optgroup, table, th, td, h1, h2, h3, h4, h5, h6, p, label, kbd, code, pre {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+        }
+
+        span:not([class*="fa-"]):not(.fa):not(.fas):not(.far):not(.fab):not(.fa-solid):not(.fa-regular), 
+        a:not([class*="fa-"]):not(.fa):not(.fas):not(.far):not(.fab):not(.fa-solid):not(.fa-regular),
+        i:not([class*="fa-"]):not(.fa):not(.fas):not(.far):not(.fab):not(.fa-solid):not(.fa-regular) {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
         }
 
@@ -66,9 +74,35 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Preserve FontAwesome icons across all variations */
-        [class*="fa-"], [class^="fa-"], .fa, .fas, .far, .fal, .fad, .fab {
+        /* Preserve and enforce FontAwesome icons across all variations and pseudo-elements */
+        [class*="fa-"], [class^="fa-"], .fa, .fas, .far, .fal, .fad, .fab, .fa-solid, .fa-regular, .fa-brands,
+        [class*="fa-"]::before, [class^="fa-"]::before, .fa::before, .fas::before, .far::before, .fal::before, .fad::before, .fab::before, .fa-solid::before, .fa-regular::before, .fa-brands::before,
+        [class*="fa-"]::after, [class^="fa-"]::after, .fa::after, .fas::after, .far::after, .fal::after, .fad::after, .fab::after, .fa-solid::after, .fa-regular::after, .fa-brands::after {
             font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands", "FontAwesome" !important;
+            font-style: normal !important;
+            font-variant: normal !important;
+            text-rendering: auto !important;
+            line-height: 1 !important;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .fa, .fas, .fa-solid, 
+        .fa::before, .fas::before, .fa-solid::before {
+            font-weight: 900 !important;
+            font-family: "Font Awesome 6 Free" !important;
+        }
+
+        .far, .fa-regular, 
+        .far::before, .fa-regular::before {
+            font-weight: 400 !important;
+            font-family: "Font Awesome 6 Free" !important;
+        }
+
+        .fab, .fa-brands, 
+        .fab::before, .fa-brands::before {
+            font-weight: 400 !important;
+            font-family: "Font Awesome 6 Brands" !important;
         }
 
         /* Harmonize monospace/code badges to Inter with tabular numbers for consistent single font */
@@ -261,13 +295,10 @@
 
             <!-- Branding Header -->
             <div class="flex items-center justify-between h-20 px-6 bg-gray-900 border-b border-gray-800 flex-shrink-0">
-                <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-3 py-1 group">
+                <a href="{{ route('admin.dashboard') }}" class="flex items-center py-1 group">
                     @if($brandLogo)
                         <img src="{{ asset('storage/' . $brandLogo) }}" alt="{{ $appName }}" class="h-10 max-h-12 w-auto max-w-[170px] object-contain rounded-lg">
                     @else
-                        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-lg border border-emerald-500/30 group-hover:scale-105 transition-transform">
-                            <i class="fas fa-flask text-emerald-400"></i>
-                        </div>
                         <div class="flex items-center">
                             <span class="text-2xl font-bold text-brand-400 tracking-tight">Soil</span>
                             <span class="text-2xl font-light text-white tracking-tight ml-0.5">Lab</span>

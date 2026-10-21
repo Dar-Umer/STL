@@ -37,6 +37,14 @@
                 <span>Collect Another Sample</span>
             </a>
         </div>
+        <script>
+            (function() {
+                try {
+                    const audio = new Audio("{{ asset('sounds/success_chime.wav') }}");
+                    audio.play().catch(function() {});
+                } catch(e) {}
+            })();
+        </script>
     @endif
 
     @if(session('error'))
@@ -302,10 +310,11 @@
 
                                 <div>
                                     <label class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1">
-                                        Aadhaar Number
+                                        Aadhaar Number <span class="text-rose-500">*</span>
                                     </label>
-                                    <input wire:model="newFarmerAadhar" type="text" placeholder="Aadhaar number"
-                                           class="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2 text-xs text-gray-900 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition">
+                                    <input wire:model="newFarmerAadhar" type="text" maxlength="12" placeholder="12-digit Aadhaar number"
+                                           class="w-full rounded-xl border {{ $errors->has('newFarmerAadhar') ? 'border-rose-300 bg-rose-50/30' : 'border-gray-200 bg-white' }} px-3.5 py-2 text-xs text-gray-900 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition">
+                                    @error('newFarmerAadhar') <p class="text-[11px] text-rose-600 mt-1">{{ $message }}</p> @enderror
                                 </div>
 
                                 <div>

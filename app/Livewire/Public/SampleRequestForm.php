@@ -6,6 +6,7 @@ use App\Models\Location;
 use App\Models\SampleRequest;
 use App\Models\User;
 use App\Services\NotificationService;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Livewire\Component;
@@ -14,6 +15,7 @@ class SampleRequestForm extends Component
 {
     public $farmerName = '';
     public $farmerPhone = '';
+    public $aadharNo = '';
     public $farmerAddress = '';
 
     public $stateId = '';
@@ -29,11 +31,25 @@ class SampleRequestForm extends Component
     public $honeypot = '';
     public $mountedAt;
 
+    public $recaptchaToken = '';
+    public $recaptchaEnabled = true;
+
     public function mount()
     {
         $this->mountedAt = now()->timestamp;
+        $this->recaptchaEnabled = (bool) setting('recaptcha_enabled', true);
         session()->put('sample_form_token', Str::random(32));
         session()->put('sample_form_expires', now()->addMinutes(30)->timestamp);
+    }
+
+    public function getRecaptchaSiteKeyProperty()
+    {
+        return setting('recaptcha_site_key') ?: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI';
+    }
+
+    public function getRecaptchaSecretKeyProperty()
+    {
+        return setting('recaptcha_secret_key') ?: '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe';
     }
 
     public function getStatesProperty()
@@ -84,23 +100,29 @@ class SampleRequestForm extends Component
     public function rules()
     {
         return [
-            'farmerName' => 'required|string|max:255',
-            'farmerPhone' => ['required', 'regex:/^[6-9]\d{9}$/'],
-            'stateId' => 'required|exists:locations,id',
-            'districtId' => 'required|exists:locations,id',
-            'zoneId' => 'required|exists:locations,id',
-            'panchayatId' => 'required|exists:locations,id',
-            'villageId' => 'required|exists:locations,id',
-            'farmerAddress' => 'required|string|max:255',
+            'farmerName' => ['required', 'string', 'min:2', 'max:255'],
+            'farmerPhone' => ['required', 'string', 'digits:10', 'regex:/^[6-9]\d{9}$/'],
+            'aadharNo' => ['required', 'string', 'digits:12', 'regex:/^[0-9]{12}$/'],
+            'stateId' => ['required', 'exists:locations,id'],
+            'districtId' => ['required', 'exists:locations,id'],
+            'zoneId' => ['required', 'exists:locations,id'],
+            'panchayatId' => ['required', 'exists:locations,id'],
+            'villageId' => ['required', 'exists:locations,id'],
+            'farmerAddress' => ['required', 'string', 'max:255'],
         ];
     }
 
     public function messages()
     {
         return [
-            'farmerName.required' => 'Please enter your name.',
-            'farmerPhone.required' => 'Please enter your phone number.',
-            'farmerPhone.regex' => 'Enter a valid 10-digit Indian mobile number.',
+            'farmerName.required' => 'Please enter your full name.',
+            'farmerName.min' => 'Full name must be at least 2 characters.',
+            'farmerPhone.required' => 'Please enter your mobile number.',
+            'farmerPhone.digits' => 'Mobile number must be exactly 10 digits.',
+            'farmerPhone.regex' => 'Mobile number must start with 6, 7, 8, or 9.',
+            'aadharNo.required' => 'Please enter your Aadhaar number.',
+            'aadharNo.digits' => 'Aadhaar number must be exactly 12 digits.',
+            'aadharNo.regex' => 'Aadhaar number must contain only numbers.',
             'stateId.required' => 'Please select your state.',
             'stateId.exists' => 'Selected state is invalid.',
             'districtId.required' => 'Please select your district.',
@@ -111,7 +133,7 @@ class SampleRequestForm extends Component
             'panchayatId.exists' => 'Selected panchayat is invalid.',
             'villageId.required' => 'Please select your village.',
             'villageId.exists' => 'Selected village is invalid.',
-            'farmerAddress.required' => 'Please enter your landmark or address.',
+            'farmerAddress.required' => 'Please enter your landmark or local address.',
         ];
     }
 
@@ -137,10 +159,10 @@ class SampleRequestForm extends Component
         }
 
         // ---- Form expiration ----
-        $token = session()->pull('sample_form_token');
-        $expires = session()->pull('sample_form_expires');
+        $token = session()->get('sample_form_token');
+        $expires = session()->get('sample_form_expires');
         if (!$token || !$expires || now()->timestamp > $expires) {
-            $this->error = 'Form expired. Please reload and try again.';
+            $this->error = 'Form session expired. Please reload the page.';
             return;
         }
 
@@ -161,6 +183,7 @@ class SampleRequestForm extends Component
         // ---- Input sanitization ----
         $this->farmerName = $this->sanitizeInput($this->farmerName);
         $this->farmerPhone = $this->sanitizeInput($this->farmerPhone);
+        $this->aadharNo = preg_replace('/\D/', '', $this->aadharNo);
         $this->farmerAddress = $this->sanitizeInput($this->farmerAddress);
 
         // ---- Block URLs in name/address ----
@@ -172,12 +195,45 @@ class SampleRequestForm extends Component
         // ---- Validation ----
         $this->validate();
 
+        // ---- reCAPTCHA Verification ----
+        if ($this->recaptchaEnabled) {
+            if (empty($this->recaptchaToken)) {
+                $this->addError('recaptchaToken', 'Please complete the reCAPTCHA verification.');
+                return;
+            }
+
+            try {
+                $verifyResponse = Http::asForm()->timeout(10)->post('https://www.google.com/recaptcha/api/siteverify', [
+                    'secret' => $this->recaptchaSecretKey,
+                    'response' => $this->recaptchaToken,
+                    'remoteip' => request()->ip(),
+                ]);
+
+                if (!($verifyResponse->json()['success'] ?? false)) {
+                    $this->addError('recaptchaToken', 'reCAPTCHA verification failed. Please try again.');
+                    $this->recaptchaToken = '';
+                    $this->dispatch('reset-recaptcha');
+                    return;
+                }
+            } catch (\Exception $e) {
+                report($e);
+            }
+        }
+
         // ---- Phone cooldown + duplicate detection ----
         $existing = SampleRequest::where('farmer_phone', $this->farmerPhone)
             ->where('status', 'pending')
             ->exists();
         if ($existing) {
             $this->error = 'A pending request already exists for this phone number.';
+            return;
+        }
+
+        $existingAadhar = SampleRequest::where('aadhar_no', $this->aadharNo)
+            ->where('status', 'pending')
+            ->exists();
+        if ($existingAadhar) {
+            $this->error = 'A pending request already exists for this Aadhaar number.';
             return;
         }
 
@@ -216,12 +272,16 @@ class SampleRequestForm extends Component
             'request_id' => SampleRequest::generateRequestId(),
             'farmer_name' => $this->farmerName,
             'farmer_phone' => $this->farmerPhone,
+            'aadhar_no' => $this->aadharNo,
             'farmer_address' => $address ?: null,
             'zone_id' => $this->zoneId,
             'status' => 'pending',
             'submitter_ip' => request()->ip(),
             'submitter_ua' => mb_substr(request()->userAgent() ?? '', 0, 500),
         ]);
+
+        session()->forget(['sample_form_token', 'sample_form_expires']);
+        $this->dispatch('reset-recaptcha');
 
         // ---- Rate limiter hit ----
         RateLimiter::hit($rateKey, 3600);

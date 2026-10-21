@@ -9,7 +9,7 @@ class SampleRequest extends Model
 {
     use Auditable;
     protected $fillable = [
-        'request_id', 'farmer_name', 'farmer_phone', 'farmer_address',
+        'request_id', 'farmer_name', 'farmer_phone', 'aadhar_no', 'farmer_address',
         'zone_id', 'status', 'field_official_id', 'soil_sample_id',
         'submitter_ip', 'submitter_ua',
     ];

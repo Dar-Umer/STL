@@ -52,3 +52,31 @@ if (!function_exists('forget_setting')) {
         Cache::forget("settings.{$key}");
     }
 }
+
+if (!function_exists('configure_dynamic_smtp')) {
+    function configure_dynamic_smtp(): void
+    {
+        $host = setting('mail_host');
+
+        if ($host) {
+            $encryption = setting('mail_encryption', 'tls');
+            if ($encryption === 'none' || empty($encryption)) {
+                $encryption = null;
+            }
+
+            $mailer = setting('mail_mailer', 'smtp');
+
+            config([
+                'mail.default' => $mailer ?: 'smtp',
+                'mail.mailers.smtp.transport' => 'smtp',
+                'mail.mailers.smtp.host' => $host,
+                'mail.mailers.smtp.port' => (int) setting('mail_port', 587),
+                'mail.mailers.smtp.encryption' => $encryption,
+                'mail.mailers.smtp.username' => setting('mail_username'),
+                'mail.mailers.smtp.password' => setting('mail_password'),
+                'mail.from.address' => setting('mail_from_address', config('mail.from.address') ?: 'noreply@soillab.gov.in'),
+                'mail.from.name' => setting('mail_from_name', setting('app_name', config('app.name')) ?: 'Soil Testing Laboratory'),
+            ]);
+        }
+    }
+}
