@@ -148,8 +148,8 @@
         }
         .signatures-section {
             width: 100%;
-            margin-top: 18px;
-            margin-bottom: 16px;
+            margin-top: 8px;
+            margin-bottom: 10px;
             page-break-inside: avoid;
         }
         .signatures-section td {
@@ -309,7 +309,7 @@
         </tbody>
     </table>
 
-    <div class="section-heading" style="margin-top: -8px; margin-bottom: 12px; font-size: 8.5pt;">
+    <div class="section-heading" style="margin-top: -8px; margin-bottom: 6px; font-size: 8.5pt;">
         Schedule of Enclosed Soil Samples (Total: {{ $total_samples }})
     </div>
 
@@ -318,7 +318,7 @@
         <tr>
             <td style="width: 50%; text-align: left;">
                 <div class="sig-box" style="text-align: left;">
-                    <div style="height: 55px;"></div>
+                    <div style="height: 25px;"></div>
                     <p style="font-size: 8.5pt; line-height: 1.35; color: #0f172a;">
                         <strong>Sig of Collector</strong><br>
                         {{ $officer_name ?: (auth()->user()?->name ?? 'Field Official') }}
@@ -327,7 +327,7 @@
             </td>
             <td style="width: 50%; text-align: right;">
                 <div class="sig-box" style="text-align: right;">
-                    <div style="height: 55px;"></div>
+                    <div style="height: 25px;"></div>
                     @php
                         $displayHdo = trim($hdo_title ?? '');
                         if (empty($displayHdo)) {
