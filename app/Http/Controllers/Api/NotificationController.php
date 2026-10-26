@@ -152,7 +152,7 @@ class NotificationController extends Controller
         }
 
         $farmer = Farmer::create([
-            'name' => $sampleRequest->farmer_name,
+            'name' => ucwords(strtolower(trim($sampleRequest->farmer_name))),
             'phone' => $sampleRequest->farmer_phone,
             'state_id' => $stateId,
             'district_id' => $districtId,

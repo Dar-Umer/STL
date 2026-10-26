@@ -28,6 +28,7 @@ class PlotController extends Controller
         }
 
         $data = $validator->validated();
+        $data['plot_name'] = ucwords(strtolower(trim($data['plot_name'])));
 
         // Inherit location from farmer
         $farmer = \App\Models\Farmer::find($data['farmer_id']);

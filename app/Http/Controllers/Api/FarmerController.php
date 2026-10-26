@@ -184,6 +184,8 @@ class FarmerController extends Controller
         }
 
         $data = $validator->validated();
+        $data['name'] = ucwords(strtolower(trim($data['name'])));
+        $data['parentage'] = ucwords(strtolower(trim($data['parentage'])));
         $data['created_by'] = $request->user()->id;
 
         $farmer = Farmer::create($data);
