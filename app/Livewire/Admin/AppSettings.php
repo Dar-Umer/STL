@@ -18,6 +18,13 @@ class AppSettings extends Component
     public array $workingDays = [1, 2, 3, 4, 5];
     public bool $workingHoursEnabled = false;
 
+    // Covering Letter & Dispatch Template Defaults
+    public string $coveringLetterHeader;
+    public string $coveringLetterAddressedTo;
+    public string $coveringLetterSubject;
+    public string $coveringLetterBody;
+    public string $coveringLetterHdoTitle;
+
     public function mount()
     {
         $this->appVersion = setting('app_version', '1.0.0');
@@ -29,6 +36,17 @@ class AppSettings extends Component
         $this->workEndTime = setting('app.work_end_time', '17:00');
         $this->workingDays = json_decode(setting('app.working_days', '[1,2,3,4,5]'), true) ?: [1, 2, 3, 4, 5];
         $this->workingHoursEnabled = (bool) setting('app.working_hours_enabled', false);
+
+        $defaultBodyText = "Sir / Madam,\n\n" .
+            "Enclosed please find physical soil samples duly collected, processed, barcode-tagged, and packaged by the field extension team of {ZONE} under the Annual Soil Testing & Soil Health Management Programme.\n\n" .
+            "The samples have been collected as per standard composite sampling protocols from various orchardists / farmers across the Panchayats and Villages of {ZONE}. A comprehensive descriptive schedule of the dispatched samples, farmer profiles, parentage, residence, and QR identification codes is cataloged in the schedule below.\n\n" .
+            "You are kindly requested to accept the physical samples, perform the required chemical / nutrient parameter analysis (including pH, EC, Organic Carbon, Macro and Micro nutrients), and expedite the test reports for issuing Soil Health Cards to the concerned orchardists.";
+
+        $this->coveringLetterHeader = setting('covering_letter.header_template', 'OFFICE OF THE HORTICULTURE DEVELOPMENT OFFICER, {ZONE}');
+        $this->coveringLetterAddressedTo = setting('covering_letter.addressed_to_template', "The Incharge / Testing Officer,\n{LAB},\n{DISTRICT}, Jammu & Kashmir.");
+        $this->coveringLetterSubject = setting('covering_letter.subject_template', 'Transmission of physical soil samples collected from {ZONE} for laboratory testing and issuance of Soil Health Cards.');
+        $this->coveringLetterBody = setting('covering_letter.body_template', $defaultBodyText);
+        $this->coveringLetterHdoTitle = setting('covering_letter.hdo_title_template', "Horticulture Development Officer (HDO)\n{ZONE}");
     }
 
     public function addAppAnnouncement()
@@ -95,6 +113,12 @@ class AppSettings extends Component
         set_setting('app.work_end_time', $this->workEndTime);
         set_setting('app.working_days', json_encode($this->workingDays));
         set_setting('app.working_hours_enabled', $this->workingHoursEnabled ? '1' : '0');
+
+        set_setting('covering_letter.header_template', $this->coveringLetterHeader);
+        set_setting('covering_letter.addressed_to_template', $this->coveringLetterAddressedTo);
+        set_setting('covering_letter.subject_template', $this->coveringLetterSubject);
+        set_setting('covering_letter.body_template', $this->coveringLetterBody);
+        set_setting('covering_letter.hdo_title_template', $this->coveringLetterHdoTitle);
 
         $triggers = json_decode(setting('notification_triggers', '{}'), true);
         if (!empty($announcements) && ($triggers['new_announcement']['enabled'] ?? false)) {

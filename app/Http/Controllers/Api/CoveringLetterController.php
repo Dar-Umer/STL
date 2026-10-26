@@ -30,27 +30,63 @@ class CoveringLetterController extends Controller
         $zoneName = $zone ? $zone->name : 'General Field Zone';
         $districtName = $district ? $district->name : 'District Directorate';
         $labName = $lab ? $lab->name : 'District Soil Testing Laboratory';
-
-        // 3. Dispatch & Letter defaults (Empty by default so official can fill by hand on printed PDF)
-        $defaultDispatchNo = "";
-        $defaultDate = "";
-
-        // 4. Build Default Header and Body for this specific Zone
-        $defaultHeader = "OFFICE OF THE HORTICULTURE DEVELOPMENT OFFICER, {$zoneName}";
-        $defaultSubheader = "Department of Horticulture, Government of Jammu & Kashmir";
-        $defaultAddressedTo = "The Incharge / Testing Officer,\n{$labName},\n{$districtName}, Jammu & Kashmir.";
-        $defaultSubject = "Transmission of physical soil samples collected from {$zoneName} for laboratory testing and issuance of Soil Health Cards.";
-
-        $defaultBody = "Sir / Madam,\n\n" .
-            "Enclosed please find physical soil samples duly collected, processed, barcode-tagged, and packaged by the field extension team of {$zoneName} under the Annual Soil Testing & Soil Health Management Programme.\n\n" .
-            "The samples have been collected as per standard composite sampling protocols from various orchardists / farmers across the Panchayats and Villages of {$zoneName}. A comprehensive descriptive schedule of the dispatched samples, farmer profiles, parentage, residence, and QR identification codes is cataloged in the schedule below.\n\n" .
-            "You are kindly requested to accept the physical samples, perform the required chemical / nutrient parameter analysis (including pH, EC, Organic Carbon, Macro and Micro nutrients), and expedite the test reports for issuing Soil Health Cards to the concerned orchardists.";
-
-        $hdoTitle = "Horticulture Development Officer (HDO)\n{$zoneName}";
         $officerName = $user->name;
         $officerDesignation = $user->getRoleNames()->first() ?? 'Field Official';
 
-        // 5. Query Samples for this User / Zone
+        // 3. Dynamic Tag Replacements for Admin Templates
+        $tags = [
+            '{ZONE}' => $zoneName,
+            '{DISTRICT}' => $districtName,
+            '{LAB}' => $labName,
+            '{OFFICER}' => $officerName,
+            '{DATE}' => date('d/m/Y'),
+        ];
+
+        // 4. Resolve System-Wide Admin Default Templates
+        $adminHeaderTemplate = setting('covering_letter.header_template') ?: "OFFICE OF THE HORTICULTURE DEVELOPMENT OFFICER, {ZONE}";
+        $adminAddressedToTemplate = setting('covering_letter.addressed_to_template') ?: "The Incharge / Testing Officer,\n{LAB},\n{DISTRICT}, Jammu & Kashmir.";
+        $adminSubjectTemplate = setting('covering_letter.subject_template') ?: "Transmission of physical soil samples collected from {ZONE} for laboratory testing and issuance of Soil Health Cards.";
+        $adminBodyTemplate = setting('covering_letter.body_template') ?: (
+            "Sir / Madam,\n\n" .
+            "Enclosed please find physical soil samples duly collected, processed, barcode-tagged, and packaged by the field extension team of {ZONE} under the Annual Soil Testing & Soil Health Management Programme.\n\n" .
+            "The samples have been collected as per standard composite sampling protocols from various orchardists / farmers across the Panchayats and Villages of {ZONE}. A comprehensive descriptive schedule of the dispatched samples, farmer profiles, parentage, residence, and QR identification codes is cataloged in the schedule below.\n\n" .
+            "You are kindly requested to accept the physical samples, perform the required chemical / nutrient parameter analysis (including pH, EC, Organic Carbon, Macro and Micro nutrients), and expedite the test reports for issuing Soil Health Cards to the concerned orchardists."
+        );
+        $adminHdoTemplate = setting('covering_letter.hdo_title_template') ?: "Horticulture Development Officer (HDO)\n{ZONE}";
+
+        $adminHeader = str_replace(array_keys($tags), array_values($tags), $adminHeaderTemplate);
+        $adminAddressedTo = str_replace(array_keys($tags), array_values($tags), $adminAddressedToTemplate);
+        $adminSubject = str_replace(array_keys($tags), array_values($tags), $adminSubjectTemplate);
+        $adminBody = str_replace(array_keys($tags), array_values($tags), $adminBodyTemplate);
+        $adminHdoTitle = str_replace(array_keys($tags), array_values($tags), $adminHdoTemplate);
+
+        $defaultDispatchNo = "";
+        $defaultDate = "";
+        $defaultHeader = $adminHeader;
+        $defaultSubheader = "Department of Horticulture, Government of Jammu & Kashmir";
+        $defaultAddressedTo = $adminAddressedTo;
+        $defaultSubject = $adminSubject;
+        $defaultBody = $adminBody;
+        $hdoTitle = $adminHdoTitle;
+
+        // 5. Check if this User has previously saved custom Covering Letter text
+        $userCustomJson = setting("user.{$user->id}.covering_letter_custom");
+        $userCustom = $userCustomJson ? json_decode($userCustomJson, true) : null;
+        $hasUserSaved = false;
+
+        if (!empty($userCustom) && is_array($userCustom)) {
+            $hasUserSaved = true;
+            if (!empty($userCustom['dispatch_no'])) $defaultDispatchNo = $userCustom['dispatch_no'];
+            if (!empty($userCustom['date'])) $defaultDate = $userCustom['date'];
+            if (!empty($userCustom['header_title'])) $defaultHeader = $userCustom['header_title'];
+            if (!empty($userCustom['addressed_to'])) $defaultAddressedTo = $userCustom['addressed_to'];
+            if (!empty($userCustom['subject'])) $defaultSubject = $userCustom['subject'];
+            if (!empty($userCustom['body_text'])) $defaultBody = $userCustom['body_text'];
+            if (!empty($userCustom['hdo_title'])) $hdoTitle = $userCustom['hdo_title'];
+            if (!empty($userCustom['officer_name'])) $officerName = $userCustom['officer_name'];
+        }
+
+        // 6. Query Samples for this User / Zone
         // Strict Business Rule: ONLY samples in 'collected' status can be selected to create the covering letter
         $query = SoilSample::with([
             'farmer.village', 'farmer.panchayat', 'farmer.zone',
@@ -109,6 +145,14 @@ class CoveringLetterController extends Controller
                 'officer_name' => $officerName,
                 'officer_designation' => $officerDesignation,
                 'officer_phone' => $user->phone ?? '',
+                'has_user_saved' => $hasUserSaved,
+                'admin_defaults' => [
+                    'header_title' => $adminHeader,
+                    'addressed_to' => $adminAddressedTo,
+                    'subject' => $adminSubject,
+                    'body_text' => $adminBody,
+                    'hdo_title' => $adminHdoTitle,
+                ],
                 'samples' => $samples,
             ]
         ]);
@@ -177,10 +221,67 @@ class CoveringLetterController extends Controller
 
         $pdf->setPaper('a4', 'portrait');
 
+        // Persist User's customized Covering Letter text for subsequent dispatches
+        if ($request->user()) {
+            set_setting("user.{$request->user()->id}.covering_letter_custom", json_encode([
+                'dispatch_no' => $dispatchNo,
+                'date' => $date,
+                'header_title' => $validated['header_title'],
+                'addressed_to' => $validated['addressed_to'],
+                'subject' => $validated['subject'],
+                'body_text' => $validated['body_text'],
+                'hdo_title' => $validated['hdo_title'] ?? '',
+                'officer_name' => $validated['officer_name'] ?? '',
+            ]));
+        }
+
         $safeZone = Str::slug($validated['zone_name'] ?? 'zone');
         $safeDate = date('Ymd');
         $filename = "covering-letter-{$safeZone}-{$safeDate}.pdf";
 
         return $pdf->download($filename);
+    }
+
+    /**
+     * Explicitly save user's customized covering letter text for next time.
+     */
+    public function saveUserDefaults(Request $request)
+    {
+        $validated = $request->validate([
+            'dispatch_no' => 'nullable|string|max:150',
+            'date' => 'nullable|string|max:50',
+            'header_title' => 'nullable|string|max:255',
+            'addressed_to' => 'nullable|string|max:500',
+            'subject' => 'nullable|string|max:500',
+            'body_text' => 'nullable|string',
+            'hdo_title' => 'nullable|string|max:255',
+            'officer_name' => 'nullable|string|max:255',
+        ]);
+
+        $user = $request->user();
+        $existing = json_decode(setting("user.{$user->id}.covering_letter_custom", '{}'), true) ?: [];
+        $merged = array_merge($existing, array_filter($validated, fn($v) => !is_null($v)));
+        set_setting("user.{$user->id}.covering_letter_custom", json_encode($merged));
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Covering letter preferences saved successfully.',
+            'data' => $merged,
+        ]);
+    }
+
+    /**
+     * Reset user's customized covering letter text back to official admin defaults.
+     */
+    public function resetUserDefaults(Request $request)
+    {
+        $user = $request->user();
+        forget_setting("user.{$user->id}.covering_letter_custom");
+        \App\Models\Setting::where('key', "user.{$user->id}.covering_letter_custom")->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Reset to official admin defaults.',
+        ]);
     }
 }

@@ -214,6 +214,82 @@
             </div>
         </div>
 
+        {{-- Section 5: Covering Letter & Official Dispatch Template --}}
+        <div class="bg-white rounded-2xl shadow-xs border border-gray-100 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-gray-50/70 to-white">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                        <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    </div>
+                    <div>
+                        <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wider">Covering Letter &amp; Dispatch Template Defaults</h2>
+                        <p class="text-xs text-gray-400">Pre-defined official text for soil sample dispatch letters generated in the mobile app</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6 space-y-5">
+                <div class="p-3.5 rounded-xl bg-blue-50/60 border border-blue-200/70 text-blue-900 text-xs flex items-start gap-2.5">
+                    <svg class="w-4 h-4 text-blue-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <div>
+                        <span class="font-bold">Dynamic Variable Placeholders:</span>
+                        <div class="mt-1 flex flex-wrap gap-1.5 font-mono text-[11px]">
+                            <span class="px-1.5 py-0.5 rounded bg-blue-100/80 text-blue-800 font-semibold">{ZONE}</span>
+                            <span class="px-1.5 py-0.5 rounded bg-blue-100/80 text-blue-800 font-semibold">{DISTRICT}</span>
+                            <span class="px-1.5 py-0.5 rounded bg-blue-100/80 text-blue-800 font-semibold">{LAB}</span>
+                            <span class="px-1.5 py-0.5 rounded bg-blue-100/80 text-blue-800 font-semibold">{OFFICER}</span>
+                            <span class="px-1.5 py-0.5 rounded bg-blue-100/80 text-blue-800 font-semibold">{DATE}</span>
+                        </div>
+                        <p class="text-[11px] text-blue-700 mt-1">These tags are automatically replaced with the field official's assigned zone, lab, and district names.</p>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">
+                        Letterhead Official Header *
+                    </label>
+                    <input wire:model="coveringLetterHeader" type="text"
+                           class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 font-medium placeholder-gray-400 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition"
+                           placeholder="OFFICE OF THE HORTICULTURE DEVELOPMENT OFFICER, {ZONE}">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">
+                            Addressed To (Laboratory) *
+                        </label>
+                        <textarea wire:model="coveringLetterAddressedTo" rows="3"
+                                  class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">
+                            HDO Title (Signing Authority) *
+                        </label>
+                        <textarea wire:model="coveringLetterHdoTitle" rows="3"
+                                  class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition"></textarea>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">
+                        Subject Line *
+                    </label>
+                    <input wire:model="coveringLetterSubject" type="text"
+                           class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">
+                        Official Covering Narrative / Body *
+                    </label>
+                    <textarea wire:model="coveringLetterBody" rows="7"
+                              class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition"></textarea>
+                    <p class="text-[11px] text-gray-400 mt-1">Field officials can further tailor this text on their devices, and their custom modifications will be preserved for subsequent dispatches.</p>
+                </div>
+            </div>
+        </div>
+
         {{-- Commit Actions --}}
         <div class="flex items-center justify-between p-4 bg-white rounded-2xl shadow-xs border border-gray-100">
             <span class="text-xs text-gray-400 flex items-center gap-1.5">

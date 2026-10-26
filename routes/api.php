@@ -83,4 +83,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // ---- Covering Letter ----
     Route::get('/covering-letter/data', [\App\Http\Controllers\Api\CoveringLetterController::class, 'getData']);
     Route::post('/covering-letter/pdf', [\App\Http\Controllers\Api\CoveringLetterController::class, 'generatePdf']);
+    Route::post('/covering-letter/save-defaults', [\App\Http\Controllers\Api\CoveringLetterController::class, 'saveUserDefaults']);
+    Route::post('/covering-letter/reset-defaults', [\App\Http\Controllers\Api\CoveringLetterController::class, 'resetUserDefaults']);
 });
