@@ -120,7 +120,7 @@ class DispatchBatchController extends Controller
                 'sample_count' => $batch->sample_count,
                 'status' => $batch->status,
                 'zone_name' => $batch->zone->name ?? 'Zone',
-                'district_name' => $batch->zone->district->name ?? '',
+                'district_name' => $batch->zone?->parent?->name ?? '',
                 'lab_name' => $batch->lab->name ?? 'District Laboratory',
                 'created_by_name' => $batch->creator->name ?? 'Field Official',
                 'created_at' => $batch->created_at ? $batch->created_at->format('d M Y, h:i A') : '—',
@@ -136,7 +136,7 @@ class DispatchBatchController extends Controller
                 'officer_name' => $batch->officer_name,
                 'officer_designation' => $batch->officer_designation,
                 'officer_phone' => $batch->officer_phone,
-                'samples' => $samples,
+                'samples' => $samples->values()->all(),
             ]
         ]);
     }
@@ -147,14 +147,14 @@ class DispatchBatchController extends Controller
     public function downloadPdf($id)
     {
         $batch = DispatchBatch::with([
-            'zone.district', 'lab', 'creator', 'receiver',
+            'zone.parent', 'lab', 'creator', 'receiver',
             'soilSamples.farmer.village', 'soilSamples.farmer.panchayat', 'soilSamples.farmer.zone',
             'soilSamples.plot.crop', 'soilSamples.plot.soilType', 'soilSamples.plot.village',
             'soilSamples.plot.panchayat', 'soilSamples.qrCode', 'soilSamples.collector'
         ])->findOrFail($id);
 
         $zoneName = $batch->zone->name ?? 'Zone';
-        $districtName = $batch->zone->district->name ?? '';
+        $districtName = $batch->zone?->parent?->name ?? '';
 
         $pdf = Pdf::loadView('pdf.covering-letter', [
             'batch_no' => $batch->batch_no,
