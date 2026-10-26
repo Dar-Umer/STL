@@ -31,14 +31,16 @@ class SampleTesting extends Component
 
         $sample = (clone $this->labQuery())
             ->where(function ($q) use ($code) {
-                $q->where('qr_code_path', $code)
+                $q->where('lab_number', $code)
+                  ->orWhere('sample_code', $code)
+                  ->orWhere('qr_code_path', $code)
                   ->orWhereHas('qrCode', fn($qr) => $qr->where('code', $code));
             })
             ->where('status', 'received')
             ->first();
 
         if (!$sample) {
-            $this->addError('scanInput', "No sample waiting for testing with QR code '{$code}'.");
+            $this->addError('scanInput', "No sample waiting for testing with Lab Code or QR code '{$code}'.");
             $this->scanInput = '';
             return;
         }
@@ -62,9 +64,11 @@ class SampleTesting extends Component
         }
 
         if ($this->search) {
-            $query->where(function ($q) {
-                $q->where('sample_code', 'like', "%{$this->search}%")
-                  ->orWhereHas('farmer', fn($f) => $f->where('name', 'like', "%{$this->search}%"));
+            $s = trim($this->search);
+            $query->where(function ($q) use ($s) {
+                $q->where('lab_number', 'like', "%{$s}%")
+                  ->orWhere('sample_code', 'like', "%{$s}%")
+                  ->orWhereHas('farmer', fn($f) => $f->where('name', 'like', "%{$s}%"));
             });
         }
 

@@ -28,6 +28,7 @@ class SampleController extends Controller
             'data' => $samples->map(fn($s) => [
                 'id' => $s->id,
                 'sample_code' => $s->sample_code,
+                'lab_number' => $s->lab_number,
                 'batch_no' => $s->dispatchBatch?->batch_no,
                 'dispatch_batch_id' => $s->dispatch_batch_id,
                 'status' => $s->status->value,

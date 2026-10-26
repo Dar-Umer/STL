@@ -212,9 +212,7 @@ class DispatchBatchController extends Controller
     }
 
     /**
-     * Receive a dispatch batch (marks all samples received).
-     * By default, Lab Code is not assigned immediately (receiver can assign later).
-     * If assign_lab_codes is passed as true, sequential Lab Codes are assigned immediately.
+     * Receive a dispatch batch (marks all samples received and assigns sequential Lab Codes immediately).
      */
     public function receive(Request $request, $id)
     {
@@ -236,55 +234,32 @@ class DispatchBatchController extends Controller
             ], 422);
         }
 
-        $assignLabCodes = $request->boolean('assign_lab_codes', false);
         $now = now();
 
-        if ($assignLabCodes) {
-            $evalBatch = \App\Services\LabEvaluationService::receiveSamplesIntoBatch(
-                $samples->pluck('id')->all(),
-                $user->lab_id ?? $batch->lab_id,
-                $user->id,
-                "API Receive Batch {$batch->batch_no}"
-            );
+        $evalBatch = \App\Services\LabEvaluationService::receiveSamplesIntoBatch(
+            $samples->pluck('id')->all(),
+            $user->lab_id ?? $batch->lab_id,
+            $user->id,
+            "API Receive Batch {$batch->batch_no}"
+        );
 
-            $batch->update([
-                'status' => 'received',
-                'received_by' => $user->id,
-                'received_at' => $now,
-                'evaluation_batch_id' => $evalBatch->id,
-            ]);
-        } else {
-            \Illuminate\Support\Facades\DB::transaction(function () use ($batch, $samples, $now, $user) {
-                foreach ($samples as $sample) {
-                    $oldStatus = $sample->status->value;
-                    $sample->update([
-                        'status' => 'received',
-                        'received_at' => $now,
-                    ]);
-
-                    \App\Models\SampleStatusHistory::create([
-                        'soil_sample_id' => $sample->id,
-                        'from_status' => $oldStatus,
-                        'to_status' => 'received',
-                        'changed_by' => $user->id,
-                    ]);
-                }
-
-                $batch->update([
-                    'status' => 'received',
-                    'received_by' => $user->id,
-                    'received_at' => $now,
-                ]);
-            });
-        }
+        $batch->update([
+            'status' => 'received',
+            'received_by' => $user->id,
+            'received_at' => $now,
+            'evaluation_batch_id' => $evalBatch->id,
+        ]);
 
         return response()->json([
             'status' => 'success',
-            'message' => "Batch {$batch->batch_no} ({$samples->count()} sample(s)) received successfully into laboratory. " . ($assignLabCodes ? 'Lab Codes assigned.' : 'Lab Codes can be assigned later.'),
+            'message' => "Batch {$batch->batch_no} ({$samples->count()} sample(s)) received successfully into laboratory with Lab Codes {$evalBatch->lab_number_from} to {$evalBatch->lab_number_to}.",
             'data' => [
                 'batch_no' => $batch->batch_no,
                 'status' => 'received',
                 'sample_count' => $samples->count(),
+                'evaluation_batch_code' => $evalBatch->batch_code,
+                'lab_number_from' => $evalBatch->lab_number_from,
+                'lab_number_to' => $evalBatch->lab_number_to,
                 'received_at' => $batch->received_at?->format('d M Y, h:i A'),
             ]
         ]);

@@ -24,13 +24,11 @@ class SampleQueue extends Component
 
     public $sourceFilter = '';
     public $sort = 'desc';
-    public bool $assignLabCodesImmediately = false;
 
     protected $queryString = [
         'search' => ['except' => ''],
         'sourceFilter' => ['except' => ''],
         'sort' => ['except' => 'desc'],
-        'assignLabCodesImmediately' => ['except' => false],
     ];
 
     protected function labQuery()
@@ -56,7 +54,8 @@ class SampleQueue extends Component
     {
         return $this->pendingQuery()
             ->where(function ($q) use ($code) {
-                $q->where('qr_code_path', $code)
+                $q->where('sample_code', $code)
+                  ->orWhere('qr_code_path', $code)
                   ->orWhereHas('qrCode', fn($qr) => $qr->where('code', $code));
             })
             ->with('farmer')
@@ -131,57 +130,29 @@ class SampleQueue extends Component
             $now = now();
             $userId = auth()->id();
 
-            if ($this->assignLabCodesImmediately) {
-                $evalBatch = LabEvaluationService::receiveSamplesIntoBatch(
-                    $samples->pluck('id')->all(),
-                    auth()->user()->lab_id ?? $batch->lab_id,
-                    $userId,
-                    "Field Dispatch Batch {$batch->batch_no}"
-                );
+            $evalBatch = LabEvaluationService::receiveSamplesIntoBatch(
+                $samples->pluck('id')->all(),
+                auth()->user()->lab_id ?? $batch->lab_id,
+                $userId,
+                "Field Dispatch Batch {$batch->batch_no}"
+            );
 
-                $batch->update([
-                    'status' => 'received',
-                    'received_by' => $userId,
-                    'received_at' => $now,
-                    'evaluation_batch_id' => $evalBatch->id,
-                ]);
+            $batch->update([
+                'status' => 'received',
+                'received_by' => $userId,
+                'received_at' => $now,
+                'evaluation_batch_id' => $evalBatch->id,
+            ]);
 
-                session()->flash('receivedBatch', [
-                    'id' => $evalBatch->id,
-                    'batch_code' => $evalBatch->batch_code,
-                    'from' => $evalBatch->lab_number_from,
-                    'to' => $evalBatch->lab_number_to,
-                    'count' => $evalBatch->sample_count,
-                ]);
+            session()->flash('receivedBatch', [
+                'id' => $evalBatch->id,
+                'batch_code' => $evalBatch->batch_code,
+                'from' => $evalBatch->lab_number_from,
+                'to' => $evalBatch->lab_number_to,
+                'count' => $evalBatch->sample_count,
+            ]);
 
-                session()->flash('success', "Batch {$batch->batch_no} ({$evalBatch->sample_count} sample(s)) received into Evaluation Batch {$evalBatch->batch_code} (Lab Codes: {$evalBatch->lab_number_from} to {$evalBatch->lab_number_to}).");
-            } else {
-                \Illuminate\Support\Facades\DB::transaction(function () use ($batch, $samples, $now, $userId) {
-                    foreach ($samples as $sample) {
-                        $oldStatus = $sample->status->value;
-                        $sample->update([
-                            'status' => 'received',
-                            'received_at' => $now,
-                        ]);
-
-                        SampleStatusHistory::create([
-                            'soil_sample_id' => $sample->id,
-                            'from_status' => $oldStatus,
-                            'to_status' => 'received',
-                            'changed_by' => $userId,
-                        ]);
-                    }
-
-                    $batch->update([
-                        'status' => 'received',
-                        'received_by' => $userId,
-                        'received_at' => $now,
-                    ]);
-                });
-
-                session()->flash('success', "Batch {$batch->batch_no} ({$samples->count()} sample(s)) received successfully into laboratory inventory. Lab Codes can be assigned later.");
-            }
-
+            session()->flash('success', "Batch {$batch->batch_no} ({$evalBatch->sample_count} sample(s)) received into Evaluation Batch {$evalBatch->batch_code} (Lab Codes: {$evalBatch->lab_number_from} to {$evalBatch->lab_number_to}).");
             $this->dispatch('scan-added');
         } catch (\Exception $e) {
             session()->flash('error', 'Error receiving batch: ' . $e->getMessage());
@@ -278,42 +249,21 @@ class SampleQueue extends Component
             $now = now();
             $userId = auth()->id();
 
-            if ($this->assignLabCodesImmediately) {
-                $batch = LabEvaluationService::receiveSamplesIntoBatch(
-                    $eligible->pluck('id')->all(),
-                    auth()->user()->lab_id,
-                    $userId
-                );
+            $batch = LabEvaluationService::receiveSamplesIntoBatch(
+                $eligible->pluck('id')->all(),
+                auth()->user()->lab_id,
+                $userId
+            );
 
-                session()->flash('receivedBatch', [
-                    'id' => $batch->id,
-                    'batch_code' => $batch->batch_code,
-                    'from' => $batch->lab_number_from,
-                    'to' => $batch->lab_number_to,
-                    'count' => $batch->sample_count,
-                ]);
+            session()->flash('receivedBatch', [
+                'id' => $batch->id,
+                'batch_code' => $batch->batch_code,
+                'from' => $batch->lab_number_from,
+                'to' => $batch->lab_number_to,
+                'count' => $batch->sample_count,
+            ]);
 
-                session()->flash('success', "{$batch->sample_count} sample(s) received successfully into Evaluation Batch {$batch->batch_code} (Lab Codes: {$batch->lab_number_from} to {$batch->lab_number_to}).");
-            } else {
-                \Illuminate\Support\Facades\DB::transaction(function () use ($eligible, $now, $userId) {
-                    foreach ($eligible as $sample) {
-                        $oldStatus = $sample->status->value;
-                        $sample->update([
-                            'status' => 'received',
-                            'received_at' => $now,
-                        ]);
-
-                        SampleStatusHistory::create([
-                            'soil_sample_id' => $sample->id,
-                            'from_status' => $oldStatus,
-                            'to_status' => 'received',
-                            'changed_by' => $userId,
-                        ]);
-                    }
-                });
-
-                session()->flash('success', "{$eligible->count()} sample(s) received successfully into laboratory inventory. Lab Codes can be assigned later.");
-            }
+            session()->flash('success', "{$batch->sample_count} sample(s) received successfully into Evaluation Batch {$batch->batch_code} (Lab Codes: {$batch->lab_number_from} to {$batch->lab_number_to}).");
         } catch (\Exception $e) {
             session()->flash('error', 'Error receiving samples: ' . $e->getMessage());
         }

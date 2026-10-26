@@ -565,19 +565,23 @@
             {{-- METADATA PASSPORT BAR --}}
             <table class="meta-bar">
                 <tr>
-                    <td style="width: 25%;">
+                    <td style="width: 22%;">
                         <span class="m-label">Report Reference</span>
                         <span class="m-val">RPT-{{ $sample->sample_code }}</span>
                     </td>
-                    <td style="width: 25%;">
+                    <td style="width: 20%;">
                         <span class="m-label">Sample Bag Code</span>
                         <span class="m-val">{{ $sample->sample_code }}</span>
                     </td>
-                    <td style="width: 25%;">
+                    <td style="width: 18%;">
+                        <span class="m-label">Lab Code</span>
+                        <span class="m-val" style="color: #065f46; font-weight: bold;">{{ $sample->lab_number ?? '—' }}</span>
+                    </td>
+                    <td style="width: 20%;">
                         <span class="m-label">Tested &amp; Certified On</span>
                         <span class="m-val">{{ $sample->analyzed_at?->format('d M Y') ?? now()->format('d M Y') }}</span>
                     </td>
-                    <td style="width: 25%; text-align: right;">
+                    <td style="width: 20%; text-align: right;">
                         <span class="m-label">Security Validation</span>
                         <span class="badge-verified">&#10003; AUTHENTICATED</span>
                     </td>
