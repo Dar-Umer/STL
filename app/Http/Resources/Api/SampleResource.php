@@ -12,6 +12,8 @@ class SampleResource extends JsonResource
         return [
             'id' => $this->id,
             'sample_code' => $this->sample_code,
+            'batch_no' => $this->dispatchBatch?->batch_no,
+            'dispatch_batch_id' => $this->dispatch_batch_id,
             'status' => $this->status->value,
             'status_label' => $this->status->label(),
             'qr_code' => $this->qr_code_path,

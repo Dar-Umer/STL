@@ -19,7 +19,7 @@ class SampleController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $samples = SoilSample::with(['farmer', 'plot.soilType', 'plot.crop', 'collector', 'lab'])
+        $samples = SoilSample::with(['farmer', 'plot.soilType', 'plot.crop', 'collector', 'lab', 'dispatchBatch'])
             ->where('collected_by', $request->user()->id)
             ->orderBy('created_at', 'desc')
             ->get();
@@ -28,6 +28,8 @@ class SampleController extends Controller
             'data' => $samples->map(fn($s) => [
                 'id' => $s->id,
                 'sample_code' => $s->sample_code,
+                'batch_no' => $s->dispatchBatch?->batch_no,
+                'dispatch_batch_id' => $s->dispatch_batch_id,
                 'status' => $s->status->value,
                 'status_label' => $s->status->label(),
                 'qr_code' => $s->qr_code_path,
@@ -74,7 +76,7 @@ class SampleController extends Controller
             'data' => new SampleResource($sample->load([
                 'farmer.state', 'farmer.district', 'farmer.zone',
                 'plot.soilType', 'plot.crop', 'plot.soilColor',
-                'collector', 'lab', 'statusHistory',
+                'collector', 'lab', 'statusHistory', 'dispatchBatch',
             ])),
         ]);
     }

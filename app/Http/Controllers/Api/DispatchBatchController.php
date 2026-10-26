@@ -62,7 +62,10 @@ class DispatchBatchController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'data' => $data,
+            'data' => $data->values()->all(),
+            'total' => $batches->total(),
+            'current_page' => $batches->currentPage(),
+            'last_page' => $batches->lastPage(),
         ]);
     }
 
