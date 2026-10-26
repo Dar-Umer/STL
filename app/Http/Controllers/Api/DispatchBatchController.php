@@ -18,14 +18,19 @@ class DispatchBatchController extends Controller
     {
         $user = $request->user();
 
-        $query = DispatchBatch::with(['zone', 'lab', 'creator', 'receiver', 'evaluationBatch'])
-            ->where(function ($q) use ($user) {
-                if ($user->zone_id) {
-                    $q->where('zone_id', $user->zone_id)->orWhere('created_by', $user->id);
-                } else {
-                    $q->where('created_by', $user->id);
-                }
+        $query = DispatchBatch::with(['zone', 'lab', 'creator', 'receiver', 'evaluationBatch']);
+
+        if ($user->hasRole('Admin') || $user->hasRole('Super Admin') || $user->hasRole('Lab Manager')) {
+            // Admins & Managers can see all batches
+        } elseif ($user->lab_id) {
+            $query->where('lab_id', $user->lab_id);
+        } elseif ($user->zone_id) {
+            $query->where(function ($q) use ($user) {
+                $q->where('zone_id', $user->zone_id)->orWhere('created_by', $user->id);
             });
+        } else {
+            $query->where('created_by', $user->id);
+        }
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
