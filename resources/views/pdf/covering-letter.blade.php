@@ -238,10 +238,10 @@
         <p>Zone: <strong>{{ $zone_name }}</strong> @if($district_name) &bull; District: <strong>{{ $district_name }}</strong> @endif &bull; UT of Jammu & Kashmir</p>
     </div>
 
-    {{-- Dispatch No & Date / Batch --}}
+    {{-- Dispatch No & Date --}}
     <table class="dispatch-bar">
         <tr>
-            <td style="text-align: left; width: 55%; vertical-align: top;">
+            <td style="text-align: left; width: 60%; vertical-align: top;">
                 <strong>Dispatch No:</strong>
                 @if(!empty(trim($dispatch_no ?? '')))
                     <span style="font-weight: bold;">{{ $dispatch_no }}</span>
@@ -250,22 +250,12 @@
                 @endif
             </td>
             
-            <td style="text-align: right; width: 45%; vertical-align: top;">
-                <div>
-                    <strong>Date:</strong>
-                    @if(!empty(trim($date ?? '')))
-                        <span style="font-weight: 500;">{{ $date }}</span>
-                    @else
-                        <span style="letter-spacing: 2px; color: #64748b;">________________________</span>
-                    @endif
-                </div>
-                @if(!empty($batch_no))
-                    <div style="margin-top: 4px;">
-                        <strong>Batch No:</strong>
-                        <span style="font-weight: bold; color: #047857; background-color: #f0fdf4; border: 1px solid #86efac; padding: 1.5px 6px; border-radius: 3px; font-size: 8pt; letter-spacing: 0.3px;">
-                            {{ $batch_no }}
-                        </span>
-                    </div>
+            <td style="text-align: right; width: 40%; vertical-align: top;">
+                <strong>Date:</strong>
+                @if(!empty(trim($date ?? '')))
+                    <span style="font-weight: 500;">{{ $date }}</span>
+                @else
+                    <span style="letter-spacing: 2px; color: #64748b;">________________________</span>
                 @endif
             </td>
         </tr>
@@ -355,6 +345,14 @@
 
     {{-- Laboratory Acknowledgement & Physical Receipt Certificate (Footer Section) --}}
     <div class="receipt-footer-section">
+        @if(!empty($batch_no))
+        <div style="text-align: right; margin-bottom: 5px;">
+            <span style="display: inline-block; border: 1.5px solid #047857; background-color: #f0fdf4; padding: 2.5px 10px; border-radius: 4px;">
+                <span style="font-size: 7.5pt; color: #065f46; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">BATCH NO:</span>
+                <span style="font-size: 9pt; color: #047857; font-weight: 800; letter-spacing: 0.5px; margin-left: 3px;">{{ $batch_no }}</span>
+            </span>
+        </div>
+        @endif
         <div class="cut-line">
             <span class="cut-label"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA8ElEQVR4nO1X2w3DIAzEVobzBB2iA3WITtDtqPhAItSxjXFKK8VSFIWgO3P4AZBzTisNl7Kny4GUNk4Wut0/AuP1fMBXtoAYcmk81AFSSM5wAo/Ai+T1iXaixUBuQk8auf+VvL63KGArcT+GUWCe+UVZqKWYiwELobY9WkpD2wu8AcY5Ia26/UYNqP9vIbOSF9spIAHMpKO0MJhpxxYnNFVh9jwwIvf/KEArY4AMOa856M4CWlAH4GcqITUTLSsa6ZCSGmgF8ZJL893d0GNcGT9UwFrbvY60bxjNgujTMY6An3E0RyvJWfcCuC6nabG9AbY42/i3lVgmAAAAAElFTkSuQmCC" width="12" height="12"> Cut / Detach Along This Line (For Zone Records)</span>
         </div>
