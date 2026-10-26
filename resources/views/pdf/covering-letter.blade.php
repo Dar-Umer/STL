@@ -231,21 +231,6 @@
 </head>
 <body>
 
-    {{-- Top Bar: Batch No at Top Right Corner --}}
-    <table style="width: 100%; margin-bottom: 2px;">
-        <tr>
-            <td style="width: 50%; text-align: left; vertical-align: middle;"></td>
-            <td style="width: 50%; text-align: right; vertical-align: middle;">
-                @if(!empty($batch_no))
-                    <div style="display: inline-block; border: 1.5px solid #047857; background-color: #f0fdf4; padding: 2.5px 8px; border-radius: 4px;">
-                        <span style="font-size: 7pt; color: #065f46; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">BATCH NO:</span>
-                        <span style="font-size: 8.5pt; color: #047857; font-weight: 800; letter-spacing: 0.5px; margin-left: 3px;">{{ $batch_no }}</span>
-                    </div>
-                @endif
-            </td>
-        </tr>
-    </table>
-
     {{-- Official Header --}}
     <div class="header">
         <h1>Government of Jammu & Kashmir &bull; Department of Horticulture</h1>
@@ -253,10 +238,10 @@
         <p>Zone: <strong>{{ $zone_name }}</strong> @if($district_name) &bull; District: <strong>{{ $district_name }}</strong> @endif &bull; UT of Jammu & Kashmir</p>
     </div>
 
-    {{-- Dispatch No & Date --}}
+    {{-- Dispatch No & Date / Batch --}}
     <table class="dispatch-bar">
         <tr>
-            <td style="text-align: left; width: 60%;">
+            <td style="text-align: left; width: 55%; vertical-align: top;">
                 <strong>Dispatch No:</strong>
                 @if(!empty(trim($dispatch_no ?? '')))
                     <span style="font-weight: bold;">{{ $dispatch_no }}</span>
@@ -265,12 +250,22 @@
                 @endif
             </td>
             
-            <td style="text-align: right; width: 40%;">
-                <strong>Date:</strong>
-                @if(!empty(trim($date ?? '')))
-                    <span style="font-weight: 500;">{{ $date }}</span>
-                @else
-                    <span style="letter-spacing: 2px; color: #64748b;">________________________</span>
+            <td style="text-align: right; width: 45%; vertical-align: top;">
+                <div>
+                    <strong>Date:</strong>
+                    @if(!empty(trim($date ?? '')))
+                        <span style="font-weight: 500;">{{ $date }}</span>
+                    @else
+                        <span style="letter-spacing: 2px; color: #64748b;">________________________</span>
+                    @endif
+                </div>
+                @if(!empty($batch_no))
+                    <div style="margin-top: 4px;">
+                        <strong>Batch No:</strong>
+                        <span style="font-weight: bold; color: #047857; background-color: #f0fdf4; border: 1px solid #86efac; padding: 1.5px 6px; border-radius: 3px; font-size: 8pt; letter-spacing: 0.3px;">
+                            {{ $batch_no }}
+                        </span>
+                    </div>
                 @endif
             </td>
         </tr>
