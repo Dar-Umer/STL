@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Lab;
 
+use App\Models\DispatchBatch;
 use App\Models\SoilSample;
 use App\Models\SampleStatusHistory;
 use App\Services\LabEvaluationService;
@@ -65,10 +66,23 @@ class SampleQueue extends Component
         $code = trim($this->scanInput);
         if (!$code) return;
 
+        // Check if scanned code is a Dispatch Batch (e.g. BAT501)
+        $dispatchBatch = DispatchBatch::where('batch_no', $code)->first();
+        if ($dispatchBatch) {
+            $this->scanInput = '';
+            if ($dispatchBatch->status === 'received') {
+                $this->addError('scanInput', "Batch {$code} was already received on " . ($dispatchBatch->received_at ? $dispatchBatch->received_at->format('d M Y') : 'earlier') . ".");
+                $this->dispatch('scan-duplicate');
+                return;
+            }
+            $this->receiveDispatchBatch($dispatchBatch->id);
+            return;
+        }
+
         $sample = $this->findByCode($code);
 
         if (!$sample) {
-            $this->addError('scanInput', "No pending sample with QR code '{$code}'.");
+            $this->addError('scanInput', "No pending sample or batch found with code '{$code}'.");
             $this->scanInput = '';
             $this->dispatch('scan-rejected');
             return;
@@ -90,6 +104,55 @@ class SampleQueue extends Component
 
         $this->scanInput = '';
         $this->dispatch('scan-added');
+    }
+
+    /**
+     * Receive an entire field dispatch batch at once.
+     */
+    public function receiveDispatchBatch(int $batchId)
+    {
+        $batch = DispatchBatch::with('soilSamples')->findOrFail($batchId);
+
+        if ($batch->status === 'received') {
+            session()->flash('warning', "Batch {$batch->batch_no} has already been received.");
+            return;
+        }
+
+        $sampleIds = $batch->soilSamples()->where('status', 'collected')->pluck('id')->all();
+
+        if (empty($sampleIds)) {
+            session()->flash('warning', "No eligible collected samples found in Batch {$batch->batch_no}.");
+            return;
+        }
+
+        try {
+            $evalBatch = LabEvaluationService::receiveSamplesIntoBatch(
+                $sampleIds,
+                auth()->user()->lab_id ?? $batch->lab_id,
+                auth()->id(),
+                "Field Dispatch Batch {$batch->batch_no}"
+            );
+
+            $batch->update([
+                'status' => 'received',
+                'received_by' => auth()->id(),
+                'received_at' => now(),
+                'evaluation_batch_id' => $evalBatch->id,
+            ]);
+
+            session()->flash('receivedBatch', [
+                'id' => $evalBatch->id,
+                'batch_code' => $evalBatch->batch_code,
+                'from' => $evalBatch->lab_number_from,
+                'to' => $evalBatch->lab_number_to,
+                'count' => $evalBatch->sample_count,
+            ]);
+
+            session()->flash('success', "Batch {$batch->batch_no} ({$evalBatch->sample_count} sample(s)) received successfully into Evaluation Batch {$evalBatch->batch_code} (Lab Codes: {$evalBatch->lab_number_from} to {$evalBatch->lab_number_to}).");
+            $this->dispatch('scan-added');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Error receiving batch: ' . $e->getMessage());
+        }
     }
 
     public function removeScannedSample($index)
@@ -224,8 +287,23 @@ class SampleQueue extends Component
                 ->count(),
         ];
 
+        $pendingBatchesQuery = DispatchBatch::with(['zone', 'creator', 'lab', 'soilSamples'])
+            ->where('status', 'dispatched');
+
+        if (!auth()->user()->hasRole('Admin')) {
+            $labId = auth()->user()->lab_id;
+            if ($labId) {
+                $pendingBatchesQuery->where(function ($q) use ($labId) {
+                    $q->where('lab_id', $labId)->orWhereNull('lab_id');
+                });
+            }
+        }
+
+        $pendingBatches = $pendingBatchesQuery->orderBy('id', 'desc')->get();
+
         return view('livewire.lab.sample-queue', [
             'samples' => $samples,
+            'pendingBatches' => $pendingBatches,
             'stats' => $stats,
             'overdueDays' => (int) setting('overdue_days', 2),
             'pageIds' => $samples->getCollection()->pluck('id')->all(),

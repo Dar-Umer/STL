@@ -85,4 +85,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/covering-letter/pdf', [\App\Http\Controllers\Api\CoveringLetterController::class, 'generatePdf']);
     Route::post('/covering-letter/save-defaults', [\App\Http\Controllers\Api\CoveringLetterController::class, 'saveUserDefaults']);
     Route::post('/covering-letter/reset-defaults', [\App\Http\Controllers\Api\CoveringLetterController::class, 'resetUserDefaults']);
+
+    // ---- Dispatch Batches ----
+    Route::get('/dispatch-batches', [\App\Http\Controllers\Api\DispatchBatchController::class, 'index']);
+    Route::get('/dispatch-batches/{id}', [\App\Http\Controllers\Api\DispatchBatchController::class, 'show']);
+    Route::get('/dispatch-batches/{id}/pdf', [\App\Http\Controllers\Api\DispatchBatchController::class, 'downloadPdf']);
+    Route::delete('/dispatch-batches/{id}', [\App\Http\Controllers\Api\DispatchBatchController::class, 'destroy']);
 });

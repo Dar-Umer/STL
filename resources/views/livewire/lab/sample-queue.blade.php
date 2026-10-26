@@ -257,6 +257,66 @@
         @endif
     </div>
 
+    {{-- Incoming Field Batches Card --}}
+    @if(isset($pendingBatches) && $pendingBatches->isNotEmpty())
+        <div class="bg-gradient-to-r from-blue-900 to-indigo-950 rounded-2xl shadow-lg border border-blue-800 text-white p-5">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                <div class="flex items-center gap-3">
+                    <span class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-lg">
+                        <i class="fas fa-boxes-stacked"></i>
+                    </span>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-sm sm:text-base font-bold text-white">Incoming Field Dispatches (Batches)</h3>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/30 text-blue-200 border border-blue-400/30">
+                                {{ $pendingBatches->count() }} Pending
+                            </span>
+                        </div>
+                        <p class="text-xs text-blue-200/70">Receive all samples in a batch with a single click or scan the batch number</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                @foreach($pendingBatches as $batch)
+                    <div wire:key="pending-batch-{{ $batch->id }}" class="bg-white/10 hover:bg-white/15 border border-white/10 rounded-xl p-4 transition flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between gap-2 mb-2">
+                                <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-amber-400 text-amber-950 shadow-xs">
+                                    {{ $batch->batch_no }}
+                                </span>
+                                <span class="text-[11px] text-blue-200/80 font-medium">
+                                    {{ $batch->created_at ? $batch->created_at->format('d M, h:i A') : '—' }}
+                                </span>
+                            </div>
+
+                            <h4 class="text-xs font-bold text-white truncate">
+                                {{ $batch->zone->name ?? 'Zone' }}
+                            </h4>
+                            <p class="text-[11px] text-blue-200/70 mt-0.5 truncate">
+                                Dispatched by: {{ $batch->creator->name ?? 'Field Official' }}
+                                @if($batch->dispatch_no) &bull; Ref: {{ $batch->dispatch_no }} @endif
+                            </p>
+                            <div class="mt-2.5 inline-flex items-center gap-1.5 px-2 py-1 rounded bg-black/20 text-blue-100 text-[11px] font-semibold">
+                                <i class="fas fa-vial text-emerald-400"></i>
+                                <span>{{ $batch->sample_count }} Sample{{ $batch->sample_count != 1 ? 's' : '' }}</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-t border-white/10">
+                            <button wire:click="receiveDispatchBatch({{ $batch->id }})"
+                                    wire:confirm="Receive all {{ $batch->sample_count }} sample(s) from Batch {{ $batch->batch_no }} into the laboratory intake?"
+                                    class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 rounded-lg shadow-sm transition active:scale-[0.98]">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Receive Batch ({{ $batch->sample_count }})</span>
+                            </button>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    @endif
+
     {{-- Stats Row --}}
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div class="bg-white rounded-2xl shadow-xs border border-gray-100 p-5 flex items-center gap-4">

@@ -241,7 +241,7 @@
     {{-- Dispatch No & Date --}}
     <table class="dispatch-bar">
         <tr>
-            <td style="text-align: left; width: 60%;">
+            <td style="text-align: left; width: 42%;">
                 <strong>Dispatch No:</strong>
                 @if(!empty(trim($dispatch_no ?? '')))
                     <span style="font-weight: bold;">{{ $dispatch_no }}</span>
@@ -249,7 +249,14 @@
                     <span style="letter-spacing: 2px; color: #64748b;">____________________________________</span>
                 @endif
             </td>
-            <td style="text-align: right; width: 40%;">
+            <td style="text-align: center; width: 33%;">
+                @if(!empty($batch_no))
+                    <span style="display: inline-block; padding: 2.5px 10px; background-color: #047857; color: #ffffff; border-radius: 4px; font-weight: bold; font-size: 8.5pt; letter-spacing: 0.5px;">
+                        BATCH: {{ $batch_no }}
+                    </span>
+                @endif
+            </td>
+            <td style="text-align: right; width: 25%;">
                 <strong>Date:</strong>
                 @if(!empty(trim($date ?? '')))
                     <span style="font-weight: 500;">{{ $date }}</span>

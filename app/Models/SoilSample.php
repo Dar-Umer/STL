@@ -10,7 +10,7 @@ class SoilSample extends Model
 {
     use Auditable;
     protected $fillable = [
-        'farmer_id', 'plot_id', 'sample_code', 'lab_number', 'evaluation_batch_id',
+        'farmer_id', 'plot_id', 'sample_code', 'lab_number', 'evaluation_batch_id', 'dispatch_batch_id',
         'source', 'qr_code_path', 'collected_by', 'collected_at', 'status',
         'received_at', 'reported_at', 'analyzed_by', 'analyzed_at', 'recommendations',
         'evaluation_remarks', 'lab_id'
@@ -96,6 +96,11 @@ class SoilSample extends Model
     public function evaluationBatch()
     {
         return $this->belongsTo(EvaluationBatch::class, 'evaluation_batch_id');
+    }
+
+    public function dispatchBatch()
+    {
+        return $this->belongsTo(DispatchBatch::class, 'dispatch_batch_id');
     }
 
     public function scopeByLab($query, $labId = null)

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\DispatchBatch;
 use App\Models\Lab;
 use App\Models\Location;
 use App\Models\SoilSample;
@@ -87,13 +88,14 @@ class CoveringLetterController extends Controller
         }
 
         // 6. Query Samples for this User / Zone
-        // Strict Business Rule: ONLY samples in 'collected' status can be selected to create the covering letter
+        // Strict Business Rule: ONLY samples in 'collected' status and NOT YET in any batch can be selected
         $query = SoilSample::with([
             'farmer.village', 'farmer.panchayat', 'farmer.zone',
             'plot.crop', 'plot.soilType', 'plot.village', 'plot.panchayat',
             'collector', 'lab', 'qrCode'
         ])
-        ->where('status', 'collected');
+        ->where('status', 'collected')
+        ->whereNull('dispatch_batch_id');
 
         if ($user->zone_id) {
             $query->where(function ($q) use ($user) {
@@ -128,12 +130,24 @@ class CoveringLetterController extends Controller
             ];
         });
 
+        $nextBatchNo = DispatchBatch::generateNextBatchNo($user->zone_id);
+        $totalBatchesCount = DispatchBatch::where(function ($q) use ($user) {
+            if ($user->zone_id) {
+                $q->where('zone_id', $user->zone_id)->orWhere('created_by', $user->id);
+            } else {
+                $q->where('created_by', $user->id);
+            }
+        })->count();
+
         return response()->json([
             'status' => 'success',
             'data' => [
                 'zone_name' => $zoneName,
                 'district_name' => $districtName,
                 'lab_name' => $labName,
+                'next_batch_no' => $nextBatchNo,
+                'unbatched_count' => $samples->count(),
+                'total_batches_count' => $totalBatchesCount,
                 'default_dispatch_no' => $defaultDispatchNo,
                 'default_date' => $defaultDate,
                 'default_header' => $defaultHeader,
@@ -166,6 +180,7 @@ class CoveringLetterController extends Controller
         $validated = $request->validate([
             'sample_ids' => 'required|array|min:1',
             'sample_ids.*' => 'exists:soil_samples,id',
+            'batch_id' => 'nullable|integer',
             'dispatch_no' => 'nullable|string|max:150',
             'date' => 'nullable|string|max:50',
             'header_title' => 'required|string|max:255',
@@ -201,7 +216,61 @@ class CoveringLetterController extends Controller
             ], 422);
         }
 
+        // Check if regenerating for an existing batch or creating a new batch
+        $batch = null;
+        if (!empty($validated['batch_id'])) {
+            $batch = DispatchBatch::find($validated['batch_id']);
+        }
+
+        if (!$batch) {
+            // Business rule: Once a sample has been added to a batch, it cannot be added to another batch
+            $alreadyBatched = SoilSample::whereIn('id', $validated['sample_ids'])
+                ->whereNotNull('dispatch_batch_id')
+                ->with('dispatchBatch')
+                ->get();
+
+            if ($alreadyBatched->isNotEmpty()) {
+                $first = $alreadyBatched->first();
+                $bCode = $first->dispatchBatch?->batch_no ?? 'another batch';
+                return response()->json([
+                    'status' => 'error',
+                    'message' => "Sample {$first->sample_code} is already included in Batch {$bCode}. Once a sample has been added to a batch, it cannot be added to another batch.",
+                ], 422);
+            }
+
+            // Generate batch number like BAT{ZoneID}01
+            $batchNo = DispatchBatch::generateNextBatchNo($request->user()->zone_id);
+            $labId = $samples->first()->lab_id ?? $request->user()->zone?->lab_id ?? 1;
+
+            $batch = DispatchBatch::create([
+                'batch_no' => $batchNo,
+                'dispatch_no' => $dispatchNo,
+                'date' => $date,
+                'zone_id' => $request->user()->zone_id,
+                'lab_id' => $labId,
+                'created_by' => $request->user()->id,
+                'sample_count' => $samples->count(),
+                'status' => 'dispatched',
+                'header_title' => $validated['header_title'],
+                'subheader' => $validated['subheader'] ?? 'Department of Horticulture, Government of Jammu & Kashmir',
+                'addressed_to' => $validated['addressed_to'],
+                'subject' => $validated['subject'],
+                'body_text' => $validated['body_text'],
+                'hdo_title' => $validated['hdo_title'] ?? 'Horticulture Development Officer',
+                'officer_name' => !empty(trim($validated['officer_name'] ?? '')) ? $validated['officer_name'] : ($request->user()?->name ?? 'Field Official'),
+                'officer_designation' => $validated['officer_designation'] ?? 'Field Official',
+                'officer_phone' => $validated['officer_phone'] ?? auth()->user()->phone,
+            ]);
+
+            // Assign samples to this batch
+            SoilSample::whereIn('id', $samples->pluck('id'))->update([
+                'dispatch_batch_id' => $batch->id,
+            ]);
+        }
+
         $pdf = Pdf::loadView('pdf.covering-letter', [
+            'batch_no' => $batch->batch_no,
+            'batch' => $batch,
             'dispatch_no' => $dispatchNo,
             'date' => $date,
             'header_title' => $validated['header_title'],
@@ -235,11 +304,15 @@ class CoveringLetterController extends Controller
             ]));
         }
 
-        $safeZone = Str::slug($validated['zone_name'] ?? 'zone');
-        $safeDate = date('Ymd');
-        $filename = "covering-letter-{$safeZone}-{$safeDate}.pdf";
+        $filename = "Covering_Letter_{$batch->batch_no}.pdf";
 
-        return $pdf->download($filename);
+        return response($pdf->output(), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+            'X-Batch-No' => $batch->batch_no,
+            'X-Batch-Id' => (string) $batch->id,
+            'Access-Control-Expose-Headers' => 'X-Batch-No, X-Batch-Id, Content-Disposition',
+        ]);
     }
 
     /**
