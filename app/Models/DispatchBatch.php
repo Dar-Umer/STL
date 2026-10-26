@@ -70,12 +70,18 @@ class DispatchBatch extends Model
     }
 
     /**
-     * Generate sequential batch number like BAT{ZoneID}01, BAT{ZoneID}02, ...
+     * Generate sequential batch number like BATTZ01, BATTZ02, ...
+     * Uses Zone Code (e.g. 'TZ' for Tral Zone) matching sample code pattern.
      */
     public static function generateNextBatchNo(?int $zoneId): string
     {
-        $zoneKey = $zoneId ? (string) $zoneId : '0';
-        $prefix = 'BAT' . $zoneKey;
+        $zoneCode = '0';
+        if ($zoneId) {
+            $zone = Location::find($zoneId);
+            $zoneCode = !empty($zone?->code) ? strtoupper($zone->code) : (string) $zoneId;
+        }
+
+        $prefix = 'BAT' . $zoneCode;
 
         $latest = static::where('batch_no', 'like', "{$prefix}%")
             ->orderBy('id', 'desc')
