@@ -231,6 +231,15 @@
 </head>
 <body>
 
+    @if(!empty($batch_no))
+        <div style="position: absolute; top: 16px; right: 36px; text-align: right;">
+            <div style="border: 1.5px solid #047857; background-color: #f0fdf4; padding: 3px 9px; border-radius: 4px; display: inline-block;">
+                <span style="font-size: 7pt; color: #065f46; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">BATCH NO:</span>
+                <span style="font-size: 9pt; color: #047857; font-weight: 800; letter-spacing: 0.5px; margin-left: 3px;">{{ $batch_no }}</span>
+            </div>
+        </div>
+    @endif
+
     {{-- Official Header --}}
     <div class="header">
         <h1>Government of Jammu & Kashmir &bull; Department of Horticulture</h1>
