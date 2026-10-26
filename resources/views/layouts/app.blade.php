@@ -238,6 +238,7 @@
                     ['route' => 'lab.evaluations', 'label' => 'Evaluations & Sheets'],
                     ['route' => 'lab.testing-list', 'label' => 'Sample Testing'],
                     ['route' => 'samples.index', 'label' => 'All Samples'],
+                    ['route' => 'admin.qr-codes', 'label' => 'QR Code Generation'],
                 ],
             ];
 
@@ -248,6 +249,7 @@
                     'items' => [
                         ['route' => 'admin.users', 'label' => 'Users'],
                         ['route' => 'admin.farmers', 'label' => 'Farmers'],
+                        ['route' => 'admin.qr-codes', 'label' => 'QR Codes'],
                         ['route' => 'admin.inventory', 'label' => 'Inventory'],
                         ['route' => 'admin.zone-targets', 'label' => 'Zone Targets'],
                         ['route' => 'admin.reports', 'label' => 'Reports'],
@@ -451,6 +453,10 @@
                              x-transition:enter-end="transform opacity-100 scale-100"
                              class="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl z-50 border border-gray-100 py-1.5 divide-y divide-gray-50">
                             <div class="py-1">
+                                <a href="{{ route('admin.qr-codes') }}" class="flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition">
+                                    <span class="w-6 h-6 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-xs font-bold"><i class="fas fa-qrcode text-[10px]"></i></span>
+                                    Generate QR Codes
+                                </a>
                                 <a href="{{ route('field.collect-sample') }}" class="flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition">
                                     <span class="w-6 h-6 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs font-bold">SMP</span>
                                     Collect Field Sample

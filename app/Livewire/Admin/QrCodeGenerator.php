@@ -26,7 +26,8 @@ class QrCodeGenerator extends Component
         if ($user->hasRole('Lab Manager')) {
             $this->labId = $user->lab_id;
             $this->zoneId = $user->zone_id;
-            $this->prefix = $user->zone?->code ?? 'N/A';
+            $defaultZone = \App\Models\Location::where('type', 'zone')->whereNotNull('code')->where('code', '!=', 'N/A')->first();
+            $this->prefix = $user->zone?->code ?? ($defaultZone?->code ?? 'TZ');
         } elseif (!$user->hasRole('Admin')) {
             $this->prefix = $user->zone?->code ?? 'N/A';
         }
@@ -86,25 +87,29 @@ class QrCodeGenerator extends Component
         if (empty($this->selectedIds)) return;
 
         $ids = implode(',', $this->selectedIds);
-        $routeName = auth()->user()->hasRole('Admin') ? 'admin.qr-codes.print-selected' : 'field.qr-codes.print-selected';
+        $routeName = auth()->user()->hasRole(['Admin', 'Lab Manager']) ? 'admin.qr-codes.print-selected' : 'field.qr-codes.print-selected';
         return redirect()->route($routeName, ['ids' => $ids]);
     }
 
     public function deleteSelected()
     {
-        $this->authorizeAdmin();
+        $this->authorizeAdminOrLabManager();
         if (empty($this->selectedIds)) return;
 
-        $count = count($this->selectedIds);
-        QrCode::whereIn('id', $this->selectedIds)->delete();
+        $user = auth()->user();
+        $query = QrCode::whereIn('id', $this->selectedIds);
+        if (!$user->hasRole('Admin')) {
+            $query->where('lab_id', $user->lab_id)->where('is_used', false);
+        }
+        $count = $query->delete();
         $this->selectedIds = [];
         $this->selectAll = false;
-        session()->flash('success', "{$count} QR codes deleted successfully.");
+        session()->flash('success', "{$count} QR code(s) deleted successfully.");
     }
 
-    protected function authorizeAdmin()
+    protected function authorizeAdminOrLabManager()
     {
-        if (!auth()->user()->hasRole('Admin')) {
+        if (!auth()->user()->hasRole(['Admin', 'Lab Manager'])) {
             abort(403);
         }
     }
@@ -180,7 +185,7 @@ class QrCodeGenerator extends Component
         }
         QrCode::insert($codes);
         $endSeq = $startFrom + $this->count - 1;
-        $routeName = $user->hasRole('Admin') ? 'admin.qr-codes.print' : 'field.qr-codes.print';
+        $routeName = $user->hasRole(['Admin', 'Lab Manager']) ? 'admin.qr-codes.print' : 'field.qr-codes.print';
         return redirect()->route($routeName, [
             'prefix' => $this->prefix,
             'start' => $startFrom,

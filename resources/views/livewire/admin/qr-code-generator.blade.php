@@ -44,6 +44,14 @@
                         </select>
                         @error('labId') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
                     </div>
+                    @elseif(auth()->user()->hasRole('Lab Manager'))
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">Lab Facility</label>
+                        <div class="px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm font-semibold text-gray-800 flex items-center gap-2">
+                            <i class="fas fa-building text-emerald-600 text-xs"></i>
+                            <span>{{ auth()->user()->lab->name ?? 'Assigned Lab' }}</span>
+                        </div>
+                    </div>
                     @endif
 
                     @if((auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Lab Manager')) && $zones->count())
@@ -62,9 +70,9 @@
 
                     <div>
                         <label class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">Prefix Code</label>
-                        @if(auth()->user()->hasRole('Admin'))
-                        <input wire:model="prefix" type="text" placeholder="e.g. A, B, CSTL" maxlength="5" class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm font-mono uppercase text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition @error('prefix') border-rose-300 ring-2 ring-rose-100 @enderror">
-                        <p class="text-[11px] text-gray-400 mt-1">Alphanumeric prefix (max 5 letters)</p>
+                        @if(auth()->user()->hasRole(['Admin', 'Lab Manager']))
+                        <input wire:model="prefix" type="text" placeholder="e.g. A, B, TZ" maxlength="5" class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm font-mono uppercase text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition @error('prefix') border-rose-300 ring-2 ring-rose-100 @enderror">
+                        <p class="text-[11px] text-gray-400 mt-1">Alphanumeric prefix (max 5 letters) &mdash; or select zone above</p>
                         @else
                         <input wire:model="prefix" type="text" readonly class="w-full rounded-xl border border-gray-200 bg-gray-100 px-4 py-2.5 text-sm font-mono text-gray-700 cursor-not-allowed">
                         <p class="text-[11px] text-gray-400 mt-1">Zone code — auto-assigned</p>
@@ -145,7 +153,7 @@
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
                             Print Selected
                         </button>
-                        @if(auth()->user()->hasRole('Admin'))
+                        @if(auth()->user()->hasRole(['Admin', 'Lab Manager']))
                         <button type="button" wire:click="deleteSelected" onclick="return confirm('Delete {{ count($selectedIds) }} QR codes? This cannot be undone.')" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-medium shadow-xs transition">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                             Delete Selected

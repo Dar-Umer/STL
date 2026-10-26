@@ -129,6 +129,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/self-sample', SelfSampleCollection::class)->name('self-sample');
         Route::get('/testing', \App\Livewire\Lab\SampleTesting::class)->name('testing-list');
         Route::get('/testing/{sampleId}', SampleTestingForm::class)->name('testing');
+        Route::get('/qr-codes', QrCodeGenerator::class)->name('qr-codes');
+        Route::get('/qr-codes/print/{prefix}', [QrPrintController::class, 'print'])->name('qr-codes.print');
+        Route::get('/qr-codes/print-selected', [QrPrintController::class, 'printSelected'])->name('qr-codes.print-selected');
     });
 
     // Field Routes (Field Official & Lab Manager)

@@ -134,6 +134,11 @@
                 <i class="fas fa-vial text-blue-600"></i>
                 <span>Sample Testing Workbench</span>
             </a>
+            <a href="{{ route('admin.qr-codes') }}"
+               class="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-xl shadow-xs transition active:scale-[0.98]">
+                <i class="fas fa-print text-purple-600"></i>
+                <span>Generate QR Codes</span>
+            </a>
         </div>
         <div class="text-xs text-gray-500">
             Total Samples Reported: <strong class="text-gray-900 font-semibold">{{ number_format($totalReported) }}</strong>
