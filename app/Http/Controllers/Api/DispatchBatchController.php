@@ -210,4 +210,83 @@ class DispatchBatchController extends Controller
             'message' => "Batch {$batchNo} cancelled successfully. All samples have been released back to your unbatched collection.",
         ]);
     }
+
+    /**
+     * Receive a dispatch batch (marks all samples received).
+     * By default, Lab Code is not assigned immediately (receiver can assign later).
+     * If assign_lab_codes is passed as true, sequential Lab Codes are assigned immediately.
+     */
+    public function receive(Request $request, $id)
+    {
+        $user = $request->user();
+        $batch = DispatchBatch::with('soilSamples')->findOrFail($id);
+
+        if ($batch->status === 'received') {
+            return response()->json([
+                'status' => 'error',
+                'message' => "Batch {$batch->batch_no} has already been received.",
+            ], 422);
+        }
+
+        $samples = $batch->soilSamples()->where('status', 'collected')->get();
+        if ($samples->isEmpty()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => "No eligible pending samples found in Batch {$batch->batch_no}.",
+            ], 422);
+        }
+
+        $assignLabCodes = $request->boolean('assign_lab_codes', false);
+        $now = now();
+
+        if ($assignLabCodes) {
+            $evalBatch = \App\Services\LabEvaluationService::receiveSamplesIntoBatch(
+                $samples->pluck('id')->all(),
+                $user->lab_id ?? $batch->lab_id,
+                $user->id,
+                "API Receive Batch {$batch->batch_no}"
+            );
+
+            $batch->update([
+                'status' => 'received',
+                'received_by' => $user->id,
+                'received_at' => $now,
+                'evaluation_batch_id' => $evalBatch->id,
+            ]);
+        } else {
+            \Illuminate\Support\Facades\DB::transaction(function () use ($batch, $samples, $now, $user) {
+                foreach ($samples as $sample) {
+                    $oldStatus = $sample->status->value;
+                    $sample->update([
+                        'status' => 'received',
+                        'received_at' => $now,
+                    ]);
+
+                    \App\Models\SampleStatusHistory::create([
+                        'soil_sample_id' => $sample->id,
+                        'from_status' => $oldStatus,
+                        'to_status' => 'received',
+                        'changed_by' => $user->id,
+                    ]);
+                }
+
+                $batch->update([
+                    'status' => 'received',
+                    'received_by' => $user->id,
+                    'received_at' => $now,
+                ]);
+            });
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => "Batch {$batch->batch_no} ({$samples->count()} sample(s)) received successfully into laboratory. " . ($assignLabCodes ? 'Lab Codes assigned.' : 'Lab Codes can be assigned later.'),
+            'data' => [
+                'batch_no' => $batch->batch_no,
+                'status' => 'received',
+                'sample_count' => $samples->count(),
+                'received_at' => $batch->received_at?->format('d M Y, h:i A'),
+            ]
+        ]);
+    }
 }

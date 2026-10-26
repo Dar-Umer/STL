@@ -205,10 +205,15 @@
                         <span>Camera</span>
                     </button>
 
-                    <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-gray-800 border border-gray-700 text-gray-300 ml-auto">
+                    <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-gray-800 border border-gray-700 text-gray-300">
                         <i class="fas fa-layer-group text-emerald-400 text-[10px]"></i>
                         {{ count($scannedSamples) }} staged
                     </span>
+
+                    <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-medium text-gray-300 bg-gray-800/90 hover:bg-gray-800 px-3 py-1.5 rounded-xl border border-gray-700 transition select-none ml-auto">
+                        <input type="checkbox" wire:model.live="assignLabCodesImmediately" class="rounded text-emerald-500 focus:ring-emerald-500 bg-gray-900 border-gray-600">
+                        <span>Assign Lab Codes immediately</span>
+                    </label>
                 </form>
 
                 @error('scanInput')
@@ -303,13 +308,20 @@
                             </div>
                         </div>
 
-                        <div class="mt-4 pt-3 border-t border-white/10">
+                        <div class="mt-4 pt-3 border-t border-white/10 space-y-1.5">
                             <button wire:click="receiveDispatchBatch({{ $batch->id }})"
                                     wire:confirm="Receive all {{ $batch->sample_count }} sample(s) from Batch {{ $batch->batch_no }} into the laboratory intake?"
                                     class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 rounded-lg shadow-sm transition active:scale-[0.98]">
                                 <i class="fas fa-check-circle"></i>
                                 <span>Receive Batch ({{ $batch->sample_count }})</span>
                             </button>
+                            <p class="text-[10.5px] text-center text-blue-200/70">
+                                @if($assignLabCodesImmediately)
+                                    <span class="text-emerald-300 font-semibold"><i class="fas fa-tag"></i> Lab Codes assigned now</span>
+                                @else
+                                    <span>Lab Codes can be assigned later</span>
+                                @endif
+                            </p>
                         </div>
                     </div>
                 @endforeach

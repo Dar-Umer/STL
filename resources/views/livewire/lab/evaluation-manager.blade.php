@@ -22,6 +22,11 @@
             </button>
 
             @if(count($selected) > 0)
+                <button wire:click="assignCodesToSelected"
+                        class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium text-xs rounded-xl shadow-xs shadow-amber-500/20 transition active:scale-[0.98]">
+                    <i class="fas fa-tag"></i>
+                    <span>Assign Lab Codes ({{ count($selected) }})</span>
+                </button>
                 <button wire:click="printSelectedWorksheet"
                         class="inline-flex items-center gap-2 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs rounded-xl shadow-xs shadow-emerald-600/20 transition active:scale-[0.98] animate-pulse">
                     <i class="fas fa-file-pdf"></i>
@@ -221,9 +226,19 @@
                 </select>
             </div>
 
+            {{-- Lab Code Assignment Filter --}}
+            <div>
+                <select wire:model.live="codeFilter"
+                        class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3.5 py-2 text-xs text-gray-700 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition">
+                    <option value="">All Lab Code Status</option>
+                    <option value="no_code">Awaiting Lab Code (Unassigned)</option>
+                    <option value="with_code">Assigned with Lab Code</option>
+                </select>
+            </div>
+
             {{-- Reset Filters --}}
             <div>
-                <button wire:click="$set('search', ''); $set('statusFilter', ''); $set('batchFilter', ''); $set('dateFrom', ''); $set('dateTo', '')"
+                <button wire:click="$set('search', ''); $set('statusFilter', ''); $set('codeFilter', ''); $set('batchFilter', ''); $set('dateFrom', ''); $set('dateTo', '')"
                         class="w-full px-3.5 py-2 text-xs font-semibold text-gray-600 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-xl transition text-center">
                     <i class="fas fa-undo-alt mr-1 text-gray-400"></i> Reset Filters
                 </button>
@@ -272,10 +287,25 @@
                                            class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 w-4 h-4 cursor-pointer">
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-mono font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
-                                        <i class="fas fa-tag text-[10px] text-emerald-500"></i>
-                                        <span>{{ $sample->lab_number }}</span>
-                                    </span>
+                                    @if($sample->lab_number)
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-mono font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                                            <i class="fas fa-tag text-[10px] text-emerald-500"></i>
+                                            <span>{{ $sample->lab_number }}</span>
+                                        </span>
+                                    @else
+                                        <div class="inline-flex items-center gap-2">
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200">
+                                                <i class="fas fa-clock text-[10px] text-amber-500"></i>
+                                                <span>Unassigned</span>
+                                            </span>
+                                            <button wire:click="assignLabCode({{ $sample->id }})"
+                                                    class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-xs transition active:scale-[0.98]"
+                                                    title="Assign next sequential Lab Code">
+                                                <i class="fas fa-plus text-[9px]"></i>
+                                                <span>Assign</span>
+                                            </button>
+                                        </div>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="font-mono font-bold text-gray-900 block">{{ $sample->sample_code }}</span>

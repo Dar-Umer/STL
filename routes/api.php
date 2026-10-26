@@ -91,4 +91,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/dispatch-batches/{id}', [\App\Http\Controllers\Api\DispatchBatchController::class, 'show']);
     Route::get('/dispatch-batches/{id}/pdf', [\App\Http\Controllers\Api\DispatchBatchController::class, 'downloadPdf']);
     Route::delete('/dispatch-batches/{id}', [\App\Http\Controllers\Api\DispatchBatchController::class, 'destroy']);
+    Route::post('/dispatch-batches/{id}/receive', [\App\Http\Controllers\Api\DispatchBatchController::class, 'receive']);
 });

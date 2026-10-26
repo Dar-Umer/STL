@@ -22,6 +22,7 @@ class EvaluationManager extends Component
     // Filters
     public string $search = '';
     public string $statusFilter = ''; // '', 'received', 'testing', 'reported'
+    public string $codeFilter = ''; // '', 'with_code', 'no_code'
     public string $batchFilter = '';
     public string $dateFrom = '';
     public string $dateTo = '';
@@ -42,6 +43,7 @@ class EvaluationManager extends Component
         'activeTab' => ['except' => 'samples'],
         'search' => ['except' => ''],
         'statusFilter' => ['except' => ''],
+        'codeFilter' => ['except' => ''],
         'batchFilter' => ['except' => ''],
         'dateFrom' => ['except' => ''],
         'dateTo' => ['except' => ''],
@@ -49,6 +51,7 @@ class EvaluationManager extends Component
 
     public function updatingSearch() { $this->resetPage(); }
     public function updatingStatusFilter() { $this->resetPage(); }
+    public function updatingCodeFilter() { $this->resetPage(); }
     public function updatingBatchFilter() { $this->resetPage(); }
     public function updatingDateFrom() { $this->resetPage(); }
     public function updatingDateTo() { $this->resetPage(); }
@@ -84,10 +87,16 @@ class EvaluationManager extends Component
             'plot.crop', 'plot.soilType',
             'lab', 'analyst', 'evaluationBatch',
             'results.parameter',
-        ])->whereNotNull('lab_number');
+        ])->whereIn('status', ['received', 'testing', 'reported']);
 
         if (!auth()->user()->hasRole('Admin')) {
             $query->where('lab_id', auth()->user()->lab_id);
+        }
+
+        if ($this->codeFilter === 'with_code') {
+            $query->whereNotNull('lab_number');
+        } elseif ($this->codeFilter === 'no_code') {
+            $query->whereNull('lab_number');
         }
 
         if ($this->search) {
@@ -116,7 +125,7 @@ class EvaluationManager extends Component
             $query->whereDate('received_at', '<=', $this->dateTo);
         }
 
-        return $query->orderBy('lab_number', 'desc');
+        return $query->orderByRaw('CASE WHEN lab_number IS NULL THEN 0 ELSE 1 END, id desc');
     }
 
     protected function getBatchesQuery()
@@ -255,6 +264,41 @@ class EvaluationManager extends Component
         $this->batchFilter = (string)$batchId;
         $this->activeTab = 'samples';
         $this->resetPage();
+    }
+
+    public function assignLabCode(int $sampleId)
+    {
+        $sample = SoilSample::findOrFail($sampleId);
+        if ($sample->lab_number) {
+            session()->flash('warning', "Sample {$sample->sample_code} already has Lab Code: {$sample->lab_number}");
+            return;
+        }
+
+        $codes = LabEvaluationService::allocateLabNumbers(1);
+        $sample->update(['lab_number' => $codes[0]]);
+        session()->flash('success', "Assigned Lab Code {$codes[0]} to {$sample->sample_code}.");
+    }
+
+    public function assignCodesToSelected()
+    {
+        if (empty($this->selected)) {
+            session()->flash('warning', 'Please select at least one sample.');
+            return;
+        }
+
+        $unassigned = SoilSample::whereIn('id', $this->selected)->whereNull('lab_number')->orderBy('id', 'asc')->get();
+        if ($unassigned->isEmpty()) {
+            session()->flash('warning', 'All selected samples already have Lab Codes assigned.');
+            return;
+        }
+
+        $codes = LabEvaluationService::allocateLabNumbers($unassigned->count());
+        foreach ($unassigned as $i => $s) {
+            $s->update(['lab_number' => $codes[$i]]);
+        }
+
+        session()->flash('success', "Assigned Lab Codes to {$unassigned->count()} selected sample(s) ({$codes[0]} to " . end($codes) . ").");
+        $this->selected = [];
     }
 
     public function backfillMissingCodes()
