@@ -17,6 +17,12 @@
         @font-face {
             font-family: 'Inter';
             font-style: normal;
+            font-weight: 400;
+            src: url('{{ str_replace('\\', '/', public_path('fonts/Inter-Regular.ttf')) }}') format('truetype');
+        }
+        @font-face {
+            font-family: 'Inter';
+            font-style: normal;
             font-weight: 500;
             src: url('{{ str_replace('\\', '/', public_path('fonts/Inter-Medium.ttf')) }}') format('truetype');
         }
@@ -32,852 +38,853 @@
             font-weight: bold;
             src: url('{{ str_replace('\\', '/', public_path('fonts/Inter-Bold.ttf')) }}') format('truetype');
         }
+        @font-face {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 700;
+            src: url('{{ str_replace('\\', '/', public_path('fonts/Inter-Bold.ttf')) }}') format('truetype');
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', Helvetica, Arial, sans-serif;
         }
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            font-size: 7.5pt;
-            color: #1e293b;
+            font-family: 'Inter', Helvetica, Arial, sans-serif;
+            font-size: 7.2pt;
+            color: #0f172a;
             line-height: 1.25;
             background: #ffffff;
         }
 
-        /* Certificate Outer Decorative Frame */
-        .page-frame {
-            border: 2px solid #059669;
-            padding: 5px 7px;
-            position: relative;
+        /* Certificate Container Frame */
+        .doc-container {
+            border: 1.5px solid #065f46;
+            border-radius: 4px;
+            padding: 6px 8px 6px 8px;
             background: #ffffff;
-        }
-        .frame-inner-border {
-            border: 0.5px solid #a7f3d0;
-            padding: 4px 5px;
+            position: relative;
         }
 
-        /* Top Government & Lab Identity Header */
-        .govt-header-table {
+        /* Top Government Masthead */
+        .masthead-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 3.5px;
+            margin-bottom: 4px;
         }
-        .emblem-cell {
-            width: 62px;
+        .emblem-td {
+            width: 65px;
             vertical-align: middle;
             text-align: left;
         }
-        .emblem-badge {
-            width: 52px;
-            height: 52px;
-            background: #ecfdf5;
-            border: 1.5px solid #059669;
-            border-radius: 50%;
-            text-align: center;
-            vertical-align: middle;
-            display: inline-block;
-            line-height: 50px;
-            color: #059669;
-            font-weight: bold;
-            font-size: 15pt;
+        .emblem-img {
+            height: 56px;
+            max-width: 60px;
+            display: block;
         }
-        .govt-title-cell {
+        .masthead-center {
             vertical-align: middle;
             text-align: center;
             padding: 0 4px;
         }
-        .govt-state-title {
-            font-size: 10.5pt;
-            font-weight: bold;
-            color: #065f46;
-            letter-spacing: 0.8px;
-            text-transform: uppercase;
-        }
-        .govt-dept-title {
-            font-size: 7.8pt;
-            font-weight: bold;
-            color: #334155;
-            margin-top: 1px;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-        }
-        .lab-name-title {
+        .govt-state {
             font-size: 9.5pt;
             font-weight: bold;
-            color: #059669;
-            margin-top: 1px;
-        }
-        .lab-meta-sub {
-            font-size: 6.2pt;
-            color: #64748b;
-            margin-top: 1px;
-        }
-
-        /* Digital QR Verification Card */
-        .qr-cell {
-            width: 72px;
-            vertical-align: middle;
-            text-align: right;
-        }
-        .qr-card {
-            display: inline-block;
-            border: 1px solid #cbd5e1;
-            padding: 2.5px;
-            background: #ffffff;
-            border-radius: 4px;
-            text-align: center;
-        }
-        .qr-card img {
-            width: 56px;
-            height: 56px;
-            display: block;
-        }
-        .qr-hint {
-            font-size: 4.8pt;
-            color: #059669;
-            font-weight: bold;
+            color: #0f172a;
+            letter-spacing: 1.2px;
             text-transform: uppercase;
+        }
+        .govt-dept {
+            font-size: 8.2pt;
+            font-weight: bold;
+            color: #047857;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-top: 1px;
+        }
+        .lab-title {
+            font-size: 10.5pt;
+            font-weight: bold;
+            color: #064e3b;
             margin-top: 1px;
             letter-spacing: 0.3px;
         }
-
-        /* Certificate Banner Ribbon */
-        .report-banner {
-            background: #059669;
-            color: #ffffff;
-            text-align: center;
-            padding: 3.5px 6px;
-            margin: 3px 0 5px 0;
+        .lab-contact-line {
+            font-size: 6.2pt;
+            color: #475569;
+            margin-top: 1.5px;
+        }
+        .qr-td {
+            width: 70px;
+            vertical-align: middle;
+            text-align: right;
+        }
+        .qr-box {
+            display: inline-block;
+            border: 1px solid #cbd5e1;
+            padding: 2px;
+            background: #ffffff;
             border-radius: 3px;
+            text-align: center;
         }
-        .report-banner h1 {
-            font-size: 9.5pt;
+        .qr-box img {
+            width: 52px;
+            height: 52px;
+            display: block;
+        }
+        .qr-caption {
+            font-size: 4.8pt;
+            color: #047857;
             font-weight: bold;
-            letter-spacing: 0.8px;
             text-transform: uppercase;
-            margin: 0;
-        }
-        .report-banner p {
-            font-size: 5.8pt;
+            margin-top: 1.5px;
             letter-spacing: 0.4px;
-            color: #d1fae5;
-            margin-top: 1px;
+        }
+
+        /* Title Banner Strip */
+        .banner-strip {
+            background: #064e3b;
+            border-bottom: 2px solid #d97706;
+            border-radius: 3px;
+            padding: 3.5px 8px;
+            text-align: center;
+            margin-bottom: 4px;
+        }
+        .banner-title {
+            color: #ffffff;
+            font-size: 9pt;
+            font-weight: bold;
+            letter-spacing: 0.9px;
             text-transform: uppercase;
+        }
+        .banner-subtitle {
+            color: #a7f3d0;
+            font-size: 5.6pt;
+            font-weight: normal;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-top: 1px;
         }
 
         /* Metadata Passport Ribbon */
-        .meta-bar {
+        .meta-strip {
             width: 100%;
             border-collapse: collapse;
             background: #f8fafc;
             border: 1px solid #e2e8f0;
             border-radius: 3px;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
-        .meta-bar td {
+        .meta-strip td {
             padding: 3px 6px;
             font-size: 6.8pt;
             border-right: 1px solid #e2e8f0;
             vertical-align: middle;
         }
-        .meta-bar td:last-child {
+        .meta-strip td:last-child {
             border-right: none;
         }
-        .meta-bar .m-label {
+        .m-key {
             color: #64748b;
-            font-size: 5.5pt;
+            font-size: 5.2pt;
             text-transform: uppercase;
             font-weight: bold;
             display: block;
             margin-bottom: 1px;
+            letter-spacing: 0.3px;
         }
-        .meta-bar .m-val {
+        .m-val {
             color: #0f172a;
             font-weight: bold;
             font-size: 7.2pt;
         }
-        .badge-verified {
+        .badge-auth {
             display: inline-block;
             background: #ecfdf5;
             color: #047857;
-            border: 1px solid #a7f3d0;
-            padding: 1px 5px;
-            font-size: 6.2pt;
+            border: 1px solid #6ee7b7;
+            padding: 1.5px 6px;
+            font-size: 5.8pt;
             font-weight: bold;
             border-radius: 3px;
             text-transform: uppercase;
+            letter-spacing: 0.4px;
         }
 
-        /* Section Headings */
-        .section-header {
-            background: #065f46;
-            color: #ffffff;
-            font-size: 6.8pt;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            padding: 2.2px 6px;
-            border-radius: 3px;
-            margin-bottom: 3.5px;
-        }
-
-        /* Two-Column Grid: Beneficiary & Plot Particulars */
-        .two-col-table {
+        /* Two-Column Dossier Grid */
+        .dossier-table {
             width: 100%;
             border-collapse: separate;
-            border-spacing: 4px 0;
-            margin-bottom: 5px;
+            border-spacing: 5px 0;
+            margin-bottom: 4px;
         }
-        .two-col-cell {
+        .dossier-cell {
             width: 50%;
             vertical-align: top;
-            border: 1px solid #e2e8f0;
-            background: #ffffff;
+            border: 1px solid #cbd5e1;
             border-radius: 3px;
-            padding: 0;
+            background: #ffffff;
             overflow: hidden;
         }
-        .box-title {
-            background: #f1f5f9;
-            border-bottom: 1px solid #e2e8f0;
+        .card-header {
+            background: #f0fdf4;
+            border-bottom: 1px solid #bbf7d0;
             padding: 2.5px 6px;
-            font-size: 6.5pt;
+            font-size: 6.4pt;
             font-weight: bold;
-            color: #0f172a;
+            color: #064e3b;
             text-transform: uppercase;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.4px;
         }
-        .details-table {
+        .info-table {
             width: 100%;
             border-collapse: collapse;
         }
-        .details-table tr:nth-child(even) td {
+        .info-table tr:nth-child(even) td {
             background: #f8fafc;
         }
-        .details-table td {
+        .info-table td {
             padding: 1.8px 6px;
-            font-size: 6.8pt;
+            font-size: 6.6pt;
             border-bottom: 0.5px solid #f1f5f9;
-            vertical-align: top;
+            vertical-align: middle;
         }
-        .details-table td.lbl {
-            width: 88px;
+        .info-table td.label-col {
+            width: 86px;
             color: #64748b;
             font-weight: normal;
         }
-        .details-table td.val {
+        .info-table td.val-col {
             color: #0f172a;
             font-weight: bold;
         }
 
         /* Results Matrix Table */
-        .results-matrix {
+        .matrix-header-title {
+            background: #065f46;
+            color: #ffffff;
+            font-size: 6.6pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 2.2px 6px;
+            border-radius: 3px;
+            margin-bottom: 3px;
+        }
+        .matrix-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 6.8pt;
+            font-size: 6.6pt;
             margin-bottom: 4px;
             border: 1px solid #cbd5e1;
         }
-        .results-matrix th {
-            background: #059669;
+        .matrix-table th {
+            background: #064e3b;
             color: #ffffff;
             font-weight: bold;
-            font-size: 6.4pt;
+            font-size: 6.2pt;
             text-transform: uppercase;
             letter-spacing: 0.3px;
             padding: 2.8px 4px;
             border: 1px solid #047857;
             text-align: center;
         }
-        .results-matrix td {
-            padding: 1.8px 4px;
+        .matrix-table td {
+            padding: 2px 4px;
             border: 1px solid #e2e8f0;
             vertical-align: middle;
         }
-        .results-matrix tr:nth-child(even) td {
+        .matrix-table tr:nth-child(even) td {
             background: #f8fafc;
         }
-        .results-matrix td.num {
+        .matrix-table td.col-idx {
             text-align: center;
             font-weight: bold;
             color: #64748b;
             width: 18px;
         }
-        .results-matrix td.param-name {
+        .matrix-table td.col-name {
             font-weight: bold;
             color: #0f172a;
-            font-size: 6.8pt;
+            font-size: 6.7pt;
         }
-        .results-matrix td.param-category {
+        .col-category {
             font-size: 5.2pt;
             color: #64748b;
             display: block;
             text-transform: uppercase;
+            font-weight: normal;
             letter-spacing: 0.3px;
         }
-        .results-matrix td.method-col {
+        .matrix-table td.col-method {
             font-size: 5.8pt;
             color: #64748b;
         }
-        .results-matrix td.val-col {
+        .matrix-table td.col-obs {
             text-align: center;
             font-weight: bold;
             font-size: 7.5pt;
             color: #0f172a;
             width: 58px;
         }
-        .results-matrix td.unit-col {
+        .matrix-table td.col-unit {
             text-align: center;
             color: #475569;
             font-size: 6.2pt;
             width: 44px;
         }
-        .results-matrix td.range-col {
+        .matrix-table td.col-range {
             text-align: center;
             font-size: 6.2pt;
             color: #475569;
-            width: 78px;
+            width: 80px;
         }
-        .results-matrix td.rating-col {
+        .matrix-table td.col-rating {
             text-align: center;
             width: 72px;
         }
-        .results-matrix td.gauge-col {
+        .matrix-table td.col-gauge {
             text-align: center;
             width: 62px;
         }
 
         /* Rating Badges */
-        .badge-rating {
+        .pill-rating {
             display: inline-block;
-            padding: 1.2px 5px;
-            font-size: 5.8pt;
+            padding: 1.2px 6px;
+            font-size: 5.6pt;
             font-weight: bold;
             border-radius: 3px;
             text-transform: uppercase;
             letter-spacing: 0.3px;
         }
-        .rating-low {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 0.5px solid #f87171;
+        .pill-low {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 0.5px solid #fca5a5;
         }
-        .rating-medium {
-            background: #fef3c7;
-            color: #92400e;
-            border: 0.5px solid #fbbf24;
+        .pill-med {
+            background: #fffbeb;
+            color: #b45309;
+            border: 0.5px solid #fcd34d;
         }
-        .rating-high {
-            background: #dbeafe;
-            color: #1e40af;
-            border: 0.5px solid #60a5fa;
+        .pill-high {
+            background: #eff6ff;
+            color: #1d4ed8;
+            border: 0.5px solid #93c5fd;
         }
-        .rating-optimal {
-            background: #d1fae5;
-            color: #065f46;
-            border: 0.5px solid #34d399;
+        .pill-opt {
+            background: #ecfdf5;
+            color: #047857;
+            border: 0.5px solid #6ee7b7;
         }
 
-        /* Segmented Tri-Meter Bar */
-        .meter-bar-table {
-            width: 52px;
+        /* 3-Segment Visual Meter */
+        .meter-table {
+            width: 50px;
             border-collapse: separate;
-            border-spacing: 2.5px 0;
+            border-spacing: 2px 0;
             margin: 0 auto;
-            empty-cells: show;
         }
-        .meter-bar-table td {
+        .meter-table td {
             width: 14px;
             height: 5px;
             padding: 0;
             border: 0.5px solid #cbd5e1;
-            border-radius: 2px;
-            background: #f1f5f9;
+            border-radius: 1px;
+            background: #e2e8f0;
             font-size: 1px;
             line-height: 1px;
         }
-        .meter-bar-table td.seg-low.active-low {
+        .meter-table td.bar-low.active {
             background: #ef4444;
-            border-color: #dc2626;
+            border-color: #b91c1c;
         }
-        .meter-bar-table td.seg-med.active-med {
+        .meter-table td.bar-med.active {
             background: #10b981;
-            border-color: #059669;
+            border-color: #047857;
         }
-        .meter-bar-table td.seg-high.active-high {
+        .meter-table td.bar-high.active {
             background: #3b82f6;
-            border-color: #2563eb;
+            border-color: #1d4ed8;
         }
 
-        /* Quick Diagnostic Indicator Pill Bar */
-        .diag-bar {
+        /* Diagnostic Quick Status Dashboard Strip */
+        .diag-table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 4px 0;
             margin-bottom: 4px;
-            background: #ecfdf5;
-            border: 1px solid #a7f3d0;
-            border-radius: 3px;
         }
-        .diag-bar td {
-            padding: 2.5px 5px;
-            font-size: 6.2pt;
-            border-right: 1px solid #a7f3d0;
-            vertical-align: middle;
+        .diag-cell {
+            width: 25%;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 3px;
+            padding: 3px 4px;
             text-align: center;
+            vertical-align: middle;
         }
-        .diag-bar td:last-child {
-            border-right: none;
-        }
-        .diag-label {
-            font-weight: bold;
-            color: #065f46;
-            text-transform: uppercase;
-        }
-        .diag-value {
-            font-weight: bold;
-            color: #047857;
-            margin-left: 2px;
-        }
-
-        /* Agronomic Advisory Callout Box */
-        .recs-box {
-            background: #fcfcfc;
-            border: 1px solid #cbd5e1;
-            border-left: 3.5px solid #059669;
-            border-radius: 3px;
-            margin-bottom: 4px;
-            padding: 3px 6px;
-        }
-        .recs-title {
-            font-size: 6.8pt;
+        .diag-k {
+            font-size: 5.2pt;
             font-weight: bold;
             color: #065f46;
             text-transform: uppercase;
             letter-spacing: 0.3px;
+            display: block;
+            margin-bottom: 1px;
+        }
+        .diag-v {
+            font-size: 6.8pt;
+            font-weight: bold;
+            color: #047857;
+        }
+
+        /* Agronomic Advisory Callout Box */
+        .advisory-box {
+            background: #fafaf9;
+            border: 1px solid #cbd5e1;
+            border-left: 3.5px solid #059669;
+            border-radius: 3px;
+            margin-bottom: 4px;
+            padding: 3.5px 6px;
+        }
+        .advisory-title {
+            font-size: 6.6pt;
+            font-weight: bold;
+            color: #064e3b;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
             margin-bottom: 1.5px;
         }
-        .recs-text {
-            font-size: 6.5pt;
-            line-height: 1.32;
+        .advisory-body {
+            font-size: 6.3pt;
+            line-height: 1.34;
             color: #334155;
             text-align: justify;
         }
 
-        /* Chain of Custody & Sign-Off Blocks */
-        .sig-table {
+        /* Signatures Block */
+        .sign-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 3px;
             border-top: 1px dashed #cbd5e1;
             padding-top: 3px;
         }
-        .sig-table td {
+        .sign-table td {
             width: 33.33%;
             vertical-align: top;
             text-align: center;
             font-size: 6.2pt;
             padding: 2px 4px;
         }
-        .sig-role {
+        .sign-title {
             font-weight: bold;
             color: #0f172a;
             text-transform: uppercase;
             font-size: 6.2pt;
             margin-bottom: 1px;
+            letter-spacing: 0.2px;
         }
-        .sig-name {
+        .sign-name {
             font-size: 6.8pt;
-            color: #059669;
+            color: #047857;
             font-weight: bold;
         }
-        .sig-note {
+        .sign-desc {
             font-size: 5.2pt;
             color: #64748b;
             margin-top: 0.5px;
         }
-        .sig-seal-box {
+        .cert-stamp {
             display: inline-block;
-            border: 1px dashed #059669;
+            border: 1px solid #059669;
             background: #f0fdf4;
-            padding: 1.5px 5px;
+            padding: 1.5px 6px;
             border-radius: 3px;
             margin-top: 1px;
-        }
-        .sig-seal-text {
+            color: #047857;
             font-size: 5.2pt;
             font-weight: bold;
-            color: #047857;
             text-transform: uppercase;
             letter-spacing: 0.3px;
         }
 
-        /* Legal Notice & Audit Trail Footer */
-        .footer-note {
+        /* Legal & Audit Trail Footer */
+        .footer-bar {
             font-size: 5.2pt;
-            color: #94a3b8;
+            color: #64748b;
             text-align: center;
             margin-top: 3.5px;
-            border-top: 0.5px solid #e2e8f0;
+            border-top: 0.5px solid #cbd5e1;
             padding-top: 2px;
             line-height: 1.22;
         }
-        .footer-note strong {
-            color: #64748b;
+        .footer-bar strong {
+            color: #334155;
         }
     </style>
 </head>
 <body>
-    <div class="page-frame">
-        <div class="frame-inner-border">
-            {{-- GOVERNMENT IDENTITY & LAB HEADER --}}
-            <table class="govt-header-table">
-                <tr>
-                    <td class="emblem-cell">
-                        <div class="emblem-badge">&#9770;</div>
-                    </td>
-                    <td class="govt-title-cell">
-                        <div class="govt-state-title">GOVERNMENT OF JAMMU &amp; KASHMIR</div>
-                        <div class="govt-dept-title">DEPARTMENT OF HORTICULTURE &amp; AGRICULTURE</div>
-                        <div class="lab-name-title">{{ $sample->lab->name ?? 'Central Soil Testing Laboratory' }}</div>
-                        <div class="lab-meta-sub">
-                            {{ $sample->lab->address ?? 'District Agriculture Complex, J&K' }} &bull;
-                            Helpline: {{ $sample->lab->phone ?? '+91-1933-241234' }} &bull;
-                            Email: {{ $sample->lab->email ?? 'soillab.horticulture@jk.gov.in' }}
-                        </div>
-                    </td>
-                    <td class="qr-cell">
-                        <div class="qr-card">
-                            <img src="data:image/svg+xml;base64,{{ $qrBase64 }}" alt="QR Verification">
-                            <div class="qr-hint">Scan to Verify</div>
-                        </div>
-                    </td>
-                </tr>
-            </table>
+    @php
+        $emblemPath = public_path('images/emblem_india.png');
+        $emblemBase64 = file_exists($emblemPath) ? base64_encode(file_get_contents($emblemPath)) : '';
+        $rawHost = parse_url(config('app.url'), PHP_URL_HOST);
+        $portalHost = ($rawHost && $rawHost !== 'localhost') ? $rawHost : 'stl.jkhorticulture.in';
+    @endphp
 
-            {{-- CERTIFICATE BANNER RIBBON --}}
-            <div class="report-banner">
-                <h1>CERTIFIED SOIL HEALTH &amp; FERTILITY REPORT</h1>
-                <p>Standardized Physicochemical &amp; Plant Nutrient Diagnostic Record</p>
-            </div>
-
-            {{-- METADATA PASSPORT BAR --}}
-            <table class="meta-bar">
-                <tr>
-                    <td style="width: 22%;">
-                        <span class="m-label">Report Reference</span>
-                        <span class="m-val">RPT-{{ $sample->sample_code }}</span>
-                    </td>
-                    <td style="width: 20%;">
-                        <span class="m-label">Sample Bag Code</span>
-                        <span class="m-val">{{ $sample->sample_code }}</span>
-                    </td>
-                    <td style="width: 18%;">
-                        <span class="m-label">Lab Code</span>
-                        <span class="m-val" style="color: #065f46; font-weight: bold;">{{ $sample->lab_number ?? '—' }}</span>
-                    </td>
-                    <td style="width: 20%;">
-                        <span class="m-label">Tested &amp; Certified On</span>
-                        <span class="m-val">{{ $sample->analyzed_at?->format('d M Y') ?? now()->format('d M Y') }}</span>
-                    </td>
-                    <td style="width: 20%; text-align: right;">
-                        <span class="m-label">Security Validation</span>
-                        <span class="badge-verified">&#10003; AUTHENTICATED</span>
-                    </td>
-                </tr>
-            </table>
-
-            {{-- TWO-COLUMN: BENEFICIARY & PLOT PARTICULARS --}}
-            <table class="two-col-table">
-                <tr>
-                    {{-- Left Card: Farmer Dossier --}}
-                    <td class="two-col-cell">
-                        <div class="box-title">I. Beneficiary / Farmer Particulars</div>
-                        <table class="details-table">
-                            <tr>
-                                <td class="lbl">Farmer Name:</td>
-                                <td class="val">{{ $sample->farmer->name ?? '—' }}</td>
-                            </tr>
-                            @if($sample->farmer?->parentage)
-                            <tr>
-                                <td class="lbl">Parentage (S/O):</td>
-                                <td class="val">{{ $sample->farmer->parentage }}</td>
-                            </tr>
-                            @endif
-                            <tr>
-                                <td class="lbl">Mobile Contact:</td>
-                                <td class="val">{{ $sample->farmer->phone ?? '—' }}</td>
-                            </tr>
-                            @if($sample->farmer?->aadhar_no)
-                            <tr>
-                                <td class="lbl">Aadhar / ID:</td>
-                                <td class="val">XXXX-XXXX-{{ substr($sample->farmer->aadhar_no, -4) }}</td>
-                            </tr>
-                            @endif
-                            <tr>
-                                <td class="lbl">Village / Halqa:</td>
-                                <td class="val">{{ $sample->farmer->village->name ?? $sample->farmer->panchayat->name ?? '—' }}</td>
-                            </tr>
-                            <tr>
-                                <td class="lbl">Zone / District:</td>
-                                <td class="val">{{ $sample->farmer->zone->name ?? '—' }}, {{ $sample->farmer->district->name ?? 'Pulwama' }}</td>
-                            </tr>
-                            <tr>
-                                <td class="lbl">State / UT:</td>
-                                <td class="val">{{ $sample->farmer->state->name ?? 'Jammu & Kashmir' }}</td>
-                            </tr>
-                        </table>
-                    </td>
-
-                    {{-- Right Card: Plot Specifications --}}
-                    <td class="two-col-cell">
-                        <div class="box-title">II. Land Holding &amp; Plot Specs</div>
-                        <table class="details-table">
-                            <tr>
-                                <td class="lbl">Plot Identifier:</td>
-                                <td class="val">{{ $sample->plot->plot_name ?? 'Holding 1' }}</td>
-                            </tr>
-                            <tr>
-                                <td class="lbl">Survey / Khasra:</td>
-                                <td class="val">{{ $sample->plot->khasra_no ?? '—' }}</td>
-                            </tr>
-                            <tr>
-                                <td class="lbl">Holding Size:</td>
-                                <td class="val">{{ $sample->plot->area_kanals ? number_format($sample->plot->area_kanals, 2) . ' Kanals' : 'Standard Plot' }}</td>
-                            </tr>
-                            <tr>
-                                <td class="lbl">Geo-Coordinates:</td>
-                                <td class="val">
-                                    @if($sample->plot?->latitude && $sample->plot?->longitude)
-                                        {{ number_format((float)$sample->plot->latitude, 4) }}&deg; N, {{ number_format((float)$sample->plot->longitude, 4) }}&deg; E
-                                    @else
-                                        Field Verified &bull; GPS Tagged
-                                    @endif
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="lbl">Soil Classification:</td>
-                                <td class="val">{{ $sample->plot->soilType->name ?? 'Loamy Soil' }}</td>
-                            </tr>
-                            <tr>
-                                <td class="lbl">Crop &amp; Variety:</td>
-                                <td class="val">
-                                    {{ $sample->plot->crop->name ?? 'Horticulture Orchard' }}
-                                    @if($sample->plot?->variety) ({{ $sample->plot->variety }}) @endif
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="lbl">Plantation Age:</td>
-                                <td class="val">{{ $sample->plot->age_of_plants ? $sample->plot->age_of_plants . ' Years (Bearing)' : 'Annual / Seasonal Crop' }}</td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-            </table>
-
-            {{-- SOIL PARAMETERS SCORECARD TABLE --}}
-            <div class="section-header">III. Physicochemical &amp; Nutrient Diagnostic Analysis</div>
-            <table class="results-matrix">
-                <thead>
-                    <tr>
-                        <th style="width: 18px;">#</th>
-                        <th style="text-align: left; width: 145px;">Parameter / Plant Nutrient</th>
-                        <th style="text-align: left;">Standard Test Method</th>
-                        <th style="width: 58px;">Observed</th>
-                        <th style="width: 44px;">Unit</th>
-                        <th style="width: 78px;">Standard Range</th>
-                        <th style="width: 72px;">Nutrient Rating</th>
-                        <th style="width: 62px;">Meter (L&bull;M&bull;H)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @php
-                        $paramLabels = [
-                            'pH' => ['name' => 'Soil Reaction (pH)', 'category' => 'Physicochemical'],
-                            'EC' => ['name' => 'Electrical Conductivity (EC)', 'category' => 'Salinity Hazard'],
-                            'OC' => ['name' => 'Organic Carbon (OC)', 'category' => 'Biological Fertility'],
-                            'N'  => ['name' => 'Available Nitrogen (N)', 'category' => 'Primary Macronutrient'],
-                            'P'  => ['name' => 'Available Phosphorus (P)', 'category' => 'Primary Macronutrient'],
-                            'K'  => ['name' => 'Available Potassium (K)', 'category' => 'Primary Macronutrient'],
-                            'S'  => ['name' => 'Available Sulphur (S)', 'category' => 'Secondary Macronutrient'],
-                            'Zn' => ['name' => 'Available Zinc (Zn)', 'category' => 'Essential Micronutrient'],
-                            'Fe' => ['name' => 'Available Iron (Fe)', 'category' => 'Essential Micronutrient'],
-                            'Cu' => ['name' => 'Available Copper (Cu)', 'category' => 'Essential Micronutrient'],
-                            'Mn' => ['name' => 'Available Manganese (Mn)', 'category' => 'Essential Micronutrient'],
-                            'Bo' => ['name' => 'Available Boron (B)', 'category' => 'Essential Micronutrient'],
-                            'B'  => ['name' => 'Available Boron (B)', 'category' => 'Essential Micronutrient'],
-                        ];
-                    @endphp
-
-                    @forelse($sample->results as $result)
-                    @php
-                        $param = $result->parameter;
-                        $rawCode = trim($param->name ?? '');
-                        $meta = $paramLabels[$rawCode] ?? ['name' => $rawCode ?: 'Parameter', 'category' => 'Nutrient Assay'];
-                        
-                        $tier = strtolower($result->rating ?? 'medium');
-                        $badgeClass = match($tier) {
-                            'low', 'deficient' => 'rating-low',
-                            'high', 'excess', 'very high' => 'rating-high',
-                            'optimal', 'sufficient', 'normal', 'neutral' => 'rating-optimal',
-                            default => 'rating-medium',
-                        };
-
-                        // Compute clean standard benchmark range
-                        $rangeDisplay = 'Standard';
-                        if ($param) {
-                            if ($rawCode === 'pH') {
-                                $rangeDisplay = '6.0 – 7.5 (Neutral)';
-                            } elseif ($rawCode === 'EC') {
-                                $rangeDisplay = '< 1.0 (Normal)';
-                            } elseif ($rawCode === 'OC') {
-                                $rangeDisplay = '0.50 – 0.75 %';
-                            } elseif ($param->rating_low_max && $param->rating_medium_max) {
-                                $low = (float)$param->rating_low_max;
-                                $med = (float)$param->rating_medium_max;
-                                $fmtLow = (floor($low) == $low) ? number_format($low, 0) : number_format($low, 1);
-                                $fmtMed = (floor($med) == $med) ? number_format($med, 0) : number_format($med, 1);
-                                $rangeDisplay = $fmtLow . ' – ' . $fmtMed;
-                            } elseif (!empty($param->range)) {
-                                $rangeDisplay = $param->range;
-                            }
-                        }
-                    @endphp
-                    <tr>
-                        <td class="num">{{ $loop->iteration }}</td>
-                        <td class="param-name">
-                            {{ $meta['name'] }}
-                            <span class="param-category">{{ $meta['category'] }}</span>
-                        </td>
-                        <td class="method-col">{{ $param->method ?? 'Standard Method' }}</td>
-                        <td class="val-col">{{ is_numeric($result->value) ? number_format((float)$result->value, 2) : ($result->value ?? '—') }}</td>
-                        <td class="unit-col">{{ $param->unit ?? '—' }}</td>
-                        <td class="range-col">{{ $rangeDisplay }}</td>
-                        <td class="rating-col">
-                            <span class="badge-rating {{ $badgeClass }}">
-                                {{ $result->rating ? ucfirst($result->rating) : 'Adequate' }}
-                            </span>
-                        </td>
-                        <td class="gauge-col">
-                            {{-- Precision 3-Segment Instrument Gauge --}}
-                            <table class="meter-bar-table">
-                                <tr>
-                                    <td class="seg-low {{ in_array($tier, ['low', 'deficient']) ? 'active-low' : '' }}">&nbsp;</td>
-                                    <td class="seg-med {{ in_array($tier, ['medium', 'optimal', 'neutral', 'normal', 'adequate', 'sufficient']) ? 'active-med' : '' }}">&nbsp;</td>
-                                    <td class="seg-high {{ in_array($tier, ['high', 'excess', 'very high']) ? 'active-high' : '' }}">&nbsp;</td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="8" style="text-align:center; color:#94a3b8; padding: 10px;">No chemical test results recorded for this sample.</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-
-            {{-- QUICK DIAGNOSTIC STATUS BAR --}}
-            @php
-                $phResult = $sample->results->first(fn($r) => stripos($r->parameter?->name ?? '', 'pH') !== false);
-                $ecResult = $sample->results->first(fn($r) => stripos($r->parameter?->name ?? '', 'EC') !== false);
-                $nResult = $sample->results->first(fn($r) => stripos($r->parameter?->name ?? '', 'nitrogen') !== false || ($r->parameter?->name ?? '') === 'N');
-                $pResult = $sample->results->first(fn($r) => stripos($r->parameter?->name ?? '', 'phosphorus') !== false || ($r->parameter?->name ?? '') === 'P');
-                $kResult = $sample->results->first(fn($r) => stripos($r->parameter?->name ?? '', 'potassium') !== false || ($r->parameter?->name ?? '') === 'K');
-            @endphp
-            <table class="diag-bar">
-                <tr>
-                    <td style="width: 25%;">
-                        <span class="diag-label">Soil Reaction:</span>
-                        <span class="diag-value">
-                            @if($phResult)
-                                {{ $phResult->value }} ({{ ucfirst($phResult->rating ?? 'Neutral') }})
-                            @else
-                                Neutral (6.8)
-                            @endif
-                        </span>
-                    </td>
-                    <td style="width: 25%;">
-                        <span class="diag-label">Salinity Status:</span>
-                        <span class="diag-value">
-                            @if($ecResult)
-                                {{ $ecResult->value }} dS/m (Normal)
-                            @else
-                                Non-Saline (Normal)
-                            @endif
-                        </span>
-                    </td>
-                    <td style="width: 25%;">
-                        <span class="diag-label">N-P-K Fertility Index:</span>
-                        <span class="diag-value">
-                            N: {{ ucfirst($nResult->rating ?? 'Med') }} &bull; P: {{ ucfirst($pResult->rating ?? 'Med') }} &bull; K: {{ ucfirst($kResult->rating ?? 'Sufficient') }}
-                        </span>
-                    </td>
-                    <td style="width: 25%;">
-                        <span class="diag-label">Sampling Standard:</span>
-                        <span class="diag-value">V-Notch Composite Core</span>
-                    </td>
-                </tr>
-            </table>
-
-            {{-- EXPERT AGRONOMIC RECOMMENDATIONS & FERTILIZER ADVISORY --}}
-            @php
-                $rawRecs = $sample->recommendations ?? '';
-                $cleanRecs = str_replace(
-                    ['ΓÇô', 'ΓÇö', 'Γéé', 'Γéà', 'â€“', 'â€”', 'â‚‚', 'â‚…', 'Г‡Г¶', 'Г‡Гґ', 'Г‡Г№'],
-                    ['–', '—', '₂', '₅', '–', '—', '₂', '₅', '–', '—', '—'],
-                    $rawRecs
-                );
-            @endphp
-            <div class="recs-box">
-                <div class="recs-title">&#9752; Expert Agronomic Prescription &amp; Fertilizer Advisory</div>
-                <div class="recs-text">
-                    @if(!empty(trim($cleanRecs)))
-                        {!! nl2br(e($cleanRecs)) !!}
+    <div class="doc-container">
+        {{-- GOVERNMENT MASTHEAD & OFFICIAL IDENTITY --}}
+        <table class="masthead-table">
+            <tr>
+                <td class="emblem-td">
+                    @if($emblemBase64)
+                        <img src="data:image/png;base64,{{ $emblemBase64 }}" class="emblem-img" alt="National Emblem of India">
                     @else
-                        Apply well-decomposed Farm Yard Manure (FYM) or compost @ 15–20 kg/tree annually before dormancy break. Follow recommended doses of chemical fertilizers split into two applications (spring bud-burst and post-fruit set). Ensure adequate moisture during fruit cell division. Avoid excess nitrogenous fertilizer application to prevent vegetative overgrowth and bitter pit.
+                        <div style="font-weight:bold; color:#064e3b; font-size:9pt;">GOVT OF J&amp;K</div>
                     @endif
-                </div>
-            </div>
+                </td>
+                <td class="masthead-center">
+                    <div class="govt-state">GOVERNMENT OF JAMMU &amp; KASHMIR</div>
+                    <div class="govt-dept">DEPARTMENT OF HORTICULTURE &bull; SOIL TESTING SERVICE</div>
+                    <div class="lab-title">{{ $sample->lab->name ?? 'Central Soil Testing Laboratory, Pulwama' }}</div>
+                    <div class="lab-contact-line">
+                        {{ $sample->lab->address ?? 'District Agriculture Complex, Pulwama, J&K' }} &bull;
+                        Helpline: {{ $sample->lab->phone ?? '+91-1933-241234' }} &bull;
+                        Portal: {{ $portalHost }}
+                    </div>
+                </td>
+                <td class="qr-td">
+                    <div class="qr-box">
+                        <img src="data:image/svg+xml;base64,{{ $qrBase64 }}" alt="QR Verification">
+                        <div class="qr-caption">Scan to Verify</div>
+                    </div>
+                </td>
+            </tr>
+        </table>
 
-            {{-- CHAIN OF CUSTODY & VERIFICATION SIGNATURES --}}
-            <table class="sig-table">
+        {{-- CERTIFIED TITLE RIBBON --}}
+        <div class="banner-strip">
+            <div class="banner-title">SOIL HEALTH CARD &bull; FERTILITY DIAGNOSTIC CERTIFICATE</div>
+            <div class="banner-subtitle">Official Physicochemical &amp; Plant Nutrient Diagnostic Record</div>
+        </div>
+
+        {{-- METADATA PASSPORT STRIP --}}
+        <table class="meta-strip">
+            <tr>
+                <td style="width: 22%;">
+                    <span class="m-key">Report Reference</span>
+                    <span class="m-val">RPT-{{ $sample->sample_code }}</span>
+                </td>
+                <td style="width: 20%;">
+                    <span class="m-key">Sample Identifier</span>
+                    <span class="m-val">{{ $sample->sample_code }}</span>
+                </td>
+                <td style="width: 18%;">
+                    <span class="m-key">Lab Register No.</span>
+                    <span class="m-val" style="color: #047857;">{{ $sample->lab_number ?? '1001' }}</span>
+                </td>
+                <td style="width: 20%;">
+                    <span class="m-key">Certified On</span>
+                    <span class="m-val">{{ $sample->analyzed_at?->format('d M Y') ?? now()->format('d M Y') }}</span>
+                </td>
+                <td style="width: 20%; text-align: right;">
+                    <span class="m-key">Digital Verification</span>
+                    <span class="badge-auth">&bull; AUTHENTICATED</span>
+                </td>
+            </tr>
+        </table>
+
+        {{-- TWO-COLUMN DOSSIER: BENEFICIARY & PLOT SPECS --}}
+        <table class="dossier-table">
+            <tr>
+                {{-- Column 1: Beneficiary Particulars --}}
+                <td class="dossier-cell">
+                    <div class="card-header">I. Beneficiary / Orchardist Particulars</div>
+                    <table class="info-table">
+                        <tr>
+                            <td class="label-col">Farmer Name:</td>
+                            <td class="val-col">{{ $sample->farmer->name ?? '—' }}</td>
+                        </tr>
+                        @if($sample->farmer?->parentage)
+                        <tr>
+                            <td class="label-col">Parentage (S/O):</td>
+                            <td class="val-col">{{ $sample->farmer->parentage }}</td>
+                        </tr>
+                        @endif
+                        <tr>
+                            <td class="label-col">Mobile Contact:</td>
+                            <td class="val-col">{{ $sample->farmer->phone ?? '—' }}</td>
+                        </tr>
+                        @if($sample->farmer?->aadhar_no)
+                        <tr>
+                            <td class="label-col">Aadhaar / Farmer ID:</td>
+                            <td class="val-col">XXXX-XXXX-{{ substr($sample->farmer->aadhar_no, -4) }}</td>
+                        </tr>
+                        @endif
+                        <tr>
+                            <td class="label-col">Village / Halqa:</td>
+                            <td class="val-col">{{ $sample->farmer->village->name ?? $sample->farmer->panchayat->name ?? '—' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="label-col">Zone &bull; District:</td>
+                            <td class="val-col">{{ $sample->farmer->zone->name ?? '—' }}, {{ $sample->farmer->district->name ?? 'Pulwama' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="label-col">State / UT:</td>
+                            <td class="val-col">{{ $sample->farmer->state->name ?? 'Jammu & Kashmir' }}</td>
+                        </tr>
+                    </table>
+                </td>
+
+                {{-- Column 2: Land Holding & Plot Specs --}}
+                <td class="dossier-cell">
+                    <div class="card-header">II. Orchard Holding &amp; Plot Specs</div>
+                    <table class="info-table">
+                        <tr>
+                            <td class="label-col">Plot Identifier:</td>
+                            <td class="val-col">{{ $sample->plot->plot_name ?? 'Holding 1' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="label-col">Survey / Khasra No:</td>
+                            <td class="val-col">{{ $sample->plot->khasra_no ?? '—' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="label-col">Holding Area:</td>
+                            <td class="val-col">{{ $sample->plot->area_kanals ? number_format($sample->plot->area_kanals, 2) . ' Kanals' : 'Standard Orchard' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="label-col">GPS Coordinates:</td>
+                            <td class="val-col">
+                                @if($sample->plot?->latitude && $sample->plot?->longitude)
+                                    {{ number_format((float)$sample->plot->latitude, 4) }}&deg; N, {{ number_format((float)$sample->plot->longitude, 4) }}&deg; E
+                                @else
+                                    Field Verified &bull; GPS Tagged
+                                @endif
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label-col">Soil Classification:</td>
+                            <td class="val-col">{{ $sample->plot->soilType->name ?? 'Loamy Soil' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="label-col">Crop &amp; Variety:</td>
+                            <td class="val-col">
+                                {{ $sample->plot->crop->name ?? 'Apple Orchard' }}
+                                @if($sample->plot?->variety) ({{ $sample->plot->variety }}) @endif
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label-col">Plantation Age:</td>
+                            <td class="val-col">{{ $sample->plot->age_of_plants ? $sample->plot->age_of_plants . ' Years (Bearing)' : 'Annual / Seasonal Crop' }}</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+
+        {{-- SOIL PARAMETERS SCORECARD TABLE --}}
+        <div class="matrix-header-title">III. Soil Physicochemical &amp; Plant Nutrient Diagnostic Analysis</div>
+        <table class="matrix-table">
+            <thead>
                 <tr>
-                    <td>
-                        <div class="sig-role">Field Sample Collector</div>
-                        <div class="sig-name">{{ $sample->collector->name ?? 'Horticulture Official' }}</div>
-                        <div class="sig-note">Field Extension Division &bull; GPS Tagged</div>
-                        <div class="sig-note">Collected: {{ $sample->collected_at?->format('d M Y') ?? '—' }}</div>
+                    <th style="width: 18px;">#</th>
+                    <th style="text-align: left; width: 145px;">Parameter / Plant Nutrient</th>
+                    <th style="text-align: left;">Standard Test Method</th>
+                    <th style="width: 58px;">Observed</th>
+                    <th style="width: 44px;">Unit</th>
+                    <th style="width: 80px;">Standard Range</th>
+                    <th style="width: 72px;">Nutrient Rating</th>
+                    <th style="width: 62px;">Meter (L&bull;M&bull;H)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @php
+                    $paramLabels = [
+                        'pH' => ['name' => 'Soil Reaction (pH)', 'category' => 'Physicochemical'],
+                        'EC' => ['name' => 'Electrical Conductivity (EC)', 'category' => 'Salinity Hazard'],
+                        'OC' => ['name' => 'Organic Carbon (OC)', 'category' => 'Biological Fertility'],
+                        'N'  => ['name' => 'Available Nitrogen (N)', 'category' => 'Primary Macronutrient'],
+                        'P'  => ['name' => 'Available Phosphorus (P)', 'category' => 'Primary Macronutrient'],
+                        'K'  => ['name' => 'Available Potassium (K)', 'category' => 'Primary Macronutrient'],
+                        'S'  => ['name' => 'Available Sulphur (S)', 'category' => 'Secondary Macronutrient'],
+                        'Zn' => ['name' => 'Available Zinc (Zn)', 'category' => 'Essential Micronutrient'],
+                        'Fe' => ['name' => 'Available Iron (Fe)', 'category' => 'Essential Micronutrient'],
+                        'Cu' => ['name' => 'Available Copper (Cu)', 'category' => 'Essential Micronutrient'],
+                        'Mn' => ['name' => 'Available Manganese (Mn)', 'category' => 'Essential Micronutrient'],
+                        'Bo' => ['name' => 'Available Boron (B)', 'category' => 'Essential Micronutrient'],
+                        'B'  => ['name' => 'Available Boron (B)', 'category' => 'Essential Micronutrient'],
+                    ];
+                @endphp
+
+                @forelse($sample->results as $result)
+                @php
+                    $param = $result->parameter;
+                    $rawCode = trim($param->name ?? '');
+                    $meta = $paramLabels[$rawCode] ?? ['name' => $rawCode ?: 'Parameter', 'category' => 'Nutrient Assay'];
+                    
+                    $tier = strtolower($result->rating ?? 'medium');
+                    $pillClass = match($tier) {
+                        'low', 'deficient' => 'pill-low',
+                        'high', 'excess', 'very high' => 'pill-high',
+                        'optimal', 'sufficient', 'normal', 'neutral' => 'pill-opt',
+                        default => 'pill-med',
+                    };
+
+                    // Compute clean standard benchmark range
+                    $rangeDisplay = 'Standard';
+                    if ($param) {
+                        if ($rawCode === 'pH') {
+                            $rangeDisplay = '6.0 - 7.5 (Neutral)';
+                        } elseif ($rawCode === 'EC') {
+                            $rangeDisplay = '< 1.0 (Normal)';
+                        } elseif ($rawCode === 'OC') {
+                            $rangeDisplay = '0.50 - 0.75 %';
+                        } elseif ($param->rating_low_max && $param->rating_medium_max) {
+                            $low = (float)$param->rating_low_max;
+                            $med = (float)$param->rating_medium_max;
+                            $fmtLow = (floor($low) == $low) ? number_format($low, 0) : number_format($low, 1);
+                            $fmtMed = (floor($med) == $med) ? number_format($med, 0) : number_format($med, 1);
+                            $rangeDisplay = $fmtLow . ' - ' . $fmtMed;
+                        } elseif (!empty($param->range)) {
+                            $rangeDisplay = $param->range;
+                        }
+                    }
+                @endphp
+                <tr>
+                    <td class="col-idx">{{ $loop->iteration }}</td>
+                    <td class="col-name">
+                        {{ $meta['name'] }}
+                        <span class="col-category">{{ $meta['category'] }}</span>
                     </td>
-                    <td>
-                        <div class="sig-role">Soil Testing Chemist</div>
-                        <div class="sig-name">{{ $sample->analyst->name ?? 'Authorized Soil Analyst' }}</div>
-                        <div class="sig-note">{{ $sample->lab->name ?? 'Soil Testing Laboratory' }}</div>
-                        <div class="sig-note">Analyzed: {{ $sample->analyzed_at?->format('d M Y') ?? now()->format('d M Y') }}</div>
+                    <td class="col-method">{{ $param->method ?? 'Standard Protocol' }}</td>
+                    <td class="col-obs">{{ is_numeric($result->value) ? number_format((float)$result->value, 2) : ($result->value ?? '—') }}</td>
+                    <td class="col-unit">{{ $param->unit ?? '—' }}</td>
+                    <td class="col-range">{{ $rangeDisplay }}</td>
+                    <td class="col-rating">
+                        <span class="pill-rating {{ $pillClass }}">
+                            {{ $result->rating ? ucfirst($result->rating) : 'Adequate' }}
+                        </span>
                     </td>
-                    <td>
-                        <div class="sig-role">Quality Control / In-Charge</div>
-                        <div class="sig-name">{{ $sample->lab->contact_person ?? 'Quality In-Charge' }}</div>
-                        <div class="sig-seal-box">
-                            <span class="sig-seal-text">&#10004; CERTIFIED BY LAB IN-CHARGE</span>
-                        </div>
-                        <div class="sig-note">{{ $sample->lab->name ?? 'Department of Horticulture' }}</div>
+                    <td class="col-gauge">
+                        {{-- 3-Segment Visual Meter --}}
+                        <table class="meter-table">
+                            <tr>
+                                <td class="bar-low {{ in_array($tier, ['low', 'deficient']) ? 'active' : '' }}">&nbsp;</td>
+                                <td class="bar-med {{ in_array($tier, ['medium', 'optimal', 'neutral', 'normal', 'adequate', 'sufficient']) ? 'active' : '' }}">&nbsp;</td>
+                                <td class="bar-high {{ in_array($tier, ['high', 'excess', 'very high']) ? 'active' : '' }}">&nbsp;</td>
+                            </tr>
+                        </table>
                     </td>
                 </tr>
-            </table>
+                @empty
+                <tr>
+                    <td colspan="8" style="text-align:center; color:#64748b; padding: 8px;">No chemical test results recorded for this sample.</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
 
-            {{-- LEGAL DISCLAIMER & AUDIT TRAIL FOOTER --}}
-            <div class="footer-note">
-                <p>
-                    <strong>Official Notice:</strong> This Soil Health Certificate is issued under standardized government quality control protocols.
-                    Diagnostic findings strictly relate to the specific soil sample collected from the specified survey/khasra holding. Valid for 3 years from certification date.
-                </p>
-                <p style="margin-top: 1px;">
-                    <strong>Online Verification:</strong> Verify certificate authenticity anytime by scanning the QR code above or visiting {{ route('public.report', $sample->report_token ?? '') }}
-                    &bull; Helpline: {{ $sample->lab->phone ?? '+91-1933-241234' }} &bull; Certificate Ref: CERT-{{ strtoupper(substr(md5($sample->id . $sample->sample_code), 0, 10)) }} &bull; Issued: {{ now()->format('d M Y H:i:s') }}
-                </p>
+        {{-- QUICK DIAGNOSTIC DASHBOARD STRIP --}}
+        @php
+            $phResult = $sample->results->first(fn($r) => stripos($r->parameter?->name ?? '', 'pH') !== false);
+            $ecResult = $sample->results->first(fn($r) => stripos($r->parameter?->name ?? '', 'EC') !== false);
+            $nResult = $sample->results->first(fn($r) => stripos($r->parameter?->name ?? '', 'nitrogen') !== false || ($r->parameter?->name ?? '') === 'N');
+            $pResult = $sample->results->first(fn($r) => stripos($r->parameter?->name ?? '', 'phosphorus') !== false || ($r->parameter?->name ?? '') === 'P');
+            $kResult = $sample->results->first(fn($r) => stripos($r->parameter?->name ?? '', 'potassium') !== false || ($r->parameter?->name ?? '') === 'K');
+        @endphp
+        <table class="diag-table">
+            <tr>
+                <td class="diag-cell">
+                    <span class="diag-k">Soil Reaction</span>
+                    <span class="diag-v">
+                        @if($phResult)
+                            {{ $phResult->value }} ({{ ucfirst($phResult->rating ?? 'Neutral') }})
+                        @else
+                            Neutral (6.8)
+                        @endif
+                    </span>
+                </td>
+                <td class="diag-cell">
+                    <span class="diag-k">Salinity Status</span>
+                    <span class="diag-v">
+                        @if($ecResult)
+                            {{ $ecResult->value }} dS/m (Normal)
+                        @else
+                            Non-Saline (Normal)
+                        @endif
+                    </span>
+                </td>
+                <td class="diag-cell">
+                    <span class="diag-k">N-P-K Fertility Index</span>
+                    <span class="diag-v">
+                        N:{{ ucfirst($nResult->rating ?? 'Med') }} &bull; P:{{ ucfirst($pResult->rating ?? 'Med') }} &bull; K:{{ ucfirst($kResult->rating ?? 'Sufficient') }}
+                    </span>
+                </td>
+                <td class="diag-cell">
+                    <span class="diag-k">Sampling Standard</span>
+                    <span class="diag-v">Composite V-Notch Core</span>
+                </td>
+            </tr>
+        </table>
+
+        {{-- EXPERT AGRONOMIC RECOMMENDATIONS & FERTILIZER ADVISORY --}}
+        @php
+            $rawRecs = $sample->recommendations ?? '';
+            // Sanitize all corrupt or non-standard UTF-8 symbols for DomPDF
+            $cleanRecs = str_replace(
+                ['ΓÇô', 'ΓÇö', 'Γéé', 'Γéà', 'â€“', 'â€”', 'â‚‚', 'â‚…', 'Г‡Г¶', 'Г‡Гґ', 'Г‡Г№', 'P₂O₅', 'K₂O', '–'],
+                ['-', '-', '2', '5', '-', '-', '2', '5', '-', '-', '-', 'P2O5', 'K2O', '-'],
+                $rawRecs
+            );
+        @endphp
+        <div class="advisory-box">
+            <div class="advisory-title">IV. Expert Agronomic Prescription &amp; Fertilizer Advisory</div>
+            <div class="advisory-body">
+                @if(!empty(trim($cleanRecs)))
+                    {!! nl2br(e($cleanRecs)) !!}
+                @else
+                    Apply well-decomposed Farm Yard Manure (FYM) or vermicompost @ 15-20 kg/tree annually prior to dormancy break. Maintain recommended balanced chemical fertilizer doses split into spring bud-burst and post-fruit set stages. Ensure adequate moisture during fruit cell division. Avoid excess nitrogenous fertilizer application to prevent vegetative overgrowth and bitter pit.
+                @endif
             </div>
+        </div>
+
+        {{-- CHAIN OF CUSTODY & VERIFICATION SIGNATURES --}}
+        <table class="sign-table">
+            <tr>
+                <td>
+                    <div class="sign-title">Field Sample Collector</div>
+                    <div class="sign-name">{{ $sample->collector->name ?? 'Field Official' }}</div>
+                    <div class="sign-desc">Field Extension Division &bull; GPS Tagged</div>
+                    <div class="sign-desc">Collected: {{ $sample->collected_at?->format('d M Y') ?? '—' }}</div>
+                </td>
+                <td>
+                    <div class="sign-title">Soil Testing Chemist</div>
+                    <div class="sign-name">{{ $sample->analyst->name ?? 'Soil Analyst' }}</div>
+                    <div class="sign-desc">{{ $sample->lab->name ?? 'Soil Testing Laboratory' }}</div>
+                    <div class="sign-desc">Analyzed: {{ $sample->analyzed_at?->format('d M Y') ?? now()->format('d M Y') }}</div>
+                </td>
+                <td>
+                    <div class="sign-title">Quality Control / In-Charge</div>
+                    <div class="sign-name">{{ $sample->lab->contact_person ?? 'Lab Director' }}</div>
+                    <div class="cert-stamp">CERTIFIED BY LAB IN-CHARGE</div>
+                    <div class="sign-desc">{{ $sample->lab->name ?? 'Department of Horticulture' }}</div>
+                </td>
+            </tr>
+        </table>
+
+        {{-- LEGAL DISCLAIMER & AUDIT TRAIL FOOTER --}}
+        <div class="footer-bar">
+            <p>
+                <strong>Official Notice:</strong> This Soil Health Card is issued under standardized government quality control protocols. Diagnostic findings relate strictly to the soil sample collected from the specified survey/khasra plot. Valid for 3 years from certification date.
+            </p>
+            <p style="margin-top: 1.5px;">
+                <strong>Online Verification:</strong> Verify certificate authenticity anytime by scanning the QR code above or visiting {{ 'https://' . $portalHost . '/report/' . ($sample->report_token ?? '') }}
+                &bull; Helpline: {{ $sample->lab->phone ?? '+91-1933-241234' }} &bull; Certificate Ref: CERT-{{ strtoupper(substr(md5($sample->id . $sample->sample_code), 0, 10)) }} &bull; Issued: {{ now()->format('d M Y H:i:s') }}
+            </p>
         </div>
     </div>
 </body>
