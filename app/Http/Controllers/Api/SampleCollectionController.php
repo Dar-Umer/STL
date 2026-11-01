@@ -25,9 +25,21 @@ class SampleCollectionController extends Controller
             return response()->json(['message' => 'No lab assigned to your account.'], 403);
         }
 
-        $codes = QrCode::where('lab_id', $labId)
-            ->where('is_used', false)
-            ->orderBy('prefix')
+        $query = QrCode::where('lab_id', $labId)
+            ->where('is_used', false);
+
+        // Limit strictly to the authenticated user's zone
+        if ($user->zone_id) {
+            $userZoneCode = $user->zone?->code;
+            $query->where(function ($q) use ($user, $userZoneCode) {
+                $q->where('zone_id', $user->zone_id);
+                if ($userZoneCode) {
+                    $q->orWhere('prefix', $userZoneCode);
+                }
+            });
+        }
+
+        $codes = $query->orderBy('prefix')
             ->orderBy('sequence')
             ->get(['id', 'code', 'prefix', 'sequence']);
 
@@ -36,16 +48,18 @@ class SampleCollectionController extends Controller
 
     public function validateQr(Request $request)
     {
+        $user = $request->user();
         $validator = Validator::make($request->all(), [
             'code' => 'required|string',
             'lab_id' => 'required|exists:labs,id',
+            'farmer_id' => 'nullable|exists:farmers,id',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['message' => $validator->errors()->first(), 'errors' => $validator->errors()], 422);
         }
 
-        $qr = QrCode::where('code', $request->code)->first();
+        $qr = QrCode::with('zone')->where('code', $request->code)->first();
 
         if (!$qr) {
             return response()->json(['valid' => false, 'message' => 'QR code not found in system.']);
@@ -55,6 +69,34 @@ class SampleCollectionController extends Controller
         }
         if ($qr->lab_id != $request->lab_id) {
             return response()->json(['valid' => false, 'message' => 'QR code belongs to a different lab.']);
+        }
+
+        // Zone Isolation Check: verify the QR code belongs to the user's assigned zone
+        $userZone = $user->zone;
+        if ($userZone) {
+            $isSameZone = ($qr->zone_id && $qr->zone_id == $userZone->id) || ($qr->prefix === $userZone->code);
+            if (!$isSameZone) {
+                $qrZoneName = $qr->zone?->name ?? ('Zone ' . $qr->prefix);
+                return response()->json([
+                    'valid' => false,
+                    'message' => "This QR code ({$qr->code}) was generated for {$qrZoneName} and cannot be used in {$userZone->name}.",
+                ]);
+            }
+        }
+
+        // If a farmer is selected, verify farmer's zone matches the QR code zone
+        if ($request->filled('farmer_id')) {
+            $farmer = Farmer::with('zone')->find($request->farmer_id);
+            if ($farmer && $farmer->zone_id) {
+                $isFarmerMatch = ($qr->zone_id && $qr->zone_id == $farmer->zone_id) || ($qr->prefix === $farmer->zone?->code);
+                if (!$isFarmerMatch) {
+                    $qrZoneName = $qr->zone?->name ?? ('Zone ' . $qr->prefix);
+                    return response()->json([
+                        'valid' => false,
+                        'message' => "This QR code ({$qr->code}) belongs to {$qrZoneName} and cannot be assigned to a farmer in {$farmer->zone?->name}.",
+                    ]);
+                }
+            }
         }
 
         return response()->json([
@@ -98,9 +140,25 @@ class SampleCollectionController extends Controller
             return response()->json(['message' => 'QR code belongs to a different lab.'], 422);
         }
 
-        $farmer = Farmer::find($data['farmer_id']);
+        $farmer = Farmer::with('zone')->find($data['farmer_id']);
         if (!$farmer || !$farmer->zone_id) {
             return response()->json(['message' => 'Farmer has no zone assigned.'], 422);
+        }
+
+        // Zone validation: QR code must belong to the farmer's zone
+        $isFarmerZoneMatch = ($qr->zone_id && $qr->zone_id == $farmer->zone_id) || ($qr->prefix === $farmer->zone?->code);
+        if (!$isFarmerZoneMatch) {
+            $qrZoneName = $qr->zone?->name ?? ('Zone ' . $qr->prefix);
+            return response()->json([
+                'message' => "This QR code ({$qr->code}) was generated for {$qrZoneName} and cannot be used in {$farmer->zone?->name}.",
+            ], 422);
+        }
+
+        // Zone validation: Officer can only collect in their assigned zone if set
+        if ($user->zone_id && $user->zone_id != $farmer->zone_id) {
+            return response()->json([
+                'message' => 'You cannot collect samples for a zone other than your assigned zone.',
+            ], 422);
         }
 
         $activeTarget = Target::active()->forZone($farmer->zone_id)->first();

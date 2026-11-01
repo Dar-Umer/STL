@@ -167,11 +167,22 @@ class QrCodeGenerator extends Component
             ? (int) $this->labId
             : $user->lab_id;
 
+        $zoneId = null;
+        if (!empty($this->zoneId)) {
+            $zoneId = (int) $this->zoneId;
+        } elseif ($user->zone_id) {
+            $zoneId = $user->zone_id;
+        } else {
+            $zone = \App\Models\Location::where('type', 'zone')->where('code', $this->prefix)->first();
+            $zoneId = $zone?->id;
+        }
+
         $maxSeq = QrCode::where('prefix', $this->prefix)
             ->where('lab_id', $labId)
             ->max('sequence') ?? 0;
         $startFrom = $maxSeq + 1;
 
+        $now = now();
         $codes = [];
         for ($i = 0; $i < $this->count; $i++) {
             $seq = $startFrom + $i;
@@ -180,7 +191,10 @@ class QrCodeGenerator extends Component
                 'prefix' => $this->prefix,
                 'sequence' => $seq,
                 'lab_id' => $labId,
+                'zone_id' => $zoneId,
                 'created_by' => $user->id,
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
         }
         QrCode::insert($codes);

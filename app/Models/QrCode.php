@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class QrCode extends Model
 {
     use Auditable;
-    protected $fillable = ['code', 'prefix', 'sequence', 'is_used', 'used_by', 'used_at', 'soil_sample_id', 'lab_id', 'created_by'];
+    protected $fillable = ['code', 'prefix', 'sequence', 'is_used', 'used_by', 'used_at', 'soil_sample_id', 'lab_id', 'zone_id', 'created_by'];
 
     protected function casts(): array
     {
@@ -16,6 +16,11 @@ class QrCode extends Model
             'is_used' => 'boolean',
             'used_at' => 'datetime',
         ];
+    }
+
+    public function zone()
+    {
+        return $this->belongsTo(Location::class, 'zone_id');
     }
 
     public function usedBy()
@@ -41,5 +46,10 @@ class QrCode extends Model
     public function scopeByLab($query, $labId = null)
     {
         return $labId ? $query->where('lab_id', $labId) : $query;
+    }
+
+    public function scopeByZone($query, $zoneId = null)
+    {
+        return $zoneId ? $query->where('zone_id', $zoneId) : $query;
     }
 }

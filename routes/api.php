@@ -77,6 +77,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/samples/collect', [SampleCollectionController::class, 'collect']);
     });
 
+    // ---- QR Code Generation & PDF (User End) ----
+    Route::get('/qr-codes', [\App\Http\Controllers\Api\QrController::class, 'index']);
+    Route::post('/qr-codes/generate', [\App\Http\Controllers\Api\QrController::class, 'generate']);
+    Route::get('/qr-codes/pdf', [\App\Http\Controllers\Api\QrController::class, 'downloadPdf']);
+
     // ---- Targets ----
     Route::get('/targets', [TargetController::class, 'index']);
 
