@@ -21,7 +21,13 @@ class CoveringLetterController extends Controller
         $user = $request->user();
 
         // 1. Resolve Zone & Location Hierarchy
-        $zone = $user->zone_id ? Location::with('parent.parent')->find($user->zone_id) : null;
+        // Allow zone_id override via query parameter for Admins/Managers, fallback to user's zone_id
+        $requestedZoneId = $request->query('zone_id');
+        $zoneId = ($user->hasRole('Admin') || $user->hasRole('Super Admin') || $user->hasRole('Lab Manager'))
+            ? ($requestedZoneId ?: $user->zone_id)
+            : $user->zone_id;
+
+        $zone = $zoneId ? Location::with('parent.parent')->find($zoneId) : null;
         $district = $zone?->parent ?? ($user->district_id ? Location::find($user->district_id) : null);
         $state = $district?->parent ?? Location::where('type', 'state')->first();
 
@@ -97,10 +103,10 @@ class CoveringLetterController extends Controller
         ->where('status', 'collected')
         ->whereNull('dispatch_batch_id');
 
-        if ($user->zone_id) {
-            $query->where(function ($q) use ($user) {
-                $q->whereHas('farmer', fn($fq) => $fq->where('zone_id', $user->zone_id))
-                  ->orWhere('collected_by', $user->id);
+        if ($zoneId) {
+            $query->where(function ($q) use ($zoneId) {
+                $q->whereHas('farmer', fn($fq) => $fq->where('zone_id', $zoneId))
+                  ->orWhereHas('plot', fn($pq) => $pq->where('zone_id', $zoneId));
             });
         } else {
             $query->where('collected_by', $user->id);
@@ -130,10 +136,10 @@ class CoveringLetterController extends Controller
             ];
         });
 
-        $nextBatchNo = DispatchBatch::generateNextBatchNo($user->zone_id);
-        $totalBatchesCount = DispatchBatch::where(function ($q) use ($user) {
-            if ($user->zone_id) {
-                $q->where('zone_id', $user->zone_id)->orWhere('created_by', $user->id);
+        $nextBatchNo = DispatchBatch::generateNextBatchNo($zoneId);
+        $totalBatchesCount = DispatchBatch::where(function ($q) use ($user, $zoneId) {
+            if ($zoneId) {
+                $q->where('zone_id', $zoneId);
             } else {
                 $q->where('created_by', $user->id);
             }
@@ -198,21 +204,33 @@ class CoveringLetterController extends Controller
 
         $dispatchNo = $validated['dispatch_no'] ?? '';
         $date = $validated['date'] ?? '';
+        $user = $request->user();
 
-        $samples = SoilSample::with([
+        $targetZoneId = ($user->hasRole('Admin') || $user->hasRole('Super Admin') || $user->hasRole('Lab Manager'))
+            ? ($request->input('zone_id') ?: $user->zone_id)
+            : $user->zone_id;
+
+        $samplesQuery = SoilSample::with([
             'farmer.village', 'farmer.panchayat', 'farmer.zone', 'farmer.district',
             'plot.crop', 'plot.soilType', 'plot.village', 'plot.panchayat',
             'collector', 'lab', 'qrCode'
         ])
         ->whereIn('id', $validated['sample_ids'])
-        ->where('status', 'collected')
-        ->orderBy('collected_at', 'asc')
-        ->get();
+        ->where('status', 'collected');
 
-        if ($samples->isEmpty()) {
+        if ($targetZoneId) {
+            $samplesQuery->where(function ($q) use ($targetZoneId) {
+                $q->whereHas('farmer', fn($fq) => $fq->where('zone_id', $targetZoneId))
+                  ->orWhereHas('plot', fn($pq) => $pq->where('zone_id', $targetZoneId));
+            });
+        }
+
+        $samples = $samplesQuery->orderBy('collected_at', 'asc')->get();
+
+        if ($samples->count() !== count($validated['sample_ids'])) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Only samples in "Collected" status can be dispatched with a covering letter. The selected sample(s) have either already been received at the lab or are not in collected status.',
+                'message' => 'One or more selected samples do not belong to your zone or are no longer in "Collected" status.',
             ], 422);
         }
 
@@ -238,15 +256,15 @@ class CoveringLetterController extends Controller
                 ], 422);
             }
 
-            // Generate batch number like BAT{ZoneID}01
-            $batchNo = DispatchBatch::generateNextBatchNo($request->user()->zone_id);
+            // Generate batch number like BTZ01
+            $batchNo = DispatchBatch::generateNextBatchNo($targetZoneId);
             $labId = $samples->first()->lab_id ?? $request->user()->zone?->lab_id ?? 1;
 
             $batch = DispatchBatch::create([
                 'batch_no' => $batchNo,
                 'dispatch_no' => $dispatchNo,
                 'date' => $date,
-                'zone_id' => $request->user()->zone_id,
+                'zone_id' => $targetZoneId,
                 'lab_id' => $labId,
                 'created_by' => $request->user()->id,
                 'sample_count' => $samples->count(),

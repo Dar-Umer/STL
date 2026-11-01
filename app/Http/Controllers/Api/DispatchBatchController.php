@@ -20,14 +20,27 @@ class DispatchBatchController extends Controller
 
         $query = DispatchBatch::with(['zone', 'lab', 'creator', 'receiver', 'evaluationBatch']);
 
-        if ($user->hasRole('Admin') || $user->hasRole('Super Admin') || $user->hasRole('Lab Manager')) {
-            // Admins & Managers can see all batches
+        if ($user->hasRole('Admin') || $user->hasRole('Super Admin')) {
+            // Admins & Super Admins can see all batches; optionally filter by zone_id or lab_id
+            if ($request->filled('zone_id')) {
+                $query->where('zone_id', $request->zone_id);
+            }
+            if ($request->filled('lab_id')) {
+                $query->where('lab_id', $request->lab_id);
+            }
+        } elseif ($user->hasRole('Lab Manager') || $user->hasRole('Lab Technician')) {
+            // Lab personnel see batches sent to their assigned laboratory
+            if ($user->lab_id) {
+                $query->where('lab_id', $user->lab_id);
+            }
+            if ($request->filled('zone_id')) {
+                $query->where('zone_id', $request->zone_id);
+            }
+        } elseif ($user->zone_id) {
+            // Field officials / zone users MUST strictly see batches belonging to their assigned zone
+            $query->where('zone_id', $user->zone_id);
         } elseif ($user->lab_id) {
             $query->where('lab_id', $user->lab_id);
-        } elseif ($user->zone_id) {
-            $query->where(function ($q) use ($user) {
-                $q->where('zone_id', $user->zone_id)->orWhere('created_by', $user->id);
-            });
         } else {
             $query->where('created_by', $user->id);
         }
@@ -85,6 +98,16 @@ class DispatchBatchController extends Controller
             'soilSamples.plot.crop', 'soilSamples.plot.soilType', 'soilSamples.plot.village',
             'soilSamples.qrCode', 'soilSamples.collector'
         ])->findOrFail($id);
+
+        $user = $request->user();
+        if ($user && !$user->hasRole('Admin') && !$user->hasRole('Super Admin') && !$user->hasRole('Lab Manager') && !$user->hasRole('Lab Technician')) {
+            if ($user->zone_id && $batch->zone_id != $user->zone_id) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Unauthorized. This dispatch batch belongs to another zone.',
+                ], 403);
+            }
+        }
 
         $samples = $batch->soilSamples->map(function ($s) {
             return [
@@ -153,6 +176,13 @@ class DispatchBatchController extends Controller
             'soilSamples.plot.panchayat', 'soilSamples.qrCode', 'soilSamples.collector'
         ])->findOrFail($id);
 
+        $user = auth()->user() ?? request()->user();
+        if ($user && !$user->hasRole('Admin') && !$user->hasRole('Super Admin') && !$user->hasRole('Lab Manager') && !$user->hasRole('Lab Technician')) {
+            if ($user->zone_id && $batch->zone_id != $user->zone_id) {
+                abort(403, 'Unauthorized. This dispatch batch belongs to another zone.');
+            }
+        }
+
         $zoneName = $batch->zone->name ?? 'Zone';
         $districtName = $batch->zone?->parent?->name ?? '';
 
@@ -189,6 +219,16 @@ class DispatchBatchController extends Controller
     public function destroy(Request $request, $id)
     {
         $batch = DispatchBatch::findOrFail($id);
+        $user = $request->user();
+
+        if ($user && !$user->hasRole('Admin') && !$user->hasRole('Super Admin')) {
+            if ($user->zone_id && $batch->zone_id != $user->zone_id) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Unauthorized. You cannot cancel a batch belonging to another zone.',
+                ], 403);
+            }
+        }
 
         if ($batch->status === 'received') {
             return response()->json([
