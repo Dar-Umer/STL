@@ -6,7 +6,7 @@
     <style>
         @page {
             size: a4 portrait;
-            margin: 8mm 9mm 8mm 9mm;
+            margin: 5.5mm 7.5mm 5.5mm 7.5mm;
         }
         @font-face {
             font-family: 'Inter';
@@ -50,112 +50,115 @@
             margin: 0;
             padding: 0;
             font-family: 'Inter', Helvetica, Arial, sans-serif;
+            page-break-inside: avoid;
         }
         body {
             font-family: 'Inter', Helvetica, Arial, sans-serif;
-            font-size: 7.5pt;
+            font-size: 7.2pt;
             color: #0f172a;
-            line-height: 1.3;
+            line-height: 1.25;
             background: #ffffff;
+            page-break-inside: avoid;
         }
 
         /* Certificate Container Frame */
         .doc-container {
             border: 1.5px solid #065f46;
             border-radius: 4px;
-            padding: 9px 10px 8px 10px;
+            padding: 6px 8px 5px 8px;
             background: #ffffff;
             position: relative;
+            page-break-inside: avoid;
         }
 
         /* Top Government Masthead */
         .masthead-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
         .emblem-td {
-            width: 82px;
+            width: 78px;
             vertical-align: middle;
             text-align: left;
         }
         .emblem-img {
-            height: 68px;
-            max-width: 74px;
+            height: 62px;
+            max-width: 70px;
             display: block;
         }
         .masthead-center {
             vertical-align: middle;
             text-align: center;
-            padding: 0 6px;
+            padding: 0 4px;
         }
         .govt-state {
-            font-size: 10pt;
+            font-size: 9.6pt;
             font-weight: bold;
             color: #0f172a;
-            letter-spacing: 1.2px;
+            letter-spacing: 1.1px;
             text-transform: uppercase;
         }
         .govt-dept {
-            font-size: 8.6pt;
+            font-size: 8.2pt;
             font-weight: bold;
             color: #047857;
             text-transform: uppercase;
-            letter-spacing: 0.6px;
-            margin-top: 1.5px;
+            letter-spacing: 0.5px;
+            margin-top: 1px;
         }
         .lab-title {
-            font-size: 11pt;
+            font-size: 10.5pt;
             font-weight: bold;
             color: #064e3b;
-            margin-top: 1.5px;
-            letter-spacing: 0.3px;
+            margin-top: 1px;
+            letter-spacing: 0.2px;
         }
         .lab-contact-line {
-            font-size: 6.5pt;
+            font-size: 6.2pt;
             color: #475569;
-            margin-top: 2.5px;
-            line-height: 1.25;
+            margin-top: 1.5px;
+            line-height: 1.22;
         }
         .qr-td {
-            width: 86px;
+            width: 82px;
             vertical-align: middle;
             text-align: right;
         }
         .qr-box {
             display: inline-block;
             border: 1px solid #cbd5e1;
-            padding: 3px;
+            padding: 2.5px;
             background: #ffffff;
             border-radius: 4px;
             text-align: center;
         }
         .qr-box img {
-            width: 72px;
-            height: 72px;
+            width: 66px;
+            height: 66px;
             display: block;
         }
         .qr-caption {
-            font-size: 5pt;
+            font-size: 4.8pt;
             color: #047857;
             font-weight: bold;
             text-transform: uppercase;
-            margin-top: 2px;
-            letter-spacing: 0.4px;
+            margin-top: 1.5px;
+            letter-spacing: 0.3px;
         }
 
         /* Title Banner Strip - Only "SOIL HEALTH CARD" */
         .banner-strip {
             background: #064e3b;
-            border-bottom: 2.5px solid #d97706;
+            border-bottom: 2px solid #d97706;
             border-radius: 3px;
-            padding: 4.5px 8px;
+            padding: 3.5px 8px;
             text-align: center;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
         .banner-title {
             color: #ffffff;
-            font-size: 10.5pt;
+            font-size: 9.8pt;
             font-weight: bold;
             letter-spacing: 1.2px;
             text-transform: uppercase;
@@ -168,12 +171,12 @@
             background: #f8fafc;
             border: 1px solid #e2e8f0;
             border-radius: 3px;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
         .meta-strip td {
             width: 25%;
-            padding: 4px 8px;
-            font-size: 7pt;
+            padding: 3px 6px;
+            font-size: 6.8pt;
             border-right: 1px solid #e2e8f0;
             vertical-align: middle;
         }
@@ -182,25 +185,25 @@
         }
         .m-key {
             color: #64748b;
-            font-size: 5.3pt;
+            font-size: 5.1pt;
             text-transform: uppercase;
             font-weight: bold;
             display: block;
-            margin-bottom: 1.5px;
+            margin-bottom: 1px;
             letter-spacing: 0.3px;
         }
         .m-val {
             color: #0f172a;
             font-weight: bold;
-            font-size: 7.5pt;
+            font-size: 7.2pt;
         }
 
         /* Two-Column Dossier Grid */
         .dossier-table {
             width: 100%;
             border-collapse: separate;
-            border-spacing: 6px 0;
-            margin-bottom: 6px;
+            border-spacing: 5px 0;
+            margin-bottom: 4px;
         }
         .dossier-cell {
             width: 50%;
@@ -213,8 +216,8 @@
         .card-header {
             background: #f0fdf4;
             border-bottom: 1px solid #bbf7d0;
-            padding: 3px 8px;
-            font-size: 6.6pt;
+            padding: 2.5px 6px;
+            font-size: 6.4pt;
             font-weight: bold;
             color: #064e3b;
             text-transform: uppercase;
@@ -228,13 +231,13 @@
             background: #f8fafc;
         }
         .info-table td {
-            padding: 2.2px 8px;
-            font-size: 6.8pt;
+            padding: 1.8px 6px;
+            font-size: 6.6pt;
             border-bottom: 0.5px solid #f1f5f9;
             vertical-align: middle;
         }
         .info-table td.label-col {
-            width: 90px;
+            width: 86px;
             color: #64748b;
             font-weight: normal;
         }
@@ -247,34 +250,34 @@
         .matrix-header-title {
             background: #065f46;
             color: #ffffff;
-            font-size: 6.8pt;
+            font-size: 6.6pt;
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            padding: 2.8px 8px;
+            padding: 2.2px 6px;
             border-radius: 3px;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
         .matrix-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 6.8pt;
-            margin-bottom: 6px;
+            font-size: 6.6pt;
+            margin-bottom: 4px;
             border: 1px solid #cbd5e1;
         }
         .matrix-table th {
             background: #064e3b;
             color: #ffffff;
             font-weight: bold;
-            font-size: 6.4pt;
+            font-size: 6.2pt;
             text-transform: uppercase;
             letter-spacing: 0.3px;
-            padding: 3.5px 5px;
+            padding: 2.8px 4px;
             border: 1px solid #047857;
             text-align: center;
         }
         .matrix-table td {
-            padding: 2.5px 5px;
+            padding: 1.8px 4px;
             border: 1px solid #e2e8f0;
             vertical-align: middle;
         }
@@ -285,16 +288,16 @@
             text-align: center;
             font-weight: bold;
             color: #64748b;
-            width: 22px;
+            width: 18px;
         }
         .matrix-table td.col-name {
             font-weight: bold;
             color: #0f172a;
-            font-size: 6.9pt;
-            width: 175px;
+            font-size: 6.7pt;
+            width: 170px;
         }
         .col-category {
-            font-size: 5.3pt;
+            font-size: 5.1pt;
             color: #64748b;
             display: block;
             text-transform: uppercase;
@@ -302,38 +305,38 @@
             letter-spacing: 0.3px;
         }
         .matrix-table td.col-method {
-            font-size: 6pt;
+            font-size: 5.8pt;
             color: #64748b;
         }
         .matrix-table td.col-unit {
             text-align: center;
             color: #475569;
-            font-size: 6.4pt;
-            width: 50px;
+            font-size: 6.2pt;
+            width: 46px;
         }
         .matrix-table td.col-range {
             text-align: center;
-            font-size: 6.4pt;
+            font-size: 6.2pt;
             color: #475569;
-            width: 95px;
+            width: 90px;
         }
         .matrix-table td.col-obs {
             text-align: center;
             font-weight: bold;
-            font-size: 7.8pt;
+            font-size: 7.5pt;
             color: #0f172a;
-            width: 68px;
+            width: 64px;
         }
         .matrix-table td.col-rating {
             text-align: center;
-            width: 86px;
+            width: 82px;
         }
 
         /* Rating Badges */
         .pill-rating {
             display: inline-block;
-            padding: 1.8px 8px;
-            font-size: 5.9pt;
+            padding: 1.2px 6px;
+            font-size: 5.6pt;
             font-weight: bold;
             border-radius: 3px;
             text-transform: uppercase;
@@ -366,20 +369,21 @@
             border: 1px solid #cbd5e1;
             border-left: 3.5px solid #059669;
             border-radius: 3px;
-            margin-bottom: 5px;
-            padding: 5px 8px;
+            margin-bottom: 4px;
+            padding: 3.5px 6px;
+            page-break-inside: avoid;
         }
         .advisory-title {
-            font-size: 6.8pt;
+            font-size: 6.6pt;
             font-weight: bold;
             color: #064e3b;
             text-transform: uppercase;
             letter-spacing: 0.4px;
-            margin-bottom: 2.5px;
+            margin-bottom: 1.5px;
         }
         .advisory-body {
-            font-size: 6.6pt;
-            line-height: 1.38;
+            font-size: 6.2pt;
+            line-height: 1.28;
             color: #334155;
             text-align: justify;
         }
@@ -388,13 +392,14 @@
         .custody-line {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 4px;
-            margin-bottom: 3px;
-            font-size: 6.2pt;
+            margin-top: 3px;
+            margin-bottom: 2px;
+            font-size: 6pt;
             color: #475569;
+            page-break-inside: avoid;
         }
         .custody-line td {
-            padding: 1.5px 2px;
+            padding: 1px 2px;
             vertical-align: middle;
         }
         .custody-label {
@@ -407,18 +412,19 @@
         }
         .custody-date {
             color: #64748b;
-            font-size: 5.6pt;
+            font-size: 5.5pt;
         }
 
         /* Legal & Audit Trail Footer */
         .footer-bar {
-            font-size: 5.4pt;
+            font-size: 5.2pt;
             color: #64748b;
             text-align: center;
-            margin-top: 4px;
+            margin-top: 3px;
             border-top: 0.5px solid #cbd5e1;
-            padding-top: 3.5px;
-            line-height: 1.25;
+            padding-top: 2.5px;
+            line-height: 1.2;
+            page-break-inside: avoid;
         }
         .footer-bar strong {
             color: #334155;
@@ -439,6 +445,58 @@
 
         $rawHost = parse_url(config('app.url'), PHP_URL_HOST);
         $portalHost = ($rawHost && $rawHost !== 'localhost') ? $rawHost : 'stl.jkhorticulture.in';
+
+        // -------------------------------------------------------------
+        // SAFE SINGLE-PAGE A4 GUARANTEE
+        // Dynamically budget recommendations length based on result rows
+        // -------------------------------------------------------------
+        $resCount = $sample->results->count();
+        $safeCharBudget = match(true) {
+            $resCount <= 4 => 1600,
+            $resCount <= 6 => 1300,
+            $resCount <= 8 => 1050,
+            $resCount <= 10 => 850,
+            default => 680,
+        };
+
+        $rawRecs = $sample->recommendations ?? '';
+        $cleanRecs = str_replace(
+            ['ΓÇô', 'ΓÇö', 'Γéé', 'Γéà', 'â€“', 'â€”', 'â‚‚', 'â‚…', 'Г‡Г¶', 'Г‡Гґ', 'Г‡Г№', 'P₂O₅', 'K₂O', '–'],
+            ['-', '-', '2', '5', '-', '-', '2', '5', '-', '-', '-', 'P2O5', 'K2O', '-'],
+            $rawRecs
+        );
+        $cleanRecs = trim($cleanRecs);
+
+        if (empty($cleanRecs)) {
+            $displayRecs = "Apply well-decomposed Farm Yard Manure (FYM) or vermicompost @ 15-20 kg/tree annually prior to dormancy break. Maintain recommended balanced chemical fertilizer doses split into spring bud-burst and post-fruit set stages. Ensure adequate moisture during fruit cell division. Avoid excess nitrogenous fertilizer application to prevent vegetative overgrowth and bitter pit.";
+        } elseif (mb_strlen($cleanRecs) <= $safeCharBudget) {
+            $displayRecs = $cleanRecs;
+        } else {
+            // Deduplicate repetitive paragraphs
+            $paras = array_filter(array_map('trim', preg_split('/(\r\n|\n|\r){2,}/', $cleanRecs)));
+            $uniqueParas = [];
+            $seen = [];
+            foreach ($paras as $p) {
+                $subKey = strtolower(substr($p, 0, 32));
+                if (!isset($seen[$subKey])) {
+                    $seen[$subKey] = true;
+                    $uniqueParas[] = $p;
+                }
+            }
+            $fitted = implode("\n\n", $uniqueParas);
+            if (mb_strlen($fitted) <= $safeCharBudget) {
+                $displayRecs = $fitted;
+            } else {
+                // Truncate cleanly at a sentence period within the safe budget
+                $slice = mb_substr($fitted, 0, $safeCharBudget);
+                $lastDot = mb_strrpos($slice, '.');
+                if ($lastDot !== false && $lastDot > ($safeCharBudget * 0.55)) {
+                    $displayRecs = mb_substr($slice, 0, $lastDot + 1);
+                } else {
+                    $displayRecs = rtrim($slice) . '.';
+                }
+            }
+        }
     @endphp
 
     <div class="doc-container">
@@ -589,13 +647,13 @@
         <table class="matrix-table">
             <thead>
                 <tr>
-                    <th style="width: 22px;">#</th>
-                    <th style="text-align: left; width: 175px;">Parameter / Plant Nutrient</th>
+                    <th style="width: 18px;">#</th>
+                    <th style="text-align: left; width: 170px;">Parameter / Plant Nutrient</th>
                     <th style="text-align: left;">Standard Test Method</th>
-                    <th style="width: 50px;">Unit</th>
-                    <th style="width: 95px;">Standard Range</th>
-                    <th style="width: 68px;">Observed</th>
-                    <th style="width: 86px;">Nutrient Rating</th>
+                    <th style="width: 46px;">Unit</th>
+                    <th style="width: 90px;">Standard Range</th>
+                    <th style="width: 64px;">Observed</th>
+                    <th style="width: 82px;">Nutrient Rating</th>
                 </tr>
             </thead>
             <tbody>
@@ -669,30 +727,17 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7" style="text-align:center; color:#64748b; padding: 10px;">No chemical test results recorded for this sample.</td>
+                    <td colspan="7" style="text-align:center; color:#64748b; padding: 8px;">No chemical test results recorded for this sample.</td>
                 </tr>
                 @endforelse
             </tbody>
         </table>
 
         {{-- EXPERT AGRONOMIC RECOMMENDATIONS & FERTILIZER ADVISORY --}}
-        @php
-            $rawRecs = $sample->recommendations ?? '';
-            // Sanitize all corrupt or non-standard UTF-8 symbols for DomPDF
-            $cleanRecs = str_replace(
-                ['ΓÇô', 'ΓÇö', 'Γéé', 'Γéà', 'â€“', 'â€”', 'â‚‚', 'â‚…', 'Г‡Г¶', 'Г‡Гґ', 'Г‡Г№', 'P₂O₅', 'K₂O', '–'],
-                ['-', '-', '2', '5', '-', '-', '2', '5', '-', '-', '-', 'P2O5', 'K2O', '-'],
-                $rawRecs
-            );
-        @endphp
         <div class="advisory-box">
             <div class="advisory-title">IV. Fertilizer Advisory &amp; Agronomic Recommendations</div>
             <div class="advisory-body">
-                @if(!empty(trim($cleanRecs)))
-                    {!! nl2br(e($cleanRecs)) !!}
-                @else
-                    Apply well-decomposed Farm Yard Manure (FYM) or vermicompost @ 15-20 kg/tree annually prior to dormancy break. Maintain recommended balanced chemical fertilizer doses split into spring bud-burst and post-fruit set stages. Ensure adequate moisture during fruit cell division. Avoid excess nitrogenous fertilizer application to prevent vegetative overgrowth and bitter pit.
-                @endif
+                {!! nl2br(e($displayRecs)) !!}
             </div>
         </div>
 
@@ -721,7 +766,7 @@
             <p>
                 <strong>Official Notice:</strong> This Soil Health Card is issued under standardized government quality control protocols. Diagnostic findings relate strictly to the soil sample collected from the specified survey/khasra plot. Valid for 3 years from certification date.
             </p>
-            <p style="margin-top: 2px;">
+            <p style="margin-top: 1.5px;">
                 <strong>Online Verification:</strong> Verify certificate authenticity anytime by scanning the QR code above or visiting {{ 'https://' . $portalHost . '/report/' . ($sample->report_token ?? '') }}
                 &bull; Helpline: {{ $labPhone }} &bull; Certificate Ref: CERT-{{ strtoupper(substr(md5($sample->id . $sample->sample_code), 0, 10)) }} &bull; Issued: {{ now()->format('d M Y H:i:s') }}
             </p>
