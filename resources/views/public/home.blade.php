@@ -73,16 +73,7 @@
         .util-bar .lang-switch a { color:rgba(255,255,255,0.7); text-decoration:none; padding:0 4px; font-size:0.72rem; transition:color .15s; }
         .util-bar .lang-switch a:hover, .util-bar .lang-switch a.active { color:#fcd34d; font-weight:700; }
         .util-bar .lang-switch .sep { color:rgba(255,255,255,0.3); }
-        .util-bar .helpline { color:#fcd34d; font-weight:600; text-decoration:none; white-space:nowrap; }
-
-        @media (max-width:768px) {
-            .util-bar { padding:5px 0; font-size:0.7rem; }
-            .util-bar .util-date, .util-bar .util-access, .util-bar .txt-size { display:none; }
-            .util-bar .util-inner { flex-wrap:nowrap; justify-content:space-between; }
-            .util-bar .util-left { gap:6px; }
-            .util-bar .helpline { font-size:0.72rem; }
-            .util-bar .lang-switch a { padding:0 3px; font-size:0.7rem; }
-        }
+        .util-bar .helpline { color:#fcd34d; font-weight:600; text-decoration:none; }
 
         /* ─── OFFICIAL GOVERNMENT MASTHEAD ─── */
         .gov-header { background:linear-gradient(135deg,#0a4425 0%,#0e5831 60%,#157242 100%); padding:16px 0 14px; position:relative; box-shadow:0 3px 10px rgba(0,0,0,0.12); }
@@ -111,7 +102,7 @@
         }
 
         /* ─── MAIN STICKY NAVIGATION ─── */
-        .main-nav { background:#07351d; position:sticky; top:0; z-index:1002; box-shadow:0 2px 10px rgba(0,0,0,0.15); border-top:1px solid rgba(255,255,255,0.06); }
+        .main-nav { background:#07351d; position:sticky; top:0; z-index:1000; box-shadow:0 2px 10px rgba(0,0,0,0.15); border-top:1px solid rgba(255,255,255,0.06); }
         .main-nav .nav-inner { display:flex; align-items:center; justify-content:space-between; }
         .main-nav .nav-list { display:flex; list-style:none; margin:0; padding:0; align-items:center; }
         .main-nav .nav-list > li > a { display:inline-flex; align-items:center; gap:6px; padding:13px 16px; color:rgba(255,255,255,0.9); font-size:0.82rem; font-weight:600; text-decoration:none; transition:all .2s; border-bottom:3px solid transparent; }
@@ -121,23 +112,15 @@
         .main-nav .login-btn { background:#d97706; color:#fff !important; font-weight:700; font-size:0.8rem; padding:8px 20px; border-radius:6px; text-decoration:none; transition:all .2s; display:inline-flex; align-items:center; gap:8px; box-shadow:0 2px 6px rgba(0,0,0,0.15); }
         .main-nav .login-btn:hover { background:#b45309; transform:translateY(-1px); box-shadow:0 4px 10px rgba(0,0,0,0.2); }
         .main-nav .hamburger { display:none; background:none; border:none; color:#fff; font-size:1.3rem; padding:8px 12px; cursor:pointer; }
-        .drawer-header { display:none; }
-        .drawer-login { display:none; }
 
         @media (max-width:880px) {
-            .nav-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.65); z-index:1001; backdrop-filter:blur(3px); }
-            .nav-overlay.open { display:block; }
-            .main-nav .nav-list { display:flex; flex-direction:column; position:fixed; top:0; left:-310px; width:290px; max-width:86vw; height:100vh; background:#07351d; z-index:1002; padding:0 0 24px; overflow-y:auto; transition:left .28s cubic-bezier(0.4, 0, 0.2, 1); box-shadow:4px 0 25px rgba(0,0,0,0.4); }
-            .main-nav .nav-list.open { left:0; }
-            .drawer-header { display:flex; align-items:center; justify-content:space-between; padding:16px 18px; border-bottom:1px solid rgba(255,255,255,0.12); background:#042113; }
-            .drawer-brand { color:#fff; font-size:0.86rem; font-weight:800; display:flex; align-items:center; gap:8px; }
-            .drawer-close { background:none; border:none; color:rgba(255,255,255,0.7); font-size:1.3rem; cursor:pointer; padding:4px; line-height:1; }
-            .drawer-close:hover { color:#fff; }
+            .main-nav .nav-list { display:none; flex-direction:column; position:fixed; top:0; left:-280px; width:280px; height:100vh; background:#07351d; z-index:1001; padding:20px 0; transition:left .3s ease; box-shadow:4px 0 20px rgba(0,0,0,0.3); }
+            .main-nav .nav-list.open { left:0; display:flex; }
             .main-nav .nav-list > li { width:100%; }
-            .main-nav .nav-list > li > a { width:100%; padding:14px 20px; border-bottom:1px solid rgba(255,255,255,0.05); font-size:0.85rem; }
-            .drawer-login { display:block; padding:14px 18px; margin-top:8px; }
-            .drawer-login-btn { display:flex !important; align-items:center; justify-content:center; gap:8px; background:#d97706; color:#fff !important; font-weight:700; font-size:0.84rem; padding:12px 18px; border-radius:6px; text-decoration:none; box-shadow:0 2px 8px rgba(0,0,0,0.2); }
+            .main-nav .nav-list > li > a { width:100%; padding:14px 20px; border-bottom:1px solid rgba(255,255,255,0.06); }
             .main-nav .hamburger { display:block; }
+            .nav-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:999; }
+            .nav-overlay.open { display:block; }
         }
 
         /* ─── ANNOUNCEMENT TICKER ─── */
@@ -207,30 +190,6 @@
             .hero-title { font-size:1.65rem; }
             .hero-subtitle { font-size:0.9rem; }
             .hero-inner { gap:24px; }
-            .hero-stats { grid-template-columns:1fr 1fr; gap:8px; padding:12px; }
-        }
-
-        @media (max-width:480px) {
-            .hero-title { font-size:1.5rem; }
-            .hero-subtitle { font-size:0.86rem; line-height:1.55; }
-            .hero-badge { font-size:0.68rem; padding:4px 10px; margin-bottom:10px; }
-            .hero-actions { flex-direction:column; width:100%; gap:8px; }
-            .btn-gov-primary, .btn-gov-outline { width:100%; justify-content:center; padding:11px 16px; font-size:0.82rem; }
-            .farmer-desk-body { padding:16px; }
-            .track-input-wrap { flex-direction:column; gap:8px; }
-            .track-input-wrap button { width:100%; padding:11px; justify-content:center; }
-            .request-banner { flex-direction:column; text-align:center; gap:10px; }
-            .request-banner-btn { width:100%; text-align:center; padding:10px; }
-            .section-header h2 { font-size:1.35rem; }
-            .section-header p { font-size:0.82rem; }
-            .parameters-card { padding:18px 14px; }
-            .leadership-card { padding:18px 14px; text-align:center; justify-content:center; }
-            .leader-contacts { justify-content:center; }
-            .leader-contacts span { width:100%; }
-            .service-item { padding:14px; }
-            .workflow-card { padding:18px 16px; }
-            .info-ribbon-item { justify-content:flex-start; }
-            .footer-grid { gap:24px; }
         }
 
         /* ─── SECTION STYLING ─── */
@@ -343,9 +302,9 @@
         <div class="container">
             <div class="util-inner">
                 <div class="util-left">
-                    <span class="util-date"><i class="far fa-clock mr-1"></i> <span id="liveClock">{{ now()->format('l, d F Y') }}</span></span>
-                    <a href="{{ route('accessibility') }}" class="util-access" title="Accessibility options"><i class="fas fa-universal-access mr-1"></i>Screen Reader</a>
-                    <a href="#main-content" class="util-access"><i class="fas fa-arrow-down mr-1"></i>Skip to Main</a>
+                    <span><i class="far fa-clock mr-1"></i> <span id="liveClock">{{ now()->format('l, d F Y') }}</span></span>
+                    <a href="{{ route('accessibility') }}" title="Accessibility options"><i class="fas fa-universal-access mr-1"></i>Screen Reader</a>
+                    <a href="#main-content"><i class="fas fa-arrow-down mr-1"></i>Skip to Main</a>
                     <span><i class="fas fa-phone-alt mr-1"></i>Kisan Helpline: <a href="tel:18001801551" class="helpline">1800-180-1551 (Toll-Free)</a></span>
                 </div>
                 <div class="util-right">
@@ -401,13 +360,6 @@
             <div class="nav-inner">
                 <button class="hamburger" id="hamburger" aria-label="Toggle navigation"><i class="fas fa-bars"></i></button>
                 <ul class="nav-list" id="navList">
-                    <li class="drawer-header">
-                        <div class="drawer-brand">
-                            <img src="{{ asset('images/emblem_india.svg') }}" alt="Emblem" style="width:24px;height:24px;background:#fff;border-radius:50%;padding:2px;">
-                            <span>Soil Testing Lab</span>
-                        </div>
-                        <button class="drawer-close" id="drawerClose" aria-label="Close navigation"><i class="fas fa-times"></i></button>
-                    </li>
                     <li class="active"><a href="{{ route('home') }}"><i class="fas fa-home"></i> Home</a></li>
                     <li><a href="#services"><i class="fas fa-th-large"></i> Citizen Services</a></li>
                     <li><a href="#workflow"><i class="fas fa-route"></i> How It Works</a></li>
@@ -415,9 +367,6 @@
                     <li><a href="{{ route('public.track') }}"><i class="fas fa-file-medical-alt"></i> Track Soil Report</a></li>
                     <li><a href="{{ route('public.sample-request') }}"><i class="fas fa-clipboard-check"></i> Request Sample Collection</a></li>
                     <li><a href="{{ route('contact') }}"><i class="fas fa-map-marker-alt"></i> Contact &amp; Labs</a></li>
-                    <li class="drawer-login">
-                        <a href="{{ route('login') }}" class="drawer-login-btn"><i class="fas fa-shield-alt"></i> Official Login</a>
-                    </li>
                 </ul>
                 <div class="nav-right">
                     <a href="{{ route('login') }}" class="login-btn"><i class="fas fa-shield-alt"></i> Official Login</a>
@@ -457,7 +406,7 @@
                 {{-- LEFT: HERO PROPOSITION & LIVE DATA --}}
                 <div class="hero-left">
                     <div class="hero-badge">
-                        <i class="fas fa-seedling"></i> {!! html_entity_decode(setting('front.hero_tag', 'Soil Health Management Initiative • Pulwama District')) !!}
+                        <i class="fas fa-seedling"></i> {{ setting('front.hero_tag', 'Soil Health Management Initiative • Pulwama District') }}
                     </div>
                     <h2 class="hero-title">{{ setting('front.hero_title', 'Scientific Soil Testing for Better Orchard & Farm Yield') }}</h2>
                     <p class="hero-subtitle">{{ setting('front.hero_subtitle', 'Comprehensive 12-parameter nutrient analysis and crop-specific fertilizer recommendations for Apple, Saffron, Walnut, and Field crops. Free testing for all farmers across Pulwama district.') }}</p>
@@ -856,8 +805,6 @@
                 else openNav();
             });
             overlay.addEventListener('click', closeNav);
-            var closeBtn = document.getElementById('drawerClose');
-            if (closeBtn) closeBtn.addEventListener('click', closeNav);
             document.querySelectorAll('#navList a').forEach(function(a) {
                 a.addEventListener('click', closeNav);
             });
