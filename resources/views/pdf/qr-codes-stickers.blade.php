@@ -27,7 +27,7 @@
     }
     .header {
         text-align: center;
-        margin-bottom: 2.5mm;
+        margin-bottom: 3mm;
         border-bottom: 1.5px solid #047857;
         padding-bottom: 2mm;
     }
@@ -50,60 +50,51 @@
     }
     table.grid td {
         width: 25%;
-        padding: 1.5mm;
+        padding: 2mm 1.5mm;
         vertical-align: top;
     }
     .sticker {
         border: 1px dashed #94a3b8;
         border-radius: 4px;
-        padding: 2mm 1.5mm;
+        padding: 3mm 2mm 3mm 2mm;
         text-align: center;
         background: #ffffff;
-        min-height: 48mm;
+        min-height: 44mm;
     }
     .sticker-badge {
         background: #047857;
         color: #ffffff;
-        font-size: 5.5pt;
+        font-size: 6pt;
         font-weight: bold;
         text-transform: uppercase;
         padding: 1.5px 2px;
         border-radius: 2px;
-        margin-bottom: 1.5mm;
+        margin-bottom: 2.5mm;
         display: block;
         overflow: hidden;
         white-space: nowrap;
+        letter-spacing: 0.3px;
     }
     .sticker-qr {
         margin: 0 auto;
         text-align: center;
     }
     .sticker-qr img {
-        width: 25mm;
-        height: 25mm;
+        width: 28mm;
+        height: 28mm;
         display: inline-block;
     }
     .sticker-code {
-        font-family: Courier, monospace;
-        font-size: 9pt;
+        font-family: 'Courier-Bold', Courier, monospace;
+        font-size: 10.5pt;
         font-weight: bold;
         color: #0f172a;
-        margin-top: 1mm;
-    }
-    .sticker-lines {
-        margin-top: 1.5mm;
-        border-top: 0.5px solid #cbd5e1;
-        padding-top: 1mm;
-        font-size: 5.5pt;
-        color: #64748b;
-        text-align: left;
-    }
-    .sticker-field {
-        margin-bottom: 1px;
+        margin-top: 2mm;
+        letter-spacing: 0.5px;
     }
     .footer {
         text-align: center;
-        margin-top: 2mm;
+        margin-top: 3mm;
         font-size: 6pt;
         color: #94a3b8;
     }
@@ -126,11 +117,7 @@
                     <div class="sticker-qr">
                         <img src="{{ $item['b64'] }}" alt="{{ $item['code'] }}" />
                     </div>
-                    <div class="sticker-code">&diams; {{ $item['code'] }} &diams;</div>
-                    <div class="sticker-lines">
-                        <div class="sticker-field">Farmer: ______________</div>
-                        <div class="sticker-field">Date: _________________</div>
-                    </div>
+                    <div class="sticker-code">{{ $item['code'] }}</div>
                 </div>
             </td>
             @endforeach

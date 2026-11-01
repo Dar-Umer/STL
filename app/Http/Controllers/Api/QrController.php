@@ -232,7 +232,7 @@ class QrController extends Controller
         // Render base64 SVG data URIs for DomPDF
         $items = [];
         foreach ($codes as $c) {
-            $svg = (string) SimpleQr::size(130)->errorCorrection('M')->generate($c->code);
+            $svg = (string) SimpleQr::size(160)->errorCorrection('M')->generate($c->code);
             $items[] = [
                 'code' => $c->code,
                 'b64' => 'data:image/svg+xml;base64,' . base64_encode($svg),
