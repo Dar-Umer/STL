@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Certified Soil Health Report - {{ $sample->sample_code }}</title>
+    <title>Soil Health Card - {{ $sample->sample_code }}</title>
     <style>
         @page {
             size: a4 portrait;
-            margin: 7mm 8mm 7mm 8mm;
+            margin: 8mm 9mm 8mm 9mm;
         }
         @font-face {
             font-family: 'Inter';
@@ -53,9 +53,9 @@
         }
         body {
             font-family: 'Inter', Helvetica, Arial, sans-serif;
-            font-size: 7.4pt;
+            font-size: 7.5pt;
             color: #0f172a;
-            line-height: 1.28;
+            line-height: 1.3;
             background: #ffffff;
         }
 
@@ -63,7 +63,7 @@
         .doc-container {
             border: 1.5px solid #065f46;
             border-radius: 4px;
-            padding: 8px 9px 7px 9px;
+            padding: 9px 10px 8px 10px;
             background: #ffffff;
             position: relative;
         }
@@ -72,115 +72,108 @@
         .masthead-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
         }
         .emblem-td {
-            width: 68px;
+            width: 82px;
             vertical-align: middle;
             text-align: left;
         }
         .emblem-img {
-            height: 58px;
-            max-width: 62px;
+            height: 68px;
+            max-width: 74px;
             display: block;
         }
         .masthead-center {
             vertical-align: middle;
             text-align: center;
-            padding: 0 4px;
+            padding: 0 6px;
         }
         .govt-state {
-            font-size: 9.8pt;
+            font-size: 10pt;
             font-weight: bold;
             color: #0f172a;
             letter-spacing: 1.2px;
             text-transform: uppercase;
         }
         .govt-dept {
-            font-size: 8.4pt;
+            font-size: 8.6pt;
             font-weight: bold;
             color: #047857;
             text-transform: uppercase;
             letter-spacing: 0.6px;
-            margin-top: 1px;
+            margin-top: 1.5px;
         }
         .lab-title {
-            font-size: 10.8pt;
+            font-size: 11pt;
             font-weight: bold;
             color: #064e3b;
-            margin-top: 1px;
+            margin-top: 1.5px;
             letter-spacing: 0.3px;
         }
         .lab-contact-line {
-            font-size: 6.3pt;
+            font-size: 6.5pt;
             color: #475569;
-            margin-top: 1.5px;
+            margin-top: 2.5px;
+            line-height: 1.25;
         }
         .qr-td {
-            width: 72px;
+            width: 86px;
             vertical-align: middle;
             text-align: right;
         }
         .qr-box {
             display: inline-block;
             border: 1px solid #cbd5e1;
-            padding: 2.5px;
+            padding: 3px;
             background: #ffffff;
-            border-radius: 3px;
+            border-radius: 4px;
             text-align: center;
         }
         .qr-box img {
-            width: 54px;
-            height: 54px;
+            width: 72px;
+            height: 72px;
             display: block;
         }
         .qr-caption {
-            font-size: 4.8pt;
+            font-size: 5pt;
             color: #047857;
             font-weight: bold;
             text-transform: uppercase;
-            margin-top: 1.5px;
+            margin-top: 2px;
             letter-spacing: 0.4px;
         }
 
-        /* Title Banner Strip */
+        /* Title Banner Strip - Only "SOIL HEALTH CARD" */
         .banner-strip {
             background: #064e3b;
-            border-bottom: 2px solid #d97706;
+            border-bottom: 2.5px solid #d97706;
             border-radius: 3px;
-            padding: 4px 8px;
+            padding: 4.5px 8px;
             text-align: center;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
         }
         .banner-title {
             color: #ffffff;
-            font-size: 9.2pt;
+            font-size: 10.5pt;
             font-weight: bold;
-            letter-spacing: 0.9px;
+            letter-spacing: 1.2px;
             text-transform: uppercase;
-        }
-        .banner-subtitle {
-            color: #a7f3d0;
-            font-size: 5.7pt;
-            font-weight: normal;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            margin-top: 1px;
         }
 
-        /* Metadata Passport Ribbon (4 Columns) */
+        /* Metadata Passport Ribbon (4 Symmetrical Columns) */
         .meta-strip {
             width: 100%;
             border-collapse: collapse;
             background: #f8fafc;
             border: 1px solid #e2e8f0;
             border-radius: 3px;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
         }
         .meta-strip td {
             width: 25%;
-            padding: 3.5px 8px;
-            font-size: 6.8pt;
+            padding: 4px 8px;
+            font-size: 7pt;
             border-right: 1px solid #e2e8f0;
             vertical-align: middle;
         }
@@ -189,7 +182,7 @@
         }
         .m-key {
             color: #64748b;
-            font-size: 5.2pt;
+            font-size: 5.3pt;
             text-transform: uppercase;
             font-weight: bold;
             display: block;
@@ -199,7 +192,7 @@
         .m-val {
             color: #0f172a;
             font-weight: bold;
-            font-size: 7.4pt;
+            font-size: 7.5pt;
         }
 
         /* Two-Column Dossier Grid */
@@ -207,7 +200,7 @@
             width: 100%;
             border-collapse: separate;
             border-spacing: 6px 0;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
         }
         .dossier-cell {
             width: 50%;
@@ -220,8 +213,8 @@
         .card-header {
             background: #f0fdf4;
             border-bottom: 1px solid #bbf7d0;
-            padding: 2.8px 7px;
-            font-size: 6.5pt;
+            padding: 3px 8px;
+            font-size: 6.6pt;
             font-weight: bold;
             color: #064e3b;
             text-transform: uppercase;
@@ -235,13 +228,13 @@
             background: #f8fafc;
         }
         .info-table td {
-            padding: 2px 7px;
-            font-size: 6.7pt;
+            padding: 2.2px 8px;
+            font-size: 6.8pt;
             border-bottom: 0.5px solid #f1f5f9;
             vertical-align: middle;
         }
         .info-table td.label-col {
-            width: 88px;
+            width: 90px;
             color: #64748b;
             font-weight: normal;
         }
@@ -254,34 +247,34 @@
         .matrix-header-title {
             background: #065f46;
             color: #ffffff;
-            font-size: 6.7pt;
+            font-size: 6.8pt;
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            padding: 2.5px 7px;
+            padding: 2.8px 8px;
             border-radius: 3px;
-            margin-bottom: 3.5px;
+            margin-bottom: 4px;
         }
         .matrix-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 6.7pt;
-            margin-bottom: 5px;
+            font-size: 6.8pt;
+            margin-bottom: 6px;
             border: 1px solid #cbd5e1;
         }
         .matrix-table th {
             background: #064e3b;
             color: #ffffff;
             font-weight: bold;
-            font-size: 6.3pt;
+            font-size: 6.4pt;
             text-transform: uppercase;
             letter-spacing: 0.3px;
-            padding: 3px 5px;
+            padding: 3.5px 5px;
             border: 1px solid #047857;
             text-align: center;
         }
         .matrix-table td {
-            padding: 2.2px 5px;
+            padding: 2.5px 5px;
             border: 1px solid #e2e8f0;
             vertical-align: middle;
         }
@@ -292,16 +285,16 @@
             text-align: center;
             font-weight: bold;
             color: #64748b;
-            width: 20px;
+            width: 22px;
         }
         .matrix-table td.col-name {
             font-weight: bold;
             color: #0f172a;
-            font-size: 6.8pt;
-            width: 165px;
+            font-size: 6.9pt;
+            width: 175px;
         }
         .col-category {
-            font-size: 5.2pt;
+            font-size: 5.3pt;
             color: #64748b;
             display: block;
             text-transform: uppercase;
@@ -309,38 +302,38 @@
             letter-spacing: 0.3px;
         }
         .matrix-table td.col-method {
-            font-size: 5.9pt;
+            font-size: 6pt;
             color: #64748b;
         }
         .matrix-table td.col-obs {
             text-align: center;
             font-weight: bold;
-            font-size: 7.6pt;
+            font-size: 7.8pt;
             color: #0f172a;
-            width: 64px;
+            width: 66px;
         }
         .matrix-table td.col-unit {
             text-align: center;
             color: #475569;
-            font-size: 6.3pt;
-            width: 48px;
+            font-size: 6.4pt;
+            width: 50px;
         }
         .matrix-table td.col-range {
             text-align: center;
-            font-size: 6.3pt;
+            font-size: 6.4pt;
             color: #475569;
-            width: 88px;
+            width: 92px;
         }
         .matrix-table td.col-rating {
             text-align: center;
-            width: 82px;
+            width: 86px;
         }
 
         /* Rating Badges */
         .pill-rating {
             display: inline-block;
-            padding: 1.5px 7px;
-            font-size: 5.8pt;
+            padding: 1.8px 8px;
+            font-size: 5.9pt;
             font-weight: bold;
             border-radius: 3px;
             text-transform: uppercase;
@@ -367,37 +360,6 @@
             border: 0.5px solid #6ee7b7;
         }
 
-        /* Diagnostic Quick Status Dashboard Strip */
-        .diag-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 5px 0;
-            margin-bottom: 5px;
-        }
-        .diag-cell {
-            width: 25%;
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            border-radius: 3px;
-            padding: 3.5px 5px;
-            text-align: center;
-            vertical-align: middle;
-        }
-        .diag-k {
-            font-size: 5.3pt;
-            font-weight: bold;
-            color: #065f46;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            display: block;
-            margin-bottom: 1.5px;
-        }
-        .diag-v {
-            font-size: 7pt;
-            font-weight: bold;
-            color: #047857;
-        }
-
         /* Agronomic Advisory Callout Box */
         .advisory-box {
             background: #fafaf9;
@@ -405,31 +367,31 @@
             border-left: 3.5px solid #059669;
             border-radius: 3px;
             margin-bottom: 6px;
-            padding: 4px 7px;
+            padding: 5px 8px;
         }
         .advisory-title {
-            font-size: 6.7pt;
+            font-size: 6.8pt;
             font-weight: bold;
             color: #064e3b;
             text-transform: uppercase;
             letter-spacing: 0.4px;
-            margin-bottom: 2px;
+            margin-bottom: 2.5px;
         }
         .advisory-body {
-            font-size: 6.4pt;
-            line-height: 1.36;
+            font-size: 6.6pt;
+            line-height: 1.38;
             color: #334155;
             text-align: justify;
         }
 
         /* Legal & Audit Trail Footer */
         .footer-bar {
-            font-size: 5.3pt;
+            font-size: 5.4pt;
             color: #64748b;
             text-align: center;
-            margin-top: 4px;
+            margin-top: 5px;
             border-top: 0.5px solid #cbd5e1;
-            padding-top: 3px;
+            padding-top: 3.5px;
             line-height: 1.25;
         }
         .footer-bar strong {
@@ -441,6 +403,14 @@
     @php
         $emblemPath = public_path('images/emblem_india.png');
         $emblemBase64 = file_exists($emblemPath) ? base64_encode(file_get_contents($emblemPath)) : '';
+
+        // Dynamically fetch Lab & Portal Settings configured by Admin
+        $lab = $sample->lab;
+        $labName = $lab?->name ?: setting('app_name', 'Soil Testing Laboratory, Pulwama');
+        $labAddress = $lab?->address ?: (setting('front.cho_address') ?: 'District Complex, Pulwama, J&K - 192301');
+        $labPhone = $lab?->phone ?: (setting('front.lab_phone') ?: (setting('front.helpline') ?: setting('front.cho_phone', '+91-1933-241234')));
+        $labEmail = $lab?->email ?: (setting('front.cho_email') ?: 'soillab.horticulture@jk.gov.in');
+
         $rawHost = parse_url(config('app.url'), PHP_URL_HOST);
         $portalHost = ($rawHost && $rawHost !== 'localhost') ? $rawHost : 'stl.jkhorticulture.in';
     @endphp
@@ -459,11 +429,9 @@
                 <td class="masthead-center">
                     <div class="govt-state">GOVERNMENT OF JAMMU &amp; KASHMIR</div>
                     <div class="govt-dept">DEPARTMENT OF HORTICULTURE &bull; SOIL TESTING SERVICE</div>
-                    <div class="lab-title">{{ $sample->lab->name ?? 'Central Soil Testing Laboratory, Pulwama' }}</div>
+                    <div class="lab-title">{{ $labName }}</div>
                     <div class="lab-contact-line">
-                        {{ $sample->lab->address ?? 'District Agriculture Complex, Pulwama, J&K' }} &bull;
-                        Helpline: {{ $sample->lab->phone ?? '+91-1933-241234' }} &bull;
-                        Portal: {{ $portalHost }}
+                        {{ $labAddress }} &bull; Helpline: {{ $labPhone }} &bull; Portal: {{ $portalHost }}
                     </div>
                 </td>
                 <td class="qr-td">
@@ -475,13 +443,12 @@
             </tr>
         </table>
 
-        {{-- CERTIFIED TITLE RIBBON --}}
+        {{-- TITLE BANNER STRIP - ONLY "SOIL HEALTH CARD" --}}
         <div class="banner-strip">
-            <div class="banner-title">SOIL HEALTH CARD &bull; FERTILITY DIAGNOSTIC CERTIFICATE</div>
-            <div class="banner-subtitle">Official Physicochemical &amp; Plant Nutrient Diagnostic Record</div>
+            <div class="banner-title">SOIL HEALTH CARD</div>
         </div>
 
-        {{-- METADATA PASSPORT STRIP (4 BALANCED COLUMNS) --}}
+        {{-- METADATA PASSPORT STRIP (4 SYMMETRICAL COLUMNS) --}}
         <table class="meta-strip">
             <tr>
                 <td>
@@ -591,18 +558,18 @@
             </tr>
         </table>
 
-        {{-- SOIL PARAMETERS SCORECARD TABLE (7 CLEAN COLUMNS) --}}
+        {{-- SOIL PARAMETERS SCORECARD TABLE (7 COLUMNS) --}}
         <div class="matrix-header-title">III. Soil Physicochemical &amp; Plant Nutrient Diagnostic Analysis</div>
         <table class="matrix-table">
             <thead>
                 <tr>
-                    <th style="width: 20px;">#</th>
-                    <th style="text-align: left; width: 165px;">Parameter / Plant Nutrient</th>
+                    <th style="width: 22px;">#</th>
+                    <th style="text-align: left; width: 175px;">Parameter / Plant Nutrient</th>
                     <th style="text-align: left;">Standard Test Method</th>
-                    <th style="width: 64px;">Observed</th>
-                    <th style="width: 48px;">Unit</th>
-                    <th style="width: 88px;">Standard Range</th>
-                    <th style="width: 82px;">Nutrient Rating</th>
+                    <th style="width: 66px;">Observed</th>
+                    <th style="width: 50px;">Unit</th>
+                    <th style="width: 92px;">Standard Range</th>
+                    <th style="width: 86px;">Nutrient Rating</th>
                 </tr>
             </thead>
             <tbody>
@@ -676,53 +643,10 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7" style="text-align:center; color:#64748b; padding: 8px;">No chemical test results recorded for this sample.</td>
+                    <td colspan="7" style="text-align:center; color:#64748b; padding: 10px;">No chemical test results recorded for this sample.</td>
                 </tr>
                 @endforelse
             </tbody>
-        </table>
-
-        {{-- QUICK DIAGNOSTIC DASHBOARD STRIP --}}
-        @php
-            $phResult = $sample->results->first(fn($r) => stripos($r->parameter?->name ?? '', 'pH') !== false);
-            $ecResult = $sample->results->first(fn($r) => stripos($r->parameter?->name ?? '', 'EC') !== false);
-            $nResult = $sample->results->first(fn($r) => stripos($r->parameter?->name ?? '', 'nitrogen') !== false || ($r->parameter?->name ?? '') === 'N');
-            $pResult = $sample->results->first(fn($r) => stripos($r->parameter?->name ?? '', 'phosphorus') !== false || ($r->parameter?->name ?? '') === 'P');
-            $kResult = $sample->results->first(fn($r) => stripos($r->parameter?->name ?? '', 'potassium') !== false || ($r->parameter?->name ?? '') === 'K');
-        @endphp
-        <table class="diag-table">
-            <tr>
-                <td class="diag-cell">
-                    <span class="diag-k">Soil Reaction</span>
-                    <span class="diag-v">
-                        @if($phResult)
-                            {{ $phResult->value }} ({{ ucfirst($phResult->rating ?? 'Neutral') }})
-                        @else
-                            Neutral (6.8)
-                        @endif
-                    </span>
-                </td>
-                <td class="diag-cell">
-                    <span class="diag-k">Salinity Status</span>
-                    <span class="diag-v">
-                        @if($ecResult)
-                            {{ $ecResult->value }} dS/m (Normal)
-                        @else
-                            Non-Saline (Normal)
-                        @endif
-                    </span>
-                </td>
-                <td class="diag-cell">
-                    <span class="diag-k">N-P-K Fertility Index</span>
-                    <span class="diag-v">
-                        N:{{ ucfirst($nResult->rating ?? 'Med') }} &bull; P:{{ ucfirst($pResult->rating ?? 'Med') }} &bull; K:{{ ucfirst($kResult->rating ?? 'Sufficient') }}
-                    </span>
-                </td>
-                <td class="diag-cell">
-                    <span class="diag-k">Sampling Standard</span>
-                    <span class="diag-v">Composite V-Notch Core</span>
-                </td>
-            </tr>
         </table>
 
         {{-- EXPERT AGRONOMIC RECOMMENDATIONS & FERTILIZER ADVISORY --}}
@@ -736,7 +660,7 @@
             );
         @endphp
         <div class="advisory-box">
-            <div class="advisory-title">IV. Expert Agronomic Prescription &amp; Fertilizer Advisory</div>
+            <div class="advisory-title">IV. Fertilizer Advisory &amp; Agronomic Recommendations</div>
             <div class="advisory-body">
                 @if(!empty(trim($cleanRecs)))
                     {!! nl2br(e($cleanRecs)) !!}
@@ -751,9 +675,9 @@
             <p>
                 <strong>Official Notice:</strong> This Soil Health Card is issued under standardized government quality control protocols. Diagnostic findings relate strictly to the soil sample collected from the specified survey/khasra plot. Valid for 3 years from certification date.
             </p>
-            <p style="margin-top: 1.5px;">
+            <p style="margin-top: 2px;">
                 <strong>Online Verification:</strong> Verify certificate authenticity anytime by scanning the QR code above or visiting {{ 'https://' . $portalHost . '/report/' . ($sample->report_token ?? '') }}
-                &bull; Helpline: {{ $sample->lab->phone ?? '+91-1933-241234' }} &bull; Certificate Ref: CERT-{{ strtoupper(substr(md5($sample->id . $sample->sample_code), 0, 10)) }} &bull; Issued: {{ now()->format('d M Y H:i:s') }}
+                &bull; Helpline: {{ $labPhone }} &bull; Certificate Ref: CERT-{{ strtoupper(substr(md5($sample->id . $sample->sample_code), 0, 10)) }} &bull; Issued: {{ now()->format('d M Y H:i:s') }}
             </p>
         </div>
     </div>
