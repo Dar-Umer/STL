@@ -305,13 +305,6 @@
             font-size: 6pt;
             color: #64748b;
         }
-        .matrix-table td.col-obs {
-            text-align: center;
-            font-weight: bold;
-            font-size: 7.8pt;
-            color: #0f172a;
-            width: 66px;
-        }
         .matrix-table td.col-unit {
             text-align: center;
             color: #475569;
@@ -322,7 +315,14 @@
             text-align: center;
             font-size: 6.4pt;
             color: #475569;
-            width: 92px;
+            width: 95px;
+        }
+        .matrix-table td.col-obs {
+            text-align: center;
+            font-weight: bold;
+            font-size: 7.8pt;
+            color: #0f172a;
+            width: 68px;
         }
         .matrix-table td.col-rating {
             text-align: center;
@@ -366,7 +366,7 @@
             border: 1px solid #cbd5e1;
             border-left: 3.5px solid #059669;
             border-radius: 3px;
-            margin-bottom: 6px;
+            margin-bottom: 5px;
             padding: 5px 8px;
         }
         .advisory-title {
@@ -384,12 +384,38 @@
             text-align: justify;
         }
 
+        /* Compact Custody Attribution Line */
+        .custody-line {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 4px;
+            margin-bottom: 3px;
+            font-size: 6.2pt;
+            color: #475569;
+        }
+        .custody-line td {
+            padding: 1.5px 2px;
+            vertical-align: middle;
+        }
+        .custody-label {
+            color: #64748b;
+            font-weight: 500;
+        }
+        .custody-name {
+            color: #065f46;
+            font-weight: bold;
+        }
+        .custody-date {
+            color: #64748b;
+            font-size: 5.6pt;
+        }
+
         /* Legal & Audit Trail Footer */
         .footer-bar {
             font-size: 5.4pt;
             color: #64748b;
             text-align: center;
-            margin-top: 5px;
+            margin-top: 4px;
             border-top: 0.5px solid #cbd5e1;
             padding-top: 3.5px;
             line-height: 1.25;
@@ -558,7 +584,7 @@
             </tr>
         </table>
 
-        {{-- SOIL PARAMETERS SCORECARD TABLE (7 COLUMNS) --}}
+        {{-- SOIL PARAMETERS SCORECARD TABLE: REORDERED (Unit -> Standard Range -> Observed) --}}
         <div class="matrix-header-title">III. Soil Physicochemical &amp; Plant Nutrient Diagnostic Analysis</div>
         <table class="matrix-table">
             <thead>
@@ -566,9 +592,9 @@
                     <th style="width: 22px;">#</th>
                     <th style="text-align: left; width: 175px;">Parameter / Plant Nutrient</th>
                     <th style="text-align: left;">Standard Test Method</th>
-                    <th style="width: 66px;">Observed</th>
                     <th style="width: 50px;">Unit</th>
-                    <th style="width: 92px;">Standard Range</th>
+                    <th style="width: 95px;">Standard Range</th>
+                    <th style="width: 68px;">Observed</th>
                     <th style="width: 86px;">Nutrient Rating</th>
                 </tr>
             </thead>
@@ -632,9 +658,9 @@
                         <span class="col-category">{{ $meta['category'] }}</span>
                     </td>
                     <td class="col-method">{{ $param->method ?? 'Standard Protocol' }}</td>
-                    <td class="col-obs">{{ is_numeric($result->value) ? number_format((float)$result->value, 2) : ($result->value ?? '—') }}</td>
                     <td class="col-unit">{{ $param->unit ?? '—' }}</td>
                     <td class="col-range">{{ $rangeDisplay }}</td>
+                    <td class="col-obs">{{ is_numeric($result->value) ? number_format((float)$result->value, 2) : ($result->value ?? '—') }}</td>
                     <td class="col-rating">
                         <span class="pill-rating {{ $pillClass }}">
                             {{ $result->rating ? ucfirst($result->rating) : 'Adequate' }}
@@ -669,6 +695,26 @@
                 @endif
             </div>
         </div>
+
+        {{-- CHAIN OF CUSTODY (COMPACT ATTRIBUTION LINE) --}}
+        <table class="custody-line">
+            <tr>
+                <td style="text-align: left; width: 50%;">
+                    <span class="custody-label">Sample Collected by:</span>
+                    <span class="custody-name">{{ $sample->collector->name ?? 'Field Extension Official' }}</span>
+                    @if($sample->collected_at)
+                        <span class="custody-date">({{ $sample->collected_at->format('d M Y') }})</span>
+                    @endif
+                </td>
+                <td style="text-align: right; width: 50%;">
+                    <span class="custody-label">Tested &amp; Analyzed by:</span>
+                    <span class="custody-name">{{ $sample->analyst->name ?? 'Soil Analyst' }}</span>
+                    @if($sample->analyzed_at)
+                        <span class="custody-date">({{ $sample->analyzed_at->format('d M Y') }})</span>
+                    @endif
+                </td>
+            </tr>
+        </table>
 
         {{-- LEGAL DISCLAIMER & AUDIT TRAIL FOOTER --}}
         <div class="footer-bar">
