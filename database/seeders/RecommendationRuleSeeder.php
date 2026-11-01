@@ -3,8 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\Crop;
+use App\Models\SoilSample;
 use App\Models\SoilTestParameter;
 use App\Models\RecommendationRule;
+use App\Services\RecommendationEngine;
 use Illuminate\Database\Seeder;
 
 class RecommendationRuleSeeder extends Seeder
@@ -247,5 +249,15 @@ class RecommendationRuleSeeder extends Seeder
         }
 
         $this->command->info('Seeded ' . count($rules) . ' accurate Kashmir Apple and core soil health recommendation rules.');
+
+        // Automatically refresh existing samples with results so they immediately reflect the accurate rules
+        $engine = app(RecommendationEngine::class);
+        $samples = SoilSample::with(['results.parameter', 'plot.crop'])->has('results')->get();
+        foreach ($samples as $sample) {
+            $sample->update([
+                'recommendations' => $engine->generate($sample),
+            ]);
+        }
+        $this->command->info('Refreshed recommendations for ' . $samples->count() . ' soil samples.');
     }
 }
