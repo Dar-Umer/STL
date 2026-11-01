@@ -6,7 +6,7 @@
     <style>
         @page {
             size: a4 portrait;
-            margin: 6mm 7mm 6mm 7mm;
+            margin: 7mm 8mm 7mm 8mm;
         }
         @font-face {
             font-family: 'Inter';
@@ -53,9 +53,9 @@
         }
         body {
             font-family: 'Inter', Helvetica, Arial, sans-serif;
-            font-size: 7.2pt;
+            font-size: 7.4pt;
             color: #0f172a;
-            line-height: 1.25;
+            line-height: 1.28;
             background: #ffffff;
         }
 
@@ -63,7 +63,7 @@
         .doc-container {
             border: 1.5px solid #065f46;
             border-radius: 4px;
-            padding: 6px 8px 6px 8px;
+            padding: 8px 9px 7px 9px;
             background: #ffffff;
             position: relative;
         }
@@ -72,16 +72,16 @@
         .masthead-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 4px;
+            margin-bottom: 5px;
         }
         .emblem-td {
-            width: 65px;
+            width: 68px;
             vertical-align: middle;
             text-align: left;
         }
         .emblem-img {
-            height: 56px;
-            max-width: 60px;
+            height: 58px;
+            max-width: 62px;
             display: block;
         }
         .masthead-center {
@@ -90,14 +90,14 @@
             padding: 0 4px;
         }
         .govt-state {
-            font-size: 9.5pt;
+            font-size: 9.8pt;
             font-weight: bold;
             color: #0f172a;
             letter-spacing: 1.2px;
             text-transform: uppercase;
         }
         .govt-dept {
-            font-size: 8.2pt;
+            font-size: 8.4pt;
             font-weight: bold;
             color: #047857;
             text-transform: uppercase;
@@ -105,33 +105,33 @@
             margin-top: 1px;
         }
         .lab-title {
-            font-size: 10.5pt;
+            font-size: 10.8pt;
             font-weight: bold;
             color: #064e3b;
             margin-top: 1px;
             letter-spacing: 0.3px;
         }
         .lab-contact-line {
-            font-size: 6.2pt;
+            font-size: 6.3pt;
             color: #475569;
             margin-top: 1.5px;
         }
         .qr-td {
-            width: 70px;
+            width: 72px;
             vertical-align: middle;
             text-align: right;
         }
         .qr-box {
             display: inline-block;
             border: 1px solid #cbd5e1;
-            padding: 2px;
+            padding: 2.5px;
             background: #ffffff;
             border-radius: 3px;
             text-align: center;
         }
         .qr-box img {
-            width: 52px;
-            height: 52px;
+            width: 54px;
+            height: 54px;
             display: block;
         }
         .qr-caption {
@@ -148,37 +148,38 @@
             background: #064e3b;
             border-bottom: 2px solid #d97706;
             border-radius: 3px;
-            padding: 3.5px 8px;
+            padding: 4px 8px;
             text-align: center;
-            margin-bottom: 4px;
+            margin-bottom: 5px;
         }
         .banner-title {
             color: #ffffff;
-            font-size: 9pt;
+            font-size: 9.2pt;
             font-weight: bold;
             letter-spacing: 0.9px;
             text-transform: uppercase;
         }
         .banner-subtitle {
             color: #a7f3d0;
-            font-size: 5.6pt;
+            font-size: 5.7pt;
             font-weight: normal;
             letter-spacing: 0.5px;
             text-transform: uppercase;
             margin-top: 1px;
         }
 
-        /* Metadata Passport Ribbon */
+        /* Metadata Passport Ribbon (4 Columns) */
         .meta-strip {
             width: 100%;
             border-collapse: collapse;
             background: #f8fafc;
             border: 1px solid #e2e8f0;
             border-radius: 3px;
-            margin-bottom: 4px;
+            margin-bottom: 5px;
         }
         .meta-strip td {
-            padding: 3px 6px;
+            width: 25%;
+            padding: 3.5px 8px;
             font-size: 6.8pt;
             border-right: 1px solid #e2e8f0;
             vertical-align: middle;
@@ -192,33 +193,21 @@
             text-transform: uppercase;
             font-weight: bold;
             display: block;
-            margin-bottom: 1px;
+            margin-bottom: 1.5px;
             letter-spacing: 0.3px;
         }
         .m-val {
             color: #0f172a;
             font-weight: bold;
-            font-size: 7.2pt;
-        }
-        .badge-auth {
-            display: inline-block;
-            background: #ecfdf5;
-            color: #047857;
-            border: 1px solid #6ee7b7;
-            padding: 1.5px 6px;
-            font-size: 5.8pt;
-            font-weight: bold;
-            border-radius: 3px;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
+            font-size: 7.4pt;
         }
 
         /* Two-Column Dossier Grid */
         .dossier-table {
             width: 100%;
             border-collapse: separate;
-            border-spacing: 5px 0;
-            margin-bottom: 4px;
+            border-spacing: 6px 0;
+            margin-bottom: 5px;
         }
         .dossier-cell {
             width: 50%;
@@ -231,8 +220,8 @@
         .card-header {
             background: #f0fdf4;
             border-bottom: 1px solid #bbf7d0;
-            padding: 2.5px 6px;
-            font-size: 6.4pt;
+            padding: 2.8px 7px;
+            font-size: 6.5pt;
             font-weight: bold;
             color: #064e3b;
             text-transform: uppercase;
@@ -246,13 +235,13 @@
             background: #f8fafc;
         }
         .info-table td {
-            padding: 1.8px 6px;
-            font-size: 6.6pt;
+            padding: 2px 7px;
+            font-size: 6.7pt;
             border-bottom: 0.5px solid #f1f5f9;
             vertical-align: middle;
         }
         .info-table td.label-col {
-            width: 86px;
+            width: 88px;
             color: #64748b;
             font-weight: normal;
         }
@@ -265,34 +254,34 @@
         .matrix-header-title {
             background: #065f46;
             color: #ffffff;
-            font-size: 6.6pt;
+            font-size: 6.7pt;
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            padding: 2.2px 6px;
+            padding: 2.5px 7px;
             border-radius: 3px;
-            margin-bottom: 3px;
+            margin-bottom: 3.5px;
         }
         .matrix-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 6.6pt;
-            margin-bottom: 4px;
+            font-size: 6.7pt;
+            margin-bottom: 5px;
             border: 1px solid #cbd5e1;
         }
         .matrix-table th {
             background: #064e3b;
             color: #ffffff;
             font-weight: bold;
-            font-size: 6.2pt;
+            font-size: 6.3pt;
             text-transform: uppercase;
             letter-spacing: 0.3px;
-            padding: 2.8px 4px;
+            padding: 3px 5px;
             border: 1px solid #047857;
             text-align: center;
         }
         .matrix-table td {
-            padding: 2px 4px;
+            padding: 2.2px 5px;
             border: 1px solid #e2e8f0;
             vertical-align: middle;
         }
@@ -303,12 +292,13 @@
             text-align: center;
             font-weight: bold;
             color: #64748b;
-            width: 18px;
+            width: 20px;
         }
         .matrix-table td.col-name {
             font-weight: bold;
             color: #0f172a;
-            font-size: 6.7pt;
+            font-size: 6.8pt;
+            width: 165px;
         }
         .col-category {
             font-size: 5.2pt;
@@ -319,42 +309,38 @@
             letter-spacing: 0.3px;
         }
         .matrix-table td.col-method {
-            font-size: 5.8pt;
+            font-size: 5.9pt;
             color: #64748b;
         }
         .matrix-table td.col-obs {
             text-align: center;
             font-weight: bold;
-            font-size: 7.5pt;
+            font-size: 7.6pt;
             color: #0f172a;
-            width: 58px;
+            width: 64px;
         }
         .matrix-table td.col-unit {
             text-align: center;
             color: #475569;
-            font-size: 6.2pt;
-            width: 44px;
+            font-size: 6.3pt;
+            width: 48px;
         }
         .matrix-table td.col-range {
             text-align: center;
-            font-size: 6.2pt;
+            font-size: 6.3pt;
             color: #475569;
-            width: 80px;
+            width: 88px;
         }
         .matrix-table td.col-rating {
             text-align: center;
-            width: 72px;
-        }
-        .matrix-table td.col-gauge {
-            text-align: center;
-            width: 62px;
+            width: 82px;
         }
 
         /* Rating Badges */
         .pill-rating {
             display: inline-block;
-            padding: 1.2px 6px;
-            font-size: 5.6pt;
+            padding: 1.5px 7px;
+            font-size: 5.8pt;
             font-weight: bold;
             border-radius: 3px;
             text-transform: uppercase;
@@ -381,63 +367,33 @@
             border: 0.5px solid #6ee7b7;
         }
 
-        /* 3-Segment Visual Meter */
-        .meter-table {
-            width: 50px;
-            border-collapse: separate;
-            border-spacing: 2px 0;
-            margin: 0 auto;
-        }
-        .meter-table td {
-            width: 14px;
-            height: 5px;
-            padding: 0;
-            border: 0.5px solid #cbd5e1;
-            border-radius: 1px;
-            background: #e2e8f0;
-            font-size: 1px;
-            line-height: 1px;
-        }
-        .meter-table td.bar-low.active {
-            background: #ef4444;
-            border-color: #b91c1c;
-        }
-        .meter-table td.bar-med.active {
-            background: #10b981;
-            border-color: #047857;
-        }
-        .meter-table td.bar-high.active {
-            background: #3b82f6;
-            border-color: #1d4ed8;
-        }
-
         /* Diagnostic Quick Status Dashboard Strip */
         .diag-table {
             width: 100%;
             border-collapse: separate;
-            border-spacing: 4px 0;
-            margin-bottom: 4px;
+            border-spacing: 5px 0;
+            margin-bottom: 5px;
         }
         .diag-cell {
             width: 25%;
             background: #f0fdf4;
             border: 1px solid #bbf7d0;
             border-radius: 3px;
-            padding: 3px 4px;
+            padding: 3.5px 5px;
             text-align: center;
             vertical-align: middle;
         }
         .diag-k {
-            font-size: 5.2pt;
+            font-size: 5.3pt;
             font-weight: bold;
             color: #065f46;
             text-transform: uppercase;
             letter-spacing: 0.3px;
             display: block;
-            margin-bottom: 1px;
+            margin-bottom: 1.5px;
         }
         .diag-v {
-            font-size: 6.8pt;
+            font-size: 7pt;
             font-weight: bold;
             color: #047857;
         }
@@ -448,80 +404,33 @@
             border: 1px solid #cbd5e1;
             border-left: 3.5px solid #059669;
             border-radius: 3px;
-            margin-bottom: 4px;
-            padding: 3.5px 6px;
+            margin-bottom: 6px;
+            padding: 4px 7px;
         }
         .advisory-title {
-            font-size: 6.6pt;
+            font-size: 6.7pt;
             font-weight: bold;
             color: #064e3b;
             text-transform: uppercase;
             letter-spacing: 0.4px;
-            margin-bottom: 1.5px;
+            margin-bottom: 2px;
         }
         .advisory-body {
-            font-size: 6.3pt;
-            line-height: 1.34;
+            font-size: 6.4pt;
+            line-height: 1.36;
             color: #334155;
             text-align: justify;
         }
 
-        /* Signatures Block */
-        .sign-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 3px;
-            border-top: 1px dashed #cbd5e1;
-            padding-top: 3px;
-        }
-        .sign-table td {
-            width: 33.33%;
-            vertical-align: top;
-            text-align: center;
-            font-size: 6.2pt;
-            padding: 2px 4px;
-        }
-        .sign-title {
-            font-weight: bold;
-            color: #0f172a;
-            text-transform: uppercase;
-            font-size: 6.2pt;
-            margin-bottom: 1px;
-            letter-spacing: 0.2px;
-        }
-        .sign-name {
-            font-size: 6.8pt;
-            color: #047857;
-            font-weight: bold;
-        }
-        .sign-desc {
-            font-size: 5.2pt;
-            color: #64748b;
-            margin-top: 0.5px;
-        }
-        .cert-stamp {
-            display: inline-block;
-            border: 1px solid #059669;
-            background: #f0fdf4;
-            padding: 1.5px 6px;
-            border-radius: 3px;
-            margin-top: 1px;
-            color: #047857;
-            font-size: 5.2pt;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-
         /* Legal & Audit Trail Footer */
         .footer-bar {
-            font-size: 5.2pt;
+            font-size: 5.3pt;
             color: #64748b;
             text-align: center;
-            margin-top: 3.5px;
+            margin-top: 4px;
             border-top: 0.5px solid #cbd5e1;
-            padding-top: 2px;
-            line-height: 1.22;
+            padding-top: 3px;
+            line-height: 1.25;
         }
         .footer-bar strong {
             color: #334155;
@@ -572,28 +481,24 @@
             <div class="banner-subtitle">Official Physicochemical &amp; Plant Nutrient Diagnostic Record</div>
         </div>
 
-        {{-- METADATA PASSPORT STRIP --}}
+        {{-- METADATA PASSPORT STRIP (4 BALANCED COLUMNS) --}}
         <table class="meta-strip">
             <tr>
-                <td style="width: 22%;">
+                <td>
                     <span class="m-key">Report Reference</span>
                     <span class="m-val">RPT-{{ $sample->sample_code }}</span>
                 </td>
-                <td style="width: 20%;">
+                <td>
                     <span class="m-key">Sample Identifier</span>
                     <span class="m-val">{{ $sample->sample_code }}</span>
                 </td>
-                <td style="width: 18%;">
+                <td>
                     <span class="m-key">Lab Register No.</span>
                     <span class="m-val" style="color: #047857;">{{ $sample->lab_number ?? '1001' }}</span>
                 </td>
-                <td style="width: 20%;">
+                <td>
                     <span class="m-key">Certified On</span>
                     <span class="m-val">{{ $sample->analyzed_at?->format('d M Y') ?? now()->format('d M Y') }}</span>
-                </td>
-                <td style="width: 20%; text-align: right;">
-                    <span class="m-key">Digital Verification</span>
-                    <span class="badge-auth">&bull; AUTHENTICATED</span>
                 </td>
             </tr>
         </table>
@@ -686,19 +591,18 @@
             </tr>
         </table>
 
-        {{-- SOIL PARAMETERS SCORECARD TABLE --}}
+        {{-- SOIL PARAMETERS SCORECARD TABLE (7 CLEAN COLUMNS) --}}
         <div class="matrix-header-title">III. Soil Physicochemical &amp; Plant Nutrient Diagnostic Analysis</div>
         <table class="matrix-table">
             <thead>
                 <tr>
-                    <th style="width: 18px;">#</th>
-                    <th style="text-align: left; width: 145px;">Parameter / Plant Nutrient</th>
+                    <th style="width: 20px;">#</th>
+                    <th style="text-align: left; width: 165px;">Parameter / Plant Nutrient</th>
                     <th style="text-align: left;">Standard Test Method</th>
-                    <th style="width: 58px;">Observed</th>
-                    <th style="width: 44px;">Unit</th>
-                    <th style="width: 80px;">Standard Range</th>
-                    <th style="width: 72px;">Nutrient Rating</th>
-                    <th style="width: 62px;">Meter (L&bull;M&bull;H)</th>
+                    <th style="width: 64px;">Observed</th>
+                    <th style="width: 48px;">Unit</th>
+                    <th style="width: 88px;">Standard Range</th>
+                    <th style="width: 82px;">Nutrient Rating</th>
                 </tr>
             </thead>
             <tbody>
@@ -769,20 +673,10 @@
                             {{ $result->rating ? ucfirst($result->rating) : 'Adequate' }}
                         </span>
                     </td>
-                    <td class="col-gauge">
-                        {{-- 3-Segment Visual Meter --}}
-                        <table class="meter-table">
-                            <tr>
-                                <td class="bar-low {{ in_array($tier, ['low', 'deficient']) ? 'active' : '' }}">&nbsp;</td>
-                                <td class="bar-med {{ in_array($tier, ['medium', 'optimal', 'neutral', 'normal', 'adequate', 'sufficient']) ? 'active' : '' }}">&nbsp;</td>
-                                <td class="bar-high {{ in_array($tier, ['high', 'excess', 'very high']) ? 'active' : '' }}">&nbsp;</td>
-                            </tr>
-                        </table>
-                    </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="8" style="text-align:center; color:#64748b; padding: 8px;">No chemical test results recorded for this sample.</td>
+                    <td colspan="7" style="text-align:center; color:#64748b; padding: 8px;">No chemical test results recorded for this sample.</td>
                 </tr>
                 @endforelse
             </tbody>
@@ -851,30 +745,6 @@
                 @endif
             </div>
         </div>
-
-        {{-- CHAIN OF CUSTODY & VERIFICATION SIGNATURES --}}
-        <table class="sign-table">
-            <tr>
-                <td>
-                    <div class="sign-title">Field Sample Collector</div>
-                    <div class="sign-name">{{ $sample->collector->name ?? 'Field Official' }}</div>
-                    <div class="sign-desc">Field Extension Division &bull; GPS Tagged</div>
-                    <div class="sign-desc">Collected: {{ $sample->collected_at?->format('d M Y') ?? '—' }}</div>
-                </td>
-                <td>
-                    <div class="sign-title">Soil Testing Chemist</div>
-                    <div class="sign-name">{{ $sample->analyst->name ?? 'Soil Analyst' }}</div>
-                    <div class="sign-desc">{{ $sample->lab->name ?? 'Soil Testing Laboratory' }}</div>
-                    <div class="sign-desc">Analyzed: {{ $sample->analyzed_at?->format('d M Y') ?? now()->format('d M Y') }}</div>
-                </td>
-                <td>
-                    <div class="sign-title">Quality Control / In-Charge</div>
-                    <div class="sign-name">{{ $sample->lab->contact_person ?? 'Lab Director' }}</div>
-                    <div class="cert-stamp">CERTIFIED BY LAB IN-CHARGE</div>
-                    <div class="sign-desc">{{ $sample->lab->name ?? 'Department of Horticulture' }}</div>
-                </td>
-            </tr>
-        </table>
 
         {{-- LEGAL DISCLAIMER & AUDIT TRAIL FOOTER --}}
         <div class="footer-bar">
